@@ -1,0 +1,12 @@
+name: IRP
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+ - pip
+ - ipython
+ - jupyter
+ - numpy
+ - scipy
+ - pip:
+   - -r requirements.txt
