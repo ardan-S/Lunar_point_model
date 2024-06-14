@@ -1,0 +1,18 @@
+PDS_VERSION_ID                = PDS3
+RECORD_TYPE                   = STREAM
+OBJECT                        = TEXT
+  PUBLICATION_DATE            = 2008-08-05
+  NOTE                        = "Description of the LABEL
+     directory contents for the Moon Mineralogy Mapper (M3) PDS Archive"
+END_OBJECT                    = TEXT
+END
+
+
+                   LABEL Directory Contents
+
+     The LABEL directory contains data set label objects.  
+The following files are found in this directory.
+
+LABINFO.TXT      -  The file you are reading.
+LN_PRFX_HDR.FMT  -  The file that describes the structure of the 1280-byte
+                    line prefix header of a L0 image cube (L0.IMG).
