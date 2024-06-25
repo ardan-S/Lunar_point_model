@@ -11,4 +11,4 @@ dependencies:
  - pip:
    - -r requirements.txt
 variables:
-  PYTHONPATH: "${PYTHONPATH}:/path/to/root/directory"
+  # PYTHONPATH: "${PYTHONPATH}:/path/to/root/directory"
