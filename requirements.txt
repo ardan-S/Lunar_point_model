@@ -4,9 +4,13 @@ numpy
 scipy
 matplotlib
 jupyter-book
-# sphinx
 pandas
 pybryt
 pytest
-pds4_tools
-astropy
+glymur
+
+dask
+dask[distributed]
+dask[dataframe]
+aiohttp
+asyncio

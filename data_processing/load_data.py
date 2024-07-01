@@ -6,8 +6,8 @@ import sys
 
 sys.path.append(os.path.abspath('.'))
 
-from process_image import download_parse_metadata, process_image
-from process_urls import get_file_urls, process_url, process_urls_in_parallel
+from SS.process_image import download_parse_metadata, process_image
+from SS.process_urls import get_file_urls, process_url, process_urls_in_parallel
 
 
 Diviner_home = 'https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gdr_l3/2016/polar/jp2/'

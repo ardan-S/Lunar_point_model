@@ -4,7 +4,7 @@ from urllib.parse import urljoin
 from multiprocessing import Pool
 import pandas as pd
 
-from process_image import download_parse_metadata, process_image
+from SS.process_image import download_parse_metadata, process_image
 
 
 def get_file_urls(page_url, file_extension, keyword, limit=None):

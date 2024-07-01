@@ -4,7 +4,7 @@
 #PBS -N evaluate_diviner
 
 # Resource requirements
-#PBS -l select=1:ncpus=128:mpiprocs=128:ompthreads=1:mem=10000Mb
+#PBS -l select=1:ncpus=8:mem=16Gb
 
 # Time required
 #PBS -l walltime=00:10:00
@@ -15,42 +15,16 @@
 
 
 # Load required modules
-module load python/3.x
-module load some_other_module_if_needed
+module load python/3.8
 
-# Activate virtual environment if needed
+# Activate virtual environment
 source ~/venv/IRP/bin/activate
 
 # Change to the directory where the job was submitted
 cd $PBS_O_WORKDIR
 
 # Run the Python script
-python << EOF
-import numpy as np
-import pandas as pd
-import sys
-import os
+python ./Diviner-temp/Diviner.py --n_workers 4 --threads_per_worker 2 --memory_limit 4GB
 
-sys.path.append(os.path.abspath('../../data_processing'))
-from process_urls import get_file_urls, process_urls_in_parallel
-from utils import plot_polar_data
-
-temp_home = 'https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gdr_l3/2016/polar/jp2/'
-
-# Get and print all .lbl file URLs from the given page
-temp_urls = get_file_urls(temp_home, '.lbl', 'tbol', limit=20)
-print(f"Found {len(temp_urls)} temp files")
-
-print("Processing temp files...")
-temp_df = process_urls_in_parallel(temp_urls, 'Diviner')
-print("Files processed successfully")
-
-print(f"Number of NaNs in Temperatures: {np.isnan(temp_df['Diviner']).sum()} out of {np.prod(temp_df['Diviner'].shape)} ({(np.isnan(temp_df['Diviner']).sum()/np.prod(temp_df['Diviner'].shape)*100):.2f}%)\n")
-
-print(temp_df.describe())
-
-plot_polar_data(temp_df, 'Diviner', frac=0.9, title_prefix='Diviner temperature', save_path='Diviner.png')
-EOF
-
-# Deactivate virtual environment if needed
+# Deactivate virtual environment
 deactivate

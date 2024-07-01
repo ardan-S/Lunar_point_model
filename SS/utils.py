@@ -26,8 +26,11 @@ def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', s
         max_lat = df['Latitude'].max()
         print(f'Latitude range: {min_lat} to {max_lat}')
         print(f'Second latitude: {df["Latitude"].iloc[1]}')
-        # df['r'] = (max_lat - df['Latitude']) / (max_lat - min_lat)
-        df['r'] = (90 - df['Latitude']) if pole == 'north' else (90 + df['Latitude'])
+        # df['r'] = (90 - df['Latitude']) if pole == 'north' else (90 + df['Latitude'])
+        if pole == 'north':
+            df['r'] = 90 - df['Latitude']
+        else:
+            df['r'] = 90 + df['Latitude']
         df['theta'] = np.deg2rad(df['Longitude'])
         return df
 
@@ -74,7 +77,7 @@ def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', s
         print('No data for South Pole')
         fig.delaxes(ax2)
 
-    print(f"Plotted {len(north_pole_df[variable]) + len(south_pole_df[variable])} data points")
+    print(f"Plotting {len(north_pole_df[variable]) + len(south_pole_df[variable])} data points...")
 
     if save_path:
         plt.savefig(save_path)
