@@ -9,43 +9,7 @@ from urllib.parse import urljoin
 import io
 
 
-# # done
-# def download_parse_metadata(url):
-#     response = requests.get(url)
-#     response.raise_for_status()
-#     file_content = response.content
-#     metadata = defaultdict(dict)
-#     object_stack = []
-
-#     try:
-#         content_str = file_content.decode('utf-8')
-#         current_object_path = ""
-#         for line in content_str.splitlines():
-#             line = line.strip()
-#             if line.startswith("OBJECT"):
-#                 object_name = re.findall(r'OBJECT\s*=\s*(\w+)', line)[0]
-#                 object_stack.append(object_name)
-#                 current_object_path = '.'.join(object_stack)
-#                 metadata[current_object_path] = {}
-#             elif line.startswith("END_OBJECT"):
-#                 object_stack.pop()
-#                 current_object_path = '.'.join(object_stack)
-#             elif "=" in line:
-#                 key, value = map(str.strip, line.split('=', 1))
-#                 if value.startswith('"') and value.endswith('"'):
-#                     value = value[1:-1]
-#                 elif value.isdigit():
-#                     value = int(value)
-#                 elif re.match(r'^\d+\.\d+$', value):
-#                     value = float(value)
-#                 metadata[current_object_path][key] = value
-#     except UnicodeDecodeError:
-#         print("Error decoding the file content with utf-8 encoding")
-
-#     # Convert defaultdict to regular dict for compatibility
-#     return {k: dict(v) for k, v in metadata.items()}
-
-
+# done
 def parse_metadata_content(file_content):
     if isinstance(file_content, bytes):
         try:
@@ -89,6 +53,7 @@ def parse_metadata_content(file_content):
     return {k: dict(v) for k, v in metadata.items()}
 
 
+# done
 def download_parse_metadata(url):
     response = requests.get(url)
     response.raise_for_status()
@@ -256,7 +221,12 @@ def process_LRO_image(image_data, metadata, address, data_type):
 # !!!!!!!!!!!!!!!!!!
 def process_M3_image(image_data, ref_data):
     ratios = ref_data / image_data
-    output_vals = np.min(ratios, axis=2)    # Take the min val as if this is above threshold, they all are.
+    min_vals = np.min(ratios, axis=2)    # Take the min val as if this is above threshold, they all are.
+    print(f'Shape of min_vals: {min_vals.shape}')
+    # Number of values outside of 0 and 1.2 in each of the test channels
+    nums_outside = np.sum((min_vals < 0) | (min_vals > 1.2))
+    print(f'Number of values outside of 0 and 1.2 in each of the test channels: {nums_outside} out of {min_vals.size} ({(nums_outside/min_vals.size)*100:.2f}%)')
+    output_vals = np.where((min_vals < 0) | (min_vals > 1.2), np.nan, min_vals)    # Check if any of the ratios are outside the range
     return output_vals
 
 
@@ -356,10 +326,10 @@ def process_image(metadata, image_path, data_type, output_csv_path=None):
     if data_type == 'M3':
         image_data, ref_data = extract_M3_image(image_path, metadata)
         output_vals = process_M3_image(image_data, ref_data)
-        lons, lats, radii = generate_M3_coords(image_data.shape, metadata)
+        lons, lats, _ = generate_M3_coords(image_data.shape, metadata)
     else:
         address = 'IMAGE' if data_type == 'MiniRF' else 'UNCOMPRESSED_FILE.IMAGE'
-        image_data = extract_LRO_image(image_path, address, metadata, 0.02) if data_type == 'MiniRF' else extract_LRO_image(image_path, address, metadata)
+        image_data = extract_LRO_image(image_path, address, metadata, 1) if data_type == 'MiniRF' else extract_LRO_image(image_path, address, metadata)
         output_vals = process_LRO_image(image_data, metadata, address, data_type)
         lons, lats = generate_LRO_coords(image_data.shape, metadata)
 
@@ -370,10 +340,6 @@ def process_image(metadata, image_path, data_type, output_csv_path=None):
     })
 
     df = filter_and_optimize_df(df, data_type, metadata)
-
-    if output_csv_path:
-        df.to_csv(output_csv_path, index=False)
-        print(f"Data saved to {output_csv_path}")
 
     return df
 
