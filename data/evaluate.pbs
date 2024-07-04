@@ -13,9 +13,14 @@
 #PBS -j oe
 #PBS -o qsub.log
 
+# Delete previous qsub.log
+rm qsub.log
 
 # Load required modules
 module load python/3.8
+
+# Update virtual environment
+../update_venv.sh
 
 # Activate virtual environment
 source ~/venv/IRP/bin/activate

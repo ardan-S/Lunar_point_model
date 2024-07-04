@@ -26,7 +26,7 @@ def main(n_workers, threads_per_worker, memory_limit):
         print(f'Number of NaNs in M3 data: {np.isnan(M3_df["M3"]).sum()} out of {np.prod(M3_df["M3"].shape)} ({(np.isnan(M3_df["M3"]).sum()/np.prod(M3_df["M3"].shape)*100):.2f}%)\n')
         print(M3_df.describe())
 
-        plot_polar_data(M3_df, 'M3', frac=None, title_prefix='M3 values', save_path='M3_values.png')
+        # plot_polar_data(M3_df, 'M3', frac=None, title_prefix='M3 values', save_path='M3_values.png')
 
     asyncio.run(process())
     print('Closing client...')

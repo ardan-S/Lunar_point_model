@@ -73,3 +73,39 @@ def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', s
         plt.savefig(save_path)
     else:
         plt.show()
+
+
+def generate_mesh(RESOLUTION=0.24):
+    MOON_RADIUS = 1737.4  # Radius of the Moon in kilometers
+    # Resolution in kilometers (240 meters)
+
+    # Convert resolution to degrees (approximate, depends on latitude)
+    # 1 degree latitude is roughly MOON_RADIUS * pi / 180 km
+    resolution_deg = (RESOLUTION / (MOON_RADIUS * np.pi / 180))
+
+    # Latitude ranges for the two poles
+    lat_ranges = [(75, 90), (-90, -75)]
+    lon_slices = [(0, 60), (60, 120), (120, 180), (180, 240), (240, 300), (300, 360)]
+
+    # Generate grid points for both regions
+    def generate_grid(lat_range, lon_range, resolution_deg):
+        lats = np.arange(lat_range[0], lat_range[1] + resolution_deg, resolution_deg)
+        lons = np.arange(lon_range[0], lon_range[1] + resolution_deg, resolution_deg)
+        lon_grid, lat_grid = np.meshgrid(lons, lats)
+        return lon_grid, lat_grid
+
+    # Generate meshes for each longitude slice
+    meshes = []
+    for lon_range in lon_slices:
+        lon_grid_north, lat_grid_north = generate_grid(lat_ranges[0], lon_range, resolution_deg)
+        lon_grid_south, lat_grid_south = generate_grid(lat_ranges[1], lon_range, resolution_deg)
+        lon_lat_grid_north = np.column_stack((lon_grid_north.ravel(), lat_grid_north.ravel()))
+        lon_lat_grid_south = np.column_stack((lon_grid_south.ravel(), lat_grid_south.ravel()))
+        meshes.append((lon_lat_grid_north, lon_lat_grid_south))
+
+    # print number of points in each mesh
+    for i, (lon_lat_grid_north, lon_lat_grid_south) in enumerate(meshes):
+        print(f"Mesh {i + 1}: {len(lon_lat_grid_north)} points in North Pole, {len(lon_lat_grid_south)} points in South Pole")
+    print(f'Total points: {sum(len(lon_lat_grid_north) + len(lon_lat_grid_south) for lon_lat_grid_north, lon_lat_grid_south in meshes)}')
+
+    return meshes
