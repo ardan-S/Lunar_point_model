@@ -4,6 +4,12 @@ import dask.dataframe as dd
 import pandas as pd
 
 
+# Function to split list into chunks of specified size
+def chunks(lst, n):
+    for i in range(0, len(lst), n):
+        yield lst[i:i + n]
+
+
 def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', save_path=None):
 
     # Check for required columns

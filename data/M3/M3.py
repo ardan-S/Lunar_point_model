@@ -5,28 +5,32 @@ from dask.distributed import Client
 import asyncio
 import argparse
 
-sys.path.append(os.path.abspath('../../data_processing'))
+sys.path.append(os.path.abspath('../data_processing'))
 from process_urls_dask import get_M3_urls_async, process_urls_in_parallel
-from utils_dask import plot_polar_data
+from utils_dask import chunks
 
 
 def main(n_workers, threads_per_worker, memory_limit):
-    # Set up the Dask client
+    print('Starting M3 client...')
     client = Client(n_workers=n_workers, threads_per_worker=threads_per_worker, memory_limit=memory_limit)
 
     M3_home = 'https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004_md5.txt'
 
     async def process():
         print("!!!!!! FIX NAN HANDLING FOR M3 DATA !!!!!!")
-        # M3_urls = get_M3_urls(M3_data_home, '.LBL', 'DATA')
         M3_urls = await get_M3_urls_async(M3_home, '.LBL', 'DATA')
-        M3_urls = M3_urls[:2]
-        M3_df = process_urls_in_parallel(client, M3_urls, 'M3', num_processes=n_workers).compute()
+        M3_urls = M3_urls[:3]
+        csv_path = './M3/M3_CSVs'
+        iter = 1
 
-        print(f'Number of NaNs in M3 data: {np.isnan(M3_df["M3"]).sum()} out of {np.prod(M3_df["M3"].shape)} ({(np.isnan(M3_df["M3"]).sum()/np.prod(M3_df["M3"].shape)*100):.2f}%)\n')
-        print(M3_df.describe())
+        # for urls_in_chunk in chunks(M3_urls, 3):
+        #     print(f'Processing chunk {iter}...')
+        #     process_urls_in_parallel(client, urls_in_chunk, 'M3', csv_path)
+        #     iter += 1
 
-        # plot_polar_data(M3_df, 'M3', frac=None, title_prefix='M3 values', save_path='M3_values.png')
+        process_urls_in_parallel(client, M3_urls, 'M3', csv_path)
+
+    # plot_polar_data(M3_df, 'M3', frac=None, title_prefix='M3 values', save_path='M3_values.png')
 
     asyncio.run(process())
     print('Closing client...')

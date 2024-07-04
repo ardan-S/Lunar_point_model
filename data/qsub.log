@@ -1,0 +1,19 @@
+Starting M3 client...
+Shape of min_vals: (28974, 304)
+Number of values outside of 0 and 1.2 in each of the test channels: 1091624 out of 8808096 (12.39%)
+Shape of min_vals: (1182, 304)
+Number of values outside of 0 and 1.2 in each of the test channels: 16224 out of 359328 (4.52%)
+Shape of min_vals: (1180, 304)
+Number of values outside of 0 and 1.2 in each of the test channels: 17250 out of 358720 (4.81%)
+!!!!!! FIX NAN HANDLING FOR M3 DATA !!!!!!
+Files saved into respective CSVs
+Closing client...
+
+====================================
+CPU Time used: 00:00:30
+CPU Percent: 8%
+Memory usage: 9852044kb
+Approx Power usage: 0.0
+Walltime usage: 00:06:08
+
+====================================

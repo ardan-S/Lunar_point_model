@@ -1,33 +1,31 @@
 import numpy as np
 import sys
 import os
-import argparse
 from dask.distributed import Client
 import asyncio
+import argparse
 
-sys.path.append(os.path.abspath('../../data_processing'))
+sys.path.append(os.path.abspath('../data_processing'))
 from process_urls_dask import get_file_urls_async, process_urls_in_parallel
-from utils_dask import plot_polar_data
+# from utils_dask import plot_polar_data
 
 
 def main(n_workers, threads_per_worker, memory_limit):
+    print('Starting Diviner client...')
     client = Client(n_workers=n_workers, threads_per_worker=threads_per_worker, memory_limit=memory_limit)
 
     temp_home = 'https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gdr_l3/2016/polar/jp2/'
 
     async def process():
-        # temp_urls = get_file_urls(temp_home, '.lbl', 'tbol')
         temp_urls = await get_file_urls_async(temp_home, '.lbl', 'tbol')
-        temp_urls = temp_urls[:2]
-        temp_df = process_urls_in_parallel(client, temp_urls, 'Diviner', num_processes=n_workers).compute()
+        temp_urls = temp_urls[:5]
+        csv_path = './Diviner-temp/Diviner_CSVs'
+        process_urls_in_parallel(client, temp_urls, 'Diviner', csv_path)
 
-        print(f'Number of NaNs in Temperatures: {np.isnan(temp_df["Diviner"]).sum()} out of {np.prod(temp_df["Diviner"].shape)} ({(np.isnan(temp_df["Diviner"]).sum()/np.prod(temp_df["Diviner"].shape)*100):.2f}%)\n')
-        print(temp_df.describe())
-
-        plot_polar_data(temp_df, 'Diviner', frac=None, title_prefix='Diviner temperature', save_path='Diviner_temp.png')
+    # plot_polar_data(temp_df, 'Diviner', frac=None, title_prefix='Diviner temperature', save_path='Diviner_temp.png')
 
     asyncio.run(process())
-    print('Closing client...')
+    print('Closing Diviner client...')
     client.close()
 
 

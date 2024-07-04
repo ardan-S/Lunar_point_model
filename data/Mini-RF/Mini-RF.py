@@ -5,25 +5,23 @@ from dask.distributed import Client
 import asyncio
 import argparse
 
-sys.path.append(os.path.abspath('../../data_processing'))
+sys.path.append(os.path.abspath('../data_processing'))
 from process_urls_dask import get_file_urls_async, process_urls_in_parallel
-from utils_dask import plot_polar_data
+# from utils_dask import plot_polar_data
 
 
 def main(n_workers, threads_per_worker, memory_limit):
-    # Set up the Dask client
+    print('Starting Mini-RF client...')
     client = Client(n_workers=n_workers, threads_per_worker=threads_per_worker, memory_limit=memory_limit)
 
     MiniRF_home = 'https://pds-geosciences.wustl.edu/lro/lro-l-mrflro-5-global-mosaic-v1/lromrf_1001/data/128ppd/'
 
     async def process():
         MiniRF_urls = await get_file_urls_async(MiniRF_home, '.lbl', 'cpr')  # 'cpr' - circular polarisation ratio
-        MiniRF_df = process_urls_in_parallel(client, MiniRF_urls, 'MiniRF', num_processes=n_workers).compute()
+        csv_path = './Mini-RF/MiniRF_CSVs'
+        process_urls_in_parallel(client, MiniRF_urls, 'MiniRF', csv_path)
 
-        print(f'Number of NaNs in Mini-RF CPR data: {np.isnan(MiniRF_df["MiniRF"]).sum()} out of {np.prod(MiniRF_df["MiniRF"].shape)} ({(np.isnan(MiniRF_df["MiniRF"]).sum()/np.prod(MiniRF_df["MiniRF"].shape)*100):.2f}%)')
-        print(MiniRF_df.describe())
-
-        plot_polar_data(MiniRF_df, 'MiniRF', frac=1, title_prefix='Mini-RF CPR', save_path='MiniRF_CPR.png')
+    # plot_polar_data(MiniRF_df, 'MiniRF', frac=1, title_prefix='Mini-RF CPR', save_path='MiniRF_CPR.png')
 
     asyncio.run(process())
     print('Closing client...')

@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import pandas as pd
 import dask.dataframe as dd
-# from dask.distributed import Client
+import os
 
 import aiohttp
-# import asyncio
+import asyncio
 
 from process_image_dask import process_image, parse_metadata_content
 
@@ -63,7 +63,8 @@ async def process_image_async(metadata, image_url, label_type, output_csv_path):
 async def process_single_url(url_info):
     label_url, image_url, output_csv_path, label_type = url_info
     metadata = await download_parse_metadata_async(label_url)
-    return await process_image_async(metadata, image_url, label_type, output_csv_path)
+    df = await process_image_async(metadata, image_url, label_type, output_csv_path)
+    return df
 
 
 def get_file_urls(page_url, file_extension, keyword, limit=None):
@@ -106,33 +107,42 @@ def construct_image_url(url, label_type):
     return url.replace(*replacements.get(label_type, ('.lbl', '.jp2')))
 
 
-def process_urls_in_parallel(client, urls, label_type, output_csv_path=None, num_processes=4):
-    # Create a list of tuples containing the URL, output CSV path, and label type
-    url_info_list = [(url, construct_image_url(url, label_type), output_csv_path, label_type) for url in urls]
+def process_urls_in_parallel(client, urls, label_type, output_dir):
+    url_info_list = [(url, construct_image_url(url, label_type), output_dir, label_type) for url in urls]
+    
+    # Create directory for CSVs if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
 
-    # Submit tasks to the Dask scheduler using client.submit
+    lon_ranges = [(0, 60), (60, 120), (120, 180), (180, 240), (240, 300), (300, 360)]
+    file_names = [
+        os.path.join(output_dir, 'lon_0_60.csv'),
+        os.path.join(output_dir, 'lon_60_120.csv'),
+        os.path.join(output_dir, 'lon_120_180.csv'),
+        os.path.join(output_dir, 'lon_180_240.csv'),
+        os.path.join(output_dir, 'lon_240_300.csv'),
+        os.path.join(output_dir, 'lon_300_360.csv')
+    ]
+
+    # Initialise CSVs with headers if they don't exist
+    for file_name in file_names:
+        if not os.path.isfile(file_name):
+            with open (file_name, 'w') as f:
+                f.write(f'Longitude,Latitude,{label_type}\n')
+
+    # Submit tasks to the Dask scheduler
     futures = [
-        # client.submit(process_image, client.submit(download_parse_metadata, url_info[0]), url_info[1], url_info[3], url_info[2])
         client.submit(process_single_url, url_info)
         for url_info in url_info_list
     ]
 
-    # Gather the results from the futures and compute
-    results = client.gather(futures)
-    dfs = client.compute(results, sync=True)
+    for future in futures:
+        result_df = future.result()
+        result_df = result_df.dropna()
+        # result_df = result_df.groupby(['Latitude', 'Longitude']).mean().reset_index()
 
-    # Concatenate the DataFrames into a single Dask DataFrame and partition it
-    combined_df = pd.concat(dfs, axis=0)
-    return dd.from_pandas(combined_df, npartitions=num_processes)
-
-
-# def process_url(url_info):
-#     label_url, output_csv_path, label_type = url_info
-#     image_url = construct_image_url(label_url, label_type)
-
-#     try:
-#         metadata = download_parse_metadata(label_url)
-#         return process_image(metadata, image_url, label_type, output_csv_path)
-#     except requests.HTTPError as e:
-#         print(f'HTTP error occured: {e}' if e.response.status_code != 404 else f'URL not found: {label_url}')
-#     return pd.DataFrame()  # Return an empty DataFrame in case of an error
+        for (start, end), file_name in zip(lon_ranges, file_names):
+            filtered_df = result_df[(result_df['Longitude'] >= start) & (result_df['Longitude'] < end)]
+            if not filtered_df.empty:
+                filtered_df.to_csv(file_name, mode='a', header=False, index=False)
+    
+    print('Files saved into respective CSVs')
