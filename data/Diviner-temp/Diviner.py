@@ -18,11 +18,9 @@ def main(n_workers, threads_per_worker, memory_limit):
 
     async def process():
         temp_urls = await get_file_urls_async(temp_home, '.lbl', 'tbol')
-        temp_urls = temp_urls[:5]
+        # temp_urls = temp_urls[:5]
         csv_path = './Diviner-temp/Diviner_CSVs'
         process_urls_in_parallel(client, temp_urls, 'Diviner', csv_path)
-
-    # plot_polar_data(temp_df, 'Diviner', frac=None, title_prefix='Diviner temperature', save_path='Diviner_temp.png')
 
     asyncio.run(process())
     print('Closing Diviner client...')

@@ -7,6 +7,8 @@ from collections import defaultdict
 import re
 from urllib.parse import urljoin
 import io
+from requests.exceptions import ChunkedEncodingError, ConnectionError
+from urllib3.exceptions import IncompleteRead
 
 
 # done
@@ -140,6 +142,19 @@ def extract_LRO_image(image_url, address, metadata=None, fraction_read=1.0):
 
 # done
 def extract_M3_image(image_url, metadata):
+    def fetch_url(url, retries=3):
+        for attempt in range (retries):
+            try:
+                response = requests.get(url)
+                response.raise_for_status()
+                return response
+            except (ChunkedEncodingError, ConnectionError, IncompleteRead) as e:
+                if attempt < retries - 1:
+                    print(f'Attempt {attempt + 1} failed for url: {url}\n Error: {e}.\nRetrying...')
+                    continue
+                else:
+                    raise e
+
     address = 'RFL_FILE.RFL_IMAGE'
     lines = int(get_metadata_value(metadata, address, 'LINES'))
     line_samples = int(get_metadata_value(metadata, address, 'LINE_SAMPLES'))
@@ -151,8 +166,9 @@ def extract_M3_image(image_url, metadata):
     calib_file = str(get_metadata_value(metadata, '', 'CH1:SPECTRAL_CALIBRATION_FILE_NAME', string=True))
     calib_file_url = urljoin(base_calib_file, calib_file)
 
-    response = requests.get(calib_file_url)
-    response.raise_for_status()
+    # response = requests.get(calib_file_url)
+    # response.raise_for_status()
+    response = fetch_url(calib_file_url)
 
     # Read the .TAB file into a pandas DataFrame
     calib_data = pd.read_csv(io.StringIO(response.text), sep=r'\s+', header=None, names=["Channel", "Wavelength"])
@@ -167,8 +183,9 @@ def extract_M3_image(image_url, metadata):
         raise ValueError("Could not find a suitable ref_channels value")
 
     # Read the image file into a numpy array
-    response = requests.get(image_url)
-    response.raise_for_status()
+    # response = requests.get(image_url)
+    # response.raise_for_status()
+    response = fetch_url(image_url)
 
     if image_url.split('.')[-1].lower() != 'img':
         raise ValueError("Unsupported file extension: {}".format(image_url.split('.')[-1].lower()))
@@ -219,14 +236,11 @@ def process_LRO_image(image_data, metadata, address, data_type):
 # !!!!!!!!!!!!!!!!!!!!
 # CONFIRM THIS
 # !!!!!!!!!!!!!!!!!!
+# Future inputs
 def process_M3_image(image_data, ref_data):
     ratios = ref_data / image_data
     min_vals = np.min(ratios, axis=2)    # Take the min val as if this is above threshold, they all are.
-    print(f'Shape of min_vals: {min_vals.shape}')
-    # Number of values outside of 0 and 1.2 in each of the test channels
-    nums_outside = np.sum((min_vals < 0) | (min_vals > 1.2))
-    print(f'Number of values outside of 0 and 1.2 in each of the test channels: {nums_outside} out of {min_vals.size} ({(nums_outside/min_vals.size)*100:.2f}%)')
-    output_vals = np.where((min_vals < 0) | (min_vals > 1.2), np.nan, min_vals)    # Check if any of the ratios are outside the range
+    output_vals = np.where((min_vals < 0) | (min_vals > 1.2), np.nan, min_vals)    # Remove ratios are outside the range [0, 1.2]
     return output_vals
 
 

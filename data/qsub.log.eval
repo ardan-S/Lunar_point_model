@@ -1,0 +1,36 @@
+Starting M3 client...
+2024-07-05 11:10:13,860 - distributed.scheduler - WARNING - Worker failed to heartbeat for 302s; attempting restart: <WorkerState 'tcp://127.0.0.1:44041', name: 3, status: running, memory: 0, processing: 1>
+2024-07-05 11:10:13,860 - distributed.scheduler - WARNING - Worker failed to heartbeat for 302s; attempting restart: <WorkerState 'tcp://127.0.0.1:46781', name: 2, status: running, memory: 0, processing: 1>
+2024-07-05 11:10:17,863 - distributed.nanny - WARNING - Worker process still alive after 4.0 seconds, killing
+2024-07-05 11:10:17,863 - distributed.nanny - WARNING - Worker process still alive after 4.0 seconds, killing
+2024-07-05 11:10:17,886 - distributed.nanny - WARNING - Restarting worker
+!!!!!! FIX NAN HANDLING FOR M3 DATA !!!!!!
+Processing chunk 1...
+Files saved into respective CSVs
+Chunk 2 completed after 4.688580592473348 minutes.
+Processing chunk 2...
+2024-07-05 11:10:17,887 - distributed.nanny - WARNING - Restarting worker
+2024-07-05 11:20:13,859 - distributed.scheduler - WARNING - Worker failed to heartbeat for 596s; attempting restart: <WorkerState 'tcp://127.0.0.1:35063', name: 0, status: running, memory: 0, processing: 1>
+2024-07-05 11:20:13,860 - distributed.scheduler - WARNING - Worker failed to heartbeat for 596s; attempting restart: <WorkerState 'tcp://127.0.0.1:36757', name: 1, status: running, memory: 0, processing: 1>
+2024-07-05 11:20:17,862 - distributed.nanny - WARNING - Worker process still alive after 4.0 seconds, killing
+2024-07-05 11:20:17,862 - distributed.nanny - WARNING - Worker process still alive after 4.0 seconds, killing
+2024-07-05 11:20:17,892 - distributed.nanny - WARNING - Restarting worker
+2024-07-05 11:20:17,893 - distributed.nanny - WARNING - Restarting worker
+2024-07-05 11:30:13,860 - distributed.scheduler - WARNING - Worker failed to heartbeat for 596s; attempting restart: <WorkerState 'tcp://127.0.0.1:34527', name: 2, status: running, memory: 0, processing: 1>
+2024-07-05 11:30:13,860 - distributed.scheduler - WARNING - Worker failed to heartbeat for 596s; attempting restart: <WorkerState 'tcp://127.0.0.1:46109', name: 3, status: running, memory: 0, processing: 1>
+2024-07-05 11:30:17,863 - distributed.nanny - WARNING - Worker process still alive after 4.0 seconds, killing
+2024-07-05 11:30:17,863 - distributed.nanny - WARNING - Worker process still alive after 4.0 seconds, killing
+2024-07-05 11:30:17,893 - distributed.nanny - WARNING - Restarting worker
+2024-07-05 11:30:17,894 - distributed.nanny - WARNING - Restarting worker
+=>> PBS: job killed: walltime 1839 exceeded limit 1800
+/sw-eb/software/Python/3.11.5-GCCcore-13.2.0/lib/python3.11/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 24 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+
+====================================
+CPU Time used: 00:01:42
+CPU Percent: 5%
+Memory usage: 9835312kb
+Approx Power usage: 0.0002
+Walltime usage: 00:30:50
+
+====================================

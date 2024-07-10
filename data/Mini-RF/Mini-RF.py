@@ -4,11 +4,15 @@ import os
 from dask.distributed import Client
 import asyncio
 import argparse
+from dask import config as cfg
 
 sys.path.append(os.path.abspath('../data_processing'))
 from process_urls_dask import get_file_urls_async, process_urls_in_parallel
 # from utils_dask import plot_polar_data
 
+cfg.set({'distributed.scheduler.worker-ttl': '1h'})  # Set worker time to live to 1 hour
+cfg.set({'distributed.worker.timeout': '1h'})  # Increase worker timeout
+cfg.set({'distributed.scheduler.worker-saturation': 2})  # Increase worker saturation threshold
 
 def main(n_workers, threads_per_worker, memory_limit):
     print('Starting Mini-RF client...')

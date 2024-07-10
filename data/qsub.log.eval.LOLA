@@ -1,0 +1,16 @@
+/rds/general/user/as5023/home/venv/IRP/lib/python3.11/site-packages/distributed/node.py:182: UserWarning: Port 8787 is already in use.
+Perhaps you already have a cluster running?
+Hosting the HTTP server on port 45387 instead
+  warnings.warn(
+Starting LOLA client...
+Files saved into respective CSVs
+Closing LOLA client...
+
+====================================
+CPU Time used: 00:00:00
+CPU Percent: 0%
+Memory usage: 0b
+Approx Power usage: 0.0
+Walltime usage: 00:00:53
+
+====================================

@@ -1,26 +1,28 @@
 #!/bin/bash
 
 # Job name
-#PBS -N load_files
+#PBS -N run_M3
 
 # Resource requirements
-#PBS -l select=1:ncpus=8:mem=64Gb
+#PBS -l select=1:ncpus=8:mem=128Gb
 
 # Time required
 #PBS -l walltime=01:00:00
 
 # File to contain standard out and error
-#PBS -j oe
-#PBS -o qsub.log
+#PBS -j oe  
+#PBS -o qsub.log.eval.M3
+#PBS -M ardan.suphi23@imperial.ic.ac.uk
+#PBS -m abe
 
 # Change to the directory where the job was submitted
 cd $PBS_O_WORKDIR
 
 # Delete old CVS files
 # rm -rf ./Diviner-temp/Diviner_CSVs
-rm -rf ./LOLA-Albedo/LOLA_CSVs
+# rm -rf ./LOLA-Albedo/LOLA_CSVs
 rm -rf ./M3/M3_CSVs
-rm -rf ./Mini-RF/Mini-RF_CSVs
+# rm -rf ./Mini-RF/Mini-RF_CSVs
 
 # Load required modules
 module load Python/3.11.5-GCCcore-13.2.0
@@ -32,10 +34,10 @@ module load Python/3.11.5-GCCcore-13.2.0
 source ~/venv/IRP/bin/activate
 
 # Run the Python script
-# python Diviner-temp/Diviner.py --n_workers 4 --threads_per_worker 2 --memory_limit 8GB
+# python Diviner-temp/Diviner.py --n_workers 4 --threads_per_worker 2 --memory_limit 128GB
 # python LOLA-Albedo/LOLA.py --n_workers 4 --threads_per_worker 2 --memory_limit 8GB
-python M3/M3.py --n_workers 4 --threads_per_worker 2 --memory_limit 16GB
-# python Mini-RF/Mini-RF.py --n_workers 1 --threads_per_worker 2 --memory_limit 32GB
+python M3/M3.py --n_workers 8 --threads_per_worker 2 --memory_limit 16GB
+# python Mini-RF/Mini-RF.py --n_workers 4 --threads_per_worker 2 --memory_limit 128GB
 
 # Deactivate virtual environment
 deactivate

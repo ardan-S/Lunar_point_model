@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import dask.dataframe as dd
 import pandas as pd
+import os
 
 
 # Function to split list into chunks of specified size
@@ -111,7 +112,11 @@ def generate_mesh(RESOLUTION=0.24):
 
     # print number of points in each mesh
     for i, (lon_lat_grid_north, lon_lat_grid_south) in enumerate(meshes):
-        print(f"Mesh {i + 1}: {len(lon_lat_grid_north)} points in North Pole, {len(lon_lat_grid_south)} points in South Pole")
-    print(f'Total points: {sum(len(lon_lat_grid_north) + len(lon_lat_grid_south) for lon_lat_grid_north, lon_lat_grid_south in meshes)}')
+        print(f"Mesh {i + 1}: {len(lon_lat_grid_north):,} points per pole. Total: {2 * len(lon_lat_grid_north):,} points.")
+    print(f'Total points: {sum(len(lon_lat_grid_north) + len(lon_lat_grid_south) for lon_lat_grid_north, lon_lat_grid_south in meshes):,}')
 
     return meshes
+
+
+def concat_datasets(filepaths):
+    lon_ranges = ['']

@@ -115,8 +115,8 @@ def process_urls_in_parallel(client, urls, label_type, output_dir):
 
     lon_ranges = [(0, 60), (60, 120), (120, 180), (180, 240), (240, 300), (300, 360)]
     file_names = [
-        os.path.join(output_dir, 'lon_0_60.csv'),
-        os.path.join(output_dir, 'lon_60_120.csv'),
+        os.path.join(output_dir, 'lon_000_060.csv'),
+        os.path.join(output_dir, 'lon_060_120.csv'),
         os.path.join(output_dir, 'lon_120_180.csv'),
         os.path.join(output_dir, 'lon_180_240.csv'),
         os.path.join(output_dir, 'lon_240_300.csv'),

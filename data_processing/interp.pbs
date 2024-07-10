@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Job name
+#PBS -N interp_diviner
+
+# Resource requirements
+#PBS -l select=1:ncpus=8:mem=128Gb
+
+# Time required
+#PBS -l walltime=02:00:00
+
+# File to contain standard out and error
+#PBS -j oe
+#PBS -o qsub.log.interp
+#PBS -M ardan.suphi23@imperial.ac.uk
+#PBS -m abe
+
+# Change to the directory where the job was submitted
+cd $PBS_O_WORKDIR
+
+# Delete old CVS files
+rm -rf ../data/Diviner-temp/Diviner_interp_CSVs
+
+
+# Load required modules
+module load Python/3.11.5-GCCcore-13.2.0
+
+# Update virtual environment
+../update_venv.sh
+
+# Activate virtual environment
+source ~/venv/IRP/bin/activate
+
+# Run the Python script
+python interpolate.py   --label_type Diviner \
+                        --data_path ../data/Diviner-temp/Diviner_CSVs \
+                        --output_csv_path ../data/Diviner-temp/Diviner_interp_CSVs \
+                        --n_workers 8 \
+                        --threads_per_worker 2
+
+
+# python temp.py
+
+# Deactivate virtual environment
+deactivate
