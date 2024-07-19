@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Job name
-#PBS -N interp_diviner
+#PBS -N intrp_LO1
 
 # Resource requirements
-#PBS -l select=1:ncpus=8:mem=128Gb
+#PBS -l select=1:ncpus=128:mem=128GB
 
 # Time required
-#PBS -l walltime=02:00:00
+#PBS -l walltime=03:00:00
 
 # File to contain standard out and error
 #PBS -j oe
-#PBS -o qsub.log.interp
+#PBS -o ./logs/qsub.log.interp.LOLA1
 #PBS -M ardan.suphi23@imperial.ac.uk
 #PBS -m abe
 
@@ -19,7 +19,7 @@
 cd $PBS_O_WORKDIR
 
 # Delete old CVS files
-rm -rf ../data/Diviner-temp/Diviner_interp_CSVs
+# rm -rf ../data/Diviner-temp/Diviner_interp_CSVs/
 
 
 # Load required modules
@@ -32,11 +32,17 @@ module load Python/3.11.5-GCCcore-13.2.0
 source ~/venv/IRP/bin/activate
 
 # Run the Python script
-python interpolate.py   --label_type Diviner \
-                        --data_path ../data/Diviner-temp/Diviner_CSVs \
-                        --output_csv_path ../data/Diviner-temp/Diviner_interp_CSVs \
-                        --n_workers 8 \
-                        --threads_per_worker 2
+# python interpolate.py   --label_type Diviner \
+#                         --data_path ../data/Diviner-temp/Diviner_CSVs \
+#                         --output_csv_path ../data/Diviner-temp/Diviner_interp_CSVs \
+#                         --n_workers 128 \
+#                         --filenum 0
+
+python interpolate.py   --label_type LOLA \
+                        --data_path ../data/LOLA-Albedo/LOLA_CSVs \
+                        --output_csv_path ../data/LOLA-Albedo/LOLA_interp_CSVs \
+                        --n_workers 128 \
+                        --filenum 0
 
 
 # python temp.py

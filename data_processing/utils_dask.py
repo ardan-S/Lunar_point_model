@@ -27,20 +27,26 @@ def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', s
     if frac:
         ddf = ddf.sample(frac=frac, random_state=random_state)
 
-    ave_ddf = ddf.groupby(['Latitude', 'Longitude']).mean().reset_index().compute()
-    north_pole_df = ave_ddf[ave_ddf['Latitude'] >= 0].copy()
-    south_pole_df = ave_ddf[ave_ddf['Latitude'] < 0].copy()
+    ave_ddf = ddf.groupby(['Longitude', 'Latitude']).mean().reset_index().compute()
+    north_pole_ddf = (ave_ddf[ave_ddf['Latitude'] >= 0]).copy()
+    south_pole_ddf = (ave_ddf[ave_ddf['Latitude'] < 0]).copy()
+    print("Dataframe read in and converted to Dask")
 
-    def prepare_polar_data(df, pole):
-        if df.empty:
-            return df
-        df = df.copy()
-        df['r'] = 90 - df['Latitude'] if (pole == 'north') else 90 + df['Latitude']
-        df['theta'] = np.deg2rad(df['Longitude'])
-        return df
+    def prepare_polar_data(ddf, pole):
+        if len(ddf.index) == 0:
+            return ddf
+        ddf = ddf.copy()
+        ddf['r'] = 90 - ddf['Latitude'] if (pole == 'north') else 90 + ddf['Latitude']
+        ddf['theta'] = np.deg2rad(ddf['Longitude'])
+        return ddf
 
-    north_pole_df = prepare_polar_data(north_pole_df, 'north')
-    south_pole_df = prepare_polar_data(south_pole_df, 'south')
+    print("Preparing data for plotting...")
+    north_pole_ddf = prepare_polar_data(north_pole_ddf, 'north')
+    south_pole_ddf = prepare_polar_data(south_pole_ddf, 'south')
+
+    # Convert to pandas DataFrame
+    north_pole_df = north_pole_ddf.compute() if isinstance(north_pole_ddf, dd.DataFrame) else north_pole_ddf
+    south_pole_df = south_pole_ddf.compute() if isinstance(south_pole_ddf, dd.DataFrame) else south_pole_ddf
 
     fig, (ax1, ax2) = plt.subplots(1, 2, subplot_kw={'projection': 'polar'}, figsize=(20, 10))
 
@@ -51,9 +57,9 @@ def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', s
         ax.set_yticklabels(labels)
 
     def plot_pole_data(ax, df, pole):
-        if df.empty:
+        if len(df.index) == 0:
             return
-        sc = ax.scatter(df['theta'], df['r'], c=df[variable], cmap='Greys', s=50)
+        sc = ax.scatter(df['theta'], df['r'], c=df[variable], cmap='Greys_r', s=50)
         plt.colorbar(sc, ax=ax, label=variable)
         set_latitude_labels(ax, pole)
         ax.set_theta_zero_location('N')
@@ -61,14 +67,14 @@ def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', s
         ax.set_title(f'{title_prefix} - {pole.capitalize()} Pole')
 
     # Plot for North Pole
-    if not north_pole_df.empty:
+    if len(north_pole_df.index) != 0:
         plot_pole_data(ax1, north_pole_df, 'north')
     else:
         print('No data for North Pole')
         fig.delaxes(ax1)
 
     # Plot for South Pole
-    if not south_pole_df.empty:
+    if len(south_pole_df.index) != 0:
         plot_pole_data(ax2, south_pole_df, 'south')
     else:
         print('No data for South Pole')
@@ -78,6 +84,7 @@ def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', s
 
     if save_path:
         plt.savefig(save_path)
+        print(f"Plot saved to {save_path}")
     else:
         plt.show()
 
@@ -92,8 +99,10 @@ def generate_mesh(RESOLUTION=0.24):
 
     # Latitude ranges for the two poles
     lat_ranges = [(75, 90), (-90, -75)]
-    lon_slices = [(0, 60), (60, 120), (120, 180), (180, 240), (240, 300), (300, 360)]
-
+    lon_slices = [(0, 30), (30, 60), (60, 90),
+                  (90, 120), (120, 150), (150, 180),
+                  (180, 210), (210, 240), (240, 270),
+                  (270, 300), (300, 330), (330, 360)]
     # Generate grid points for both regions
     def generate_grid(lat_range, lon_range, resolution_deg):
         lats = np.arange(lat_range[0], lat_range[1] + resolution_deg, resolution_deg)

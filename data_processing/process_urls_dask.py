@@ -44,11 +44,15 @@ async def get_M3_urls_async(page_url, file_extension, keyword):
         return urls
 
 
-async def fetch_metadata(url):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            response.raise_for_status()
-            return await response.text()
+async def fetch_metadata(source):
+    if os.path.isfile(source):  # Check if the source is a local file
+        with open(source, 'r') as file:
+            return file.read()
+    else:  # Assume the source is a URL
+        async with aiohttp.ClientSession() as session:
+            async with session.get(source) as response:
+                response.raise_for_status()
+                return await response.text()
 
 
 async def download_parse_metadata_async(url):
@@ -99,7 +103,7 @@ def get_M3_urls(page_url, file_extension, keyword):
 
 def construct_image_url(url, label_type):
     replacements = {
-        'LOLA': ('_JP2.LBL', '.JP2'),
+        'LOLA': ('_jp2.lbl', '.jp2'),
         'M3': ('_L2.LBL', '_RFL.IMG'),
         'MiniRF': ('.lbl', '.img'),
         'Diviner': ('.lbl', '.jp2')
@@ -107,27 +111,36 @@ def construct_image_url(url, label_type):
     return url.replace(*replacements.get(label_type, ('.lbl', '.jp2')))
 
 
-def process_urls_in_parallel(client, urls, label_type, output_dir):
-    url_info_list = [(url, construct_image_url(url, label_type), output_dir, label_type) for url in urls]
+def process_urls_in_parallel(client, lbl_urls, data_type, output_dir):
+    url_info_list = [(lbl_url, construct_image_url(lbl_url, data_type), output_dir, data_type) for lbl_url in lbl_urls]
     
     # Create directory for CSVs if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
-    lon_ranges = [(0, 60), (60, 120), (120, 180), (180, 240), (240, 300), (300, 360)]
+    lon_ranges = [(0, 30), (30, 60), (60, 90),
+                  (90, 120), (120, 150), (150, 180),
+                  (180, 210), (210, 240), (240, 270),
+                  (270, 300), (300, 330), (330, 360)]
     file_names = [
-        os.path.join(output_dir, 'lon_000_060.csv'),
-        os.path.join(output_dir, 'lon_060_120.csv'),
-        os.path.join(output_dir, 'lon_120_180.csv'),
-        os.path.join(output_dir, 'lon_180_240.csv'),
-        os.path.join(output_dir, 'lon_240_300.csv'),
-        os.path.join(output_dir, 'lon_300_360.csv')
+        os.path.join(output_dir, 'lon_000_030.csv'),
+        os.path.join(output_dir, 'lon_030_060.csv'),
+        os.path.join(output_dir, 'lon_060_090.csv'),
+        os.path.join(output_dir, 'lon_090_120.csv'),
+        os.path.join(output_dir, 'lon_120_150.csv'),
+        os.path.join(output_dir, 'lon_150_180.csv'),
+        os.path.join(output_dir, 'lon_180_210.csv'),
+        os.path.join(output_dir, 'lon_210_240.csv'),
+        os.path.join(output_dir, 'lon_240_270.csv'),
+        os.path.join(output_dir, 'lon_270_300.csv'),
+        os.path.join(output_dir, 'lon_300_330.csv'),
+        os.path.join(output_dir, 'lon_330_360.csv')
     ]
 
     # Initialise CSVs with headers if they don't exist
     for file_name in file_names:
         if not os.path.isfile(file_name):
             with open (file_name, 'w') as f:
-                f.write(f'Longitude,Latitude,{label_type}\n')
+                f.write(f'Longitude,Latitude,{data_type}\n')
 
     # Submit tasks to the Dask scheduler
     futures = [
@@ -138,11 +151,12 @@ def process_urls_in_parallel(client, urls, label_type, output_dir):
     for future in futures:
         result_df = future.result()
         result_df = result_df.dropna()
-        # result_df = result_df.groupby(['Latitude', 'Longitude']).mean().reset_index()
 
         for (start, end), file_name in zip(lon_ranges, file_names):
             filtered_df = result_df[(result_df['Longitude'] >= start) & (result_df['Longitude'] < end)]
             if not filtered_df.empty:
                 filtered_df.to_csv(file_name, mode='a', header=False, index=False)
+            else:
+                print(f'No data for longitude range {start} - {end}')
     
     print('Files saved into respective CSVs')
