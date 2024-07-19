@@ -1,0 +1,35 @@
+Starting Mini-RF client...
+Image url: /rds/general/user/as5023/ephemeral/as5023/Mini-RF/raw_files/global_cpr_128ppd_simp_0c.img
+File path: /rds/general/user/as5023/ephemeral/as5023/Mini-RF/raw_files/global_cpr_128ppd_simp_0c.img
+/rds/general/user/as5023/home/irp-as5023/data_processing/process_image_dask.py:288: RuntimeWarning: overflow encountered in cast
+  output_vals = np.where(output_vals > 1e300, np.nan, output_vals)
+Extracted Mini-RF image data in 0.05 mins
+final output val size before filtering: 1061683200
+          Longitude      Latitude        MiniRF
+count  1.768550e+08  1.768550e+08  1.692918e+08
+mean   1.800002e+02 -1.329903e-05  5.135611e-01
+std    1.012369e+02  8.261545e+01  2.927749e-01
+min    2.262225e+01 -9.000000e+01  1.186435e-07
+25%    9.000634e+01 -8.250159e+01  3.067223e-01
+50%    1.800021e+02  7.629395e-06  4.440241e-01
+75%    2.699937e+02  8.250159e+01  6.431091e-01
+max    3.373735e+02  9.000000e+01  1.500000e+00
+MRF_lbl_urls: ['/rds/general/user/as5023/ephemeral/as5023/Mini-RF/raw_files/global_cpr_128ppd_simp_0c.lbl']
+Files saved into respective CSVs
+Closing client...
+Completed at Thu 18 Jul 10:45:45 BST 2024
+
+====================================
+CPU Time used: 00:06:53
+CPU Percent: 77%
+Memory usage: 75440256kb
+Approx Power usage: 0.0012000000000000001
+Walltime usage: 00:07:32
+
+====================================
+ERROR: Unable to locate a modulefile for 'Python/3.11.5-GCCcore-13.2.0'
+python: error while loading shared libraries: libpython3.11.so.1.0: cannot open shared object file: No such file or directory
+Completed at Thu 18 Jul 19:58:40 BST 2024
+ERROR: Unable to locate a modulefile for 'Python/3.5.4'
+python: error while loading shared libraries: libpython3.11.so.1.0: cannot open shared object file: No such file or directory
+Completed at Fri 19 Jul 09:26:01 BST 2024

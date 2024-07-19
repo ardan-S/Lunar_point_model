@@ -5,27 +5,44 @@ from dask.distributed import Client
 import asyncio
 import argparse
 from dask import config as cfg
+import signal
 
 sys.path.append(os.path.abspath('../data_processing'))
 from process_urls_dask import get_file_urls_async, process_urls_in_parallel
-# from utils_dask import plot_polar_data
 
 cfg.set({'distributed.scheduler.worker-ttl': '1h'})  # Set worker time to live to 1 hour
 cfg.set({'distributed.worker.timeout': '1h'})  # Increase worker timeout
 cfg.set({'distributed.scheduler.worker-saturation': 2})  # Increase worker saturation threshold
 
+client = None
+
+# Gracefully handle exits when walltime limit is reached
+def handle_signal(signum, frame):
+    global client
+    if client:
+        client.close()
+        client.shutdown()
+    sys.exit(0)
+
+signal.signal(signal.SIGTERM, handle_signal)
+signal.signal(signal.SIGINT, handle_signal)
+
+
 def main(n_workers, threads_per_worker, memory_limit):
     print('Starting Mini-RF client...')
+    global client
     client = Client(n_workers=n_workers, threads_per_worker=threads_per_worker, memory_limit=memory_limit)
 
-    MiniRF_home = 'https://pds-geosciences.wustl.edu/lro/lro-l-mrflro-5-global-mosaic-v1/lromrf_1001/data/128ppd/'
+    # MiniRF_home = 'https://pds-geosciences.wustl.edu/lro/lro-l-mrflro-5-global-mosaic-v1/lromrf_1001/data/128ppd/'
+    MiniRF_home = '/rds/general/user/as5023/ephemeral/as5023/Mini-RF/raw_files'        # For retrieving from local directory
 
     async def process():
-        MiniRF_urls = await get_file_urls_async(MiniRF_home, '.lbl', 'cpr')  # 'cpr' - circular polarisation ratio
-        csv_path = './Mini-RF/MiniRF_CSVs'
-        process_urls_in_parallel(client, MiniRF_urls, 'MiniRF', csv_path)
+        # MiniRF_urls = await get_file_urls_async(MiniRF_home, '.lbl', 'cpr')  # 'cpr' - circular polarisation ratio
+        MRF_lbl_urls = [(os.path.join(MiniRF_home, f)) for f in os.listdir(MiniRF_home) if f.endswith('.lbl')]
+        print(f"MRF_lbl_urls: {MRF_lbl_urls}")
+        csv_path = '/rds/general/user/as5023/home/irp-as5023/data/Mini-RF/MiniRF_CSVs'
+        process_urls_in_parallel(client, MRF_lbl_urls, 'MiniRF', csv_path)
 
-    # plot_polar_data(MiniRF_df, 'MiniRF', frac=1, title_prefix='Mini-RF CPR', save_path='MiniRF_CPR.png')
 
     asyncio.run(process())
     print('Closing client...')

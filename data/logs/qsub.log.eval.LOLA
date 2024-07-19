@@ -1,0 +1,17 @@
+Starting LOLA client...
+final output val size before filtering: 712336
+final output val size before filtering: 712336
+final output val size before filtering: 6411024
+final output val size before filtering: 6411024
+Files saved into respective CSVs
+Closing LOLA client...
+Completed at Thu 18 Jul 10:00:38 BST 2024
+
+====================================
+CPU Time used: 00:00:00
+CPU Percent: 0%
+Memory usage: 0b
+Approx Power usage: 0.0
+Walltime usage: 00:00:36
+
+====================================

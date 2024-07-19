@@ -14,14 +14,13 @@ def main(n_workers, threads_per_worker, memory_limit):
     print('Starting LOLA client...')
     client = Client(n_workers=n_workers, threads_per_worker=threads_per_worker, memory_limit=memory_limit)
 
-    LOLA_home = 'https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/'
+    # LOLA_home = 'https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/'
+    LOLA_home = 'https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/jp2/'
 
     async def process():
-        LOLA_urls = await get_file_urls_async(LOLA_home, '.LBL', 'LDRM')
+        LOLA_urls = await get_file_urls_async(LOLA_home, '.lbl', 'ldam')
         csv_path = './LOLA-Albedo/LOLA_CSVs'
         process_urls_in_parallel(client, LOLA_urls, 'LOLA', csv_path)
-
-    # plot_polar_data(LOLA_df, 'LOLA', frac=None, title_prefix='LOLA Albedo', save_path='LOLA_Albedo.png')
 
     asyncio.run(process())
     print('Closing LOLA client...')
