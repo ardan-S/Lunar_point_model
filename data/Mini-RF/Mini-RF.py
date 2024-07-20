@@ -1,4 +1,4 @@
-import numpy as np
+# import numpy as np
 import sys
 import os
 from dask.distributed import Client
@@ -16,6 +16,7 @@ cfg.set({'distributed.scheduler.worker-saturation': 2})  # Increase worker satur
 
 client = None
 
+
 # Gracefully handle exits when walltime limit is reached
 def handle_signal(signum, frame):
     global client
@@ -23,6 +24,7 @@ def handle_signal(signum, frame):
         client.close()
         client.shutdown()
     sys.exit(0)
+
 
 signal.signal(signal.SIGTERM, handle_signal)
 signal.signal(signal.SIGINT, handle_signal)
@@ -42,7 +44,6 @@ def main(n_workers, threads_per_worker, memory_limit):
         print(f"MRF_lbl_urls: {MRF_lbl_urls}")
         csv_path = '/rds/general/user/as5023/home/irp-as5023/data/Mini-RF/MiniRF_CSVs'
         process_urls_in_parallel(client, MRF_lbl_urls, 'MiniRF', csv_path)
-
 
     asyncio.run(process())
     print('Closing client...')

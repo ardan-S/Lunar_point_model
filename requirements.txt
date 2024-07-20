@@ -14,3 +14,5 @@ dask[distributed]
 dask[dataframe]
 aiohttp
 asyncio
+scikit-learn
+torch

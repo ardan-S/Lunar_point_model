@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 from scipy.ndimage import label
-import random
+
 
 def main(data_paths):
     all_data = {i: [] for i in range(12)}
@@ -38,6 +38,7 @@ def get_lon_range(filepath):
     lon_start = int(parts[-2])
     return lon_start // 30
 
+
 def combine_data(data_list):
     combined_data = data_list[0]
     combined_data = combined_data.rename(columns={'Value': 'Value1'})
@@ -45,6 +46,7 @@ def combine_data(data_list):
         data = data.rename(columns={'Value': f'Value{i}'})
         combined_data = combined_data.merge(data[['Longitude', 'Latitude', f'Value{i}']], on=['Longitude', 'Latitude'])
     return combined_data
+
 
 def apply_labels(data):
     # Diviner
@@ -67,26 +69,64 @@ def apply_labels(data):
 
     # MiniRF
     """ Add 1 to the label if MiniRF is above 2 standard deviations from the mean"""
-    std_dev = data['MiniRF'].std()
-    data.loc[data['MiniRF'] > 2*std_dev, 'Label'] += 1
+    std_dev = data['Mini-RF'].std()
+    data.loc[data['Mini-RF'] > 2 * std_dev, 'Label'] += 1
     # quantile = data['MiniRF'].quantile(0.90)
     # data.loc[data['MiniRF'] < quantile, 'Label'] += 1
     return data
+
+
+# def label_based_on_area(data, column, threshold, area_threshold):
+#     grid_size = 240  # grid size in meters
+
+#     # Create a binary array where 1 indicates the value is above the threshold
+#     # This is effectively a 2D map where each node is either a 1 or 0 depending on if its above threshold
+#     binary_array = (data[column] > threshold).astype(int).values.reshape(len(set(data['Latitude'])), -1)
+
+#     # Label connected regions
+#     # Identify connected regions within the binary array
+#     labeled_array, num_features = label(binary_array)
+
+#     # Create a dataframe from the labeled array
+#     labeled_df = pd.DataFrame(labeled_array, columns=data['Longitude'].unique(), index=data['Latitude'].unique())
+
+#     # Iterate through each feature
+#     for feature in range(1, num_features + 1):
+#         # Find the coordinates, area and label for the current feature
+#         coords = np.column_stack(np.where(labeled_array == feature))
+#         area = len(coords) * (grid_size ** 2)
+#         label_value = 1 if area < area_threshold else 2
+
+#         # Apply the label to the corresponding points in the original dataframe
+#         for coord in coords:
+#             lat = labeled_df.index[coord[0]]
+#             lon = labeled_df.columns[coord[1]]
+#             data.loc[(data['Latitude'] == lat) & (data['Longitude'] == lon), 'Label'] += label_value
+
+#     return data
 
 
 def label_based_on_area(data, column, threshold, area_threshold):
     grid_size = 240  # grid size in meters
 
     # Create a binary array where 1 indicates the value is above the threshold
-    # This is effectively a 2D map where each node is either a 1 or 0 depending on if its above threshold
-    binary_array = (data[column] > threshold).astype(int).values.reshape(len(set(data['Latitude'])), -1)
+    latitudes = data['Latitude'].unique()
+    longitudes = data['Longitude'].unique()
+    latitudes.sort()
+    longitudes.sort()
+
+    binary_array = np.zeros((len(latitudes), len(longitudes)), dtype=int)
+
+    for i, lat in enumerate(latitudes):
+        for j, lon in enumerate(longitudes):
+            if data[(data['Latitude'] == lat) & (data['Longitude'] == lon)][column].values > threshold:
+                binary_array[i, j] = 1
 
     # Label connected regions
-    # Identify connected regions within the binary array
     labeled_array, num_features = label(binary_array)
 
     # Create a dataframe from the labeled array
-    labeled_df = pd.DataFrame(labeled_array, columns=data['Longitude'].unique(), index=data['Latitude'].unique())
+    labeled_df = pd.DataFrame(labeled_array, columns=longitudes, index=latitudes)
 
     # Iterate through each feature
     for feature in range(1, num_features + 1):
