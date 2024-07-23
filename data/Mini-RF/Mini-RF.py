@@ -21,7 +21,6 @@ client = None
 def handle_signal(signum, frame):
     global client
     if client:
-        client.close()
         client.shutdown()
     sys.exit(0)
 
@@ -41,7 +40,6 @@ def main(n_workers, threads_per_worker, memory_limit):
     async def process():
         # MiniRF_urls = await get_file_urls_async(MiniRF_home, '.lbl', 'cpr')  # 'cpr' - circular polarisation ratio
         MRF_lbl_urls = [(os.path.join(MiniRF_home, f)) for f in os.listdir(MiniRF_home) if f.endswith('.lbl')]
-        print(f"MRF_lbl_urls: {MRF_lbl_urls}")
         csv_path = '/rds/general/user/as5023/home/irp-as5023/data/Mini-RF/MiniRF_CSVs'
         process_urls_in_parallel(client, MRF_lbl_urls, 'MiniRF', csv_path)
 

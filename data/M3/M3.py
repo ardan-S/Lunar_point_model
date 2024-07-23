@@ -6,6 +6,7 @@ import asyncio
 import argparse
 import time
 from dask import config as cfg
+import signal
 
 sys.path.append(os.path.abspath('../data_processing'))
 from process_urls_dask import get_M3_urls_async, process_urls_in_parallel
@@ -15,6 +16,19 @@ cfg.set({'distributed.scheduler.worker-ttl': '1h'})  # Set worker time to live t
 cfg.set({'distributed.worker.timeout': '1h'})  # Increase worker timeout
 cfg.set({'distributed.scheduler.worker-saturation': 2})  # Increase worker saturation threshold
 
+client = None
+
+
+# Gracefully handle exits when walltime limit is reached
+def handle_signal(signum, frame):
+    global client
+    if client:
+        client.shutdown()
+    sys.exit(0)
+
+
+signal.signal(signal.SIGTERM, handle_signal)
+signal.signal(signal.SIGINT, handle_signal)
 
 def main(n_workers, threads_per_worker, memory_limit):
     print('Starting M3 client...')
@@ -27,13 +41,12 @@ def main(n_workers, threads_per_worker, memory_limit):
     async def process():
         # M3_urls = await get_M3_urls_async(M3_home, '.LBL', 'DATA')    # For retrieving from web
         M3_lbl_urls = [(os.path.join(M3_home, f)) for f in os.listdir(M3_home) if f.endswith('_L2.LBL')]    # For retrieving from local directory
-        # The above line also excludes location label files, only taking image label files
-        M3_lbl_urls = M3_lbl_urls[:4]
+        # M3_lbl_urls = M3_lbl_urls[:n_workers]
         csv_path = '/rds/general/user/as5023/home/irp-as5023/data/M3/M3_CSVs'
         iter = 1
         start_time = time.time()
 
-        for lbl_urls_in_chunk in chunks(M3_lbl_urls, 2):
+        for lbl_urls_in_chunk in chunks(M3_lbl_urls, n_workers):
             check_time = time.time()
             print(f'Processing chunk {iter}...')
             sys.stdout.flush()

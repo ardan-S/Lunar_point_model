@@ -1,26 +1,22 @@
 #!/bin/bash
 
 # Job name
-#PBS -N intrp_LO1
+#PBS -N intrp_MRF
 
 # Resource requirements
-#PBS -l select=1:ncpus=128:mem=128GB
+#PBS -l select=1:ncpus=64:mem=128GB
 
 # Time required
 #PBS -l walltime=03:00:00
 
 # File to contain standard out and error
 #PBS -j oe
-#PBS -o ./logs/qsub.log.interp.LOLA1
+#PBS -o ./logs/qsub.log.interp.MRF
 #PBS -M ardan.suphi23@imperial.ac.uk
 #PBS -m abe
 
 # Change to the directory where the job was submitted
 cd $PBS_O_WORKDIR
-
-# Delete old CVS files
-# rm -rf ../data/Diviner-temp/Diviner_interp_CSVs/
-
 
 # Load required modules
 module load Python/3.11.5-GCCcore-13.2.0
@@ -32,20 +28,25 @@ module load Python/3.11.5-GCCcore-13.2.0
 source ~/venv/IRP/bin/activate
 
 # Run the Python script
-# python interpolate.py   --label_type Diviner \
+# python interpolate.py   --data_type Diviner \
 #                         --data_path ../data/Diviner-temp/Diviner_CSVs \
 #                         --output_csv_path ../data/Diviner-temp/Diviner_interp_CSVs \
 #                         --n_workers 128 \
 #                         --filenum 0
 
-python interpolate.py   --label_type LOLA \
-                        --data_path ../data/LOLA-Albedo/LOLA_CSVs \
-                        --output_csv_path ../data/LOLA-Albedo/LOLA_interp_CSVs \
-                        --n_workers 128 \
+# python interpolate.py   --data_type LOLA \
+#                         --data_path ../data/LOLA-Albedo/LOLA_CSVs \
+#                         --output_csv_path ../data/LOLA-Albedo/LOLA_interp_CSVs \
+#                         --n_workers 64 \
+#                         --filenum 0
+
+python interpolate.py   --data_type MiniRF \
+                        --data_path ../data/Mini-RF/MiniRF_CSVs \
+                        --output_csv_path ../data/Mini-RF/MiniRF_interp_CSVs \
+                        --n_workers 64 \
                         --filenum 0
 
-
-# python temp.py
+echo "Completed on $(date)"
 
 # Deactivate virtual environment
 deactivate

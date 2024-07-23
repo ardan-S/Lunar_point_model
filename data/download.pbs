@@ -4,7 +4,7 @@
 #PBS -N dwnld_M3
 
 # Resource requirements
-#PBS -l select=1:ncpus=64:mem=64Gb
+#PBS -l select=1:ncpus=128:mem=64Gb
 
 # Time required
 #PBS -l walltime=10:00:00
@@ -14,8 +14,8 @@
 # File to contain standard out and error
 #PBS -j oe  
 #PBS -o ./logs/qsub.log.dwnld.M3
-## PBS -M ardan.suphi23@imperial.ac.uk
-## PBS -m abe
+# PBS -M ardan.suphi23@imperial.ac.uk
+# PBS -m abe
 
 # Change to the directory where the job was submitted
 cd $PBS_O_WORKDIR
@@ -35,8 +35,7 @@ echo "Number of files remaining in directory: $(ls -1 $RDS/ephemeral/as5023/M3/r
 ls -1 $RDS/ephemeral/as5023/M3/raw_files
 
 # Load required modules
-# module load Python/3.11.5-GCCco/re-13.2.0
-module load Python/3.5.4
+module load Python/3.11.5-GCCcore-13.2.0
 
 # Update virtual environment
 ../update_venv.sh
@@ -45,7 +44,7 @@ module load Python/3.5.4
 source ~/venv/IRP/bin/activate
 
 # Run the Python script
-python download.py --n_workers 64
+python download.py --n_workers 128
 
 echo "Number of files downloaded: $(ls -1 $RDS/ephemeral/as5023/M3/raw_files | wc -l)"
 echo "Completed on $(date)"

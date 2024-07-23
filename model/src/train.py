@@ -36,11 +36,11 @@ optimiser = optim.Adam(model.parameters(), lr=learning_rate)
 criterion = FocalLoss(alpha=1, gamma=2)
 
 # Example data
-npoints = 100
-labeled_data = gen_rand_data(npoints)
+npoints = 1_000
+labeled_data = gen_rand_data(npoints, rand_state)
 
 # Extract features and targets and convert to pt tensor
-features = labeled_data[["Longitude", "Latitude", "Diviner", "LOLA", "M3", "Mini-RF"]].values
+features = labeled_data[["Longitude", "Latitude", "Diviner", "LOLA", "M3", "MiniRF"]].values
 targets = labeled_data["Label"].values
 
 train_features, val_features, test_features, train_targets, val_targets, test_targets = stratified_split_data(features, targets)

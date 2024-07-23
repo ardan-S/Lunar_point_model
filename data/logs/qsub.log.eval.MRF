@@ -1,38 +1,38 @@
 Starting Mini-RF client...
-Image url: /rds/general/user/as5023/ephemeral/as5023/Mini-RF/raw_files/global_cpr_128ppd_simp_0c.img
-File path: /rds/general/user/as5023/ephemeral/as5023/Mini-RF/raw_files/global_cpr_128ppd_simp_0c.img
-/rds/general/user/as5023/home/irp-as5023/data_processing/process_image_dask.py:288: RuntimeWarning: overflow encountered in cast
-  output_vals = np.where(output_vals > 1e300, np.nan, output_vals)
-Extracted Mini-RF image data in 0.05 mins
-final output val size before filtering: 1061683200
+Extracted Mini-RF image data in 0.03 mins
+Range of lons before adjustment: -5.936148338893485 to 5.935633059421347
+Range of lons after adjustment: 0.003906165230773695 to 359.9960938347692
+Nlons between 000 and 060: 176947200 out of 1061683200 (16.67%)
+Nlons between 060 and 120: 176947200 out of 1061683200 (16.67%)
+Nlons between 120 and 180: 176947200 out of 1061683200 (16.67%)
+Nlons between 180 and 240: 176947200 out of 1061683200 (16.67%)
+Nlons between 240 and 300: 176947200 out of 1061683200 (16.67%)
+Nlons between 300 and 360: 176947200 out of 1061683200 (16.67%)
+Nlons above 360: 0 out of 1061683200 (0.00%)
+
+Filtering and optimising...
+Number of vals above 5: 86588 out of 176947200 (0.05%)
+Number of vals above 1.5: 3041776 out of 176947200 (1.72%)
+Number of vals below 0: 7478977 out of 176947200 (4.23%)
+Number of vals below -5: 6938193 out of 176947200 (3.92%)
           Longitude      Latitude        MiniRF
-count  1.768550e+08  1.768550e+08  1.692918e+08
-mean   1.800002e+02 -1.329903e-05  5.135611e-01
-std    1.012369e+02  8.261545e+01  2.927749e-01
-min    2.262225e+01 -9.000000e+01  1.186435e-07
-25%    9.000634e+01 -8.250159e+01  3.067223e-01
-50%    1.800021e+02  7.629395e-06  4.440241e-01
-75%    2.699937e+02  8.250159e+01  6.431091e-01
-max    3.373735e+02  9.000000e+01  1.500000e+00
-MRF_lbl_urls: ['/rds/general/user/as5023/ephemeral/as5023/Mini-RF/raw_files/global_cpr_128ppd_simp_0c.lbl']
+count  1.769472e+08  1.769472e+08  1.693816e+08
+mean   1.800000e+02  0.000000e+00  5.135720e-01
+std    1.039242e+02  8.261714e+01  2.927776e-01
+min    3.906165e-03 -9.000000e+01  1.186435e-07
+25%    9.000000e+01 -8.250163e+01  3.067304e-01
+50%    1.800039e+02  0.000000e+00  4.440362e-01
+75%    2.700000e+02  8.250163e+01  6.431248e-01
+max    3.599961e+02  9.000000e+01  1.500000e+00
 Files saved into respective CSVs
 Closing client...
-Completed at Thu 18 Jul 10:45:45 BST 2024
+Completed at Sat 20 Jul 16:40:05 BST 2024
 
 ====================================
-CPU Time used: 00:06:53
-CPU Percent: 77%
-Memory usage: 75440256kb
-Approx Power usage: 0.0012000000000000001
-Walltime usage: 00:07:32
+CPU Time used: 00:08:22
+CPU Percent: 84%
+Memory usage: 67127712kb
+Approx Power usage: 0.0016
+Walltime usage: 00:09:21
 
 ====================================
-ERROR: Unable to locate a modulefile for 'Python/3.11.5-GCCcore-13.2.0'
-python: error while loading shared libraries: libpython3.11.so.1.0: cannot open shared object file: No such file or directory
-Completed at Thu 18 Jul 19:58:40 BST 2024
-ERROR: Unable to locate a modulefile for 'Python/3.5.4'
-python: error while loading shared libraries: libpython3.11.so.1.0: cannot open shared object file: No such file or directory
-Completed at Fri 19 Jul 09:26:01 BST 2024
-ERROR: Unable to locate a modulefile for 'Python/3.5.4'
-python: error while loading shared libraries: libpython3.11.so.1.0: cannot open shared object file: No such file or directory
-Completed at Fri 19 Jul 09:37:17 BST 2024

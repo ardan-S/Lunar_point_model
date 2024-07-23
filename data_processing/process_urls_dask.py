@@ -4,6 +4,7 @@ from urllib.parse import urljoin
 import pandas as pd
 import dask.dataframe as dd
 import os
+from filelock import FileLock
 
 import aiohttp
 import asyncio
@@ -151,12 +152,15 @@ def process_urls_in_parallel(client, lbl_urls, data_type, output_dir):
     for future in futures:
         result_df = future.result()
         result_df = result_df.dropna()
-
-        for (start, end), file_name in zip(lon_ranges, file_names):
-            filtered_df = result_df[(result_df['Longitude'] >= start) & (result_df['Longitude'] < end)]
-            if not filtered_df.empty:
-                filtered_df.to_csv(file_name, mode='a', header=False, index=False)
-            else:
-                print(f'No data for longitude range {start} - {end}')
+        if result_df.shape[0] > 0:
+            for (start, end), file_name in zip(lon_ranges, file_names):
+                filtered_df = result_df[(result_df['Longitude'] >= start) & (result_df['Longitude'] < end)]
+                if not filtered_df.empty:
+                    # lock = FileLock(file_name + '.lock')
+                    # with lock:
+                    filtered_df.to_csv(file_name, mode='a', header=False, index=False)
+                else:
+                    if data_type != 'M3':
+                        print(f'No data for longitude range {start} - {end}')
     
     print('Files saved into respective CSVs')

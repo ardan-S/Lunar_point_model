@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Job name
+#PBS -N train_model
+
+# Resource requirements
+#PBS -l select=1:ncpus=8:mem=128GB
+
+# Time required
+#PBS -l walltime=00:40:00
+
+# File to contain standard out and error
+#PBS -j oe  
+#PBS -o ../logs/qsub.log.train
+##PBS -M ardan.suphi23@imperial.ac.uk
+##PBS -m abe
+
+# Change to the directory where the job was submitted
+cd $PBS_O_WORKDIR
+
+# Load required modules
+module load Python/3.11.5-GCCcore-13.2.0
+
+# Update virtual environment
+../../update_venv.sh
+
+# Activate virtual environment
+source ~/venv/IRP/bin/activate
+
+# Run the Python script
+python ../src/train.py
+
+echo "Completed at $(date)"
+
+# Deactivate virtual environment
+deactivate

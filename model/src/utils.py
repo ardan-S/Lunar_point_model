@@ -43,10 +43,14 @@ def create_data_loader(inputs, targets, batch_size=32, shuffle=True):
     return data_loader
 
 
-def gen_rand_data(npoints=100):
+def gen_rand_data(npoints=100, rand_state=42):
+    torch.manual_seed(rand_state)
     print(f"Generating {npoints} random examples...")
+    sys.stdout.flush()
     inputs = torch.randn(npoints, 6)  # 6 features per example
-
+    print("Random examples generated")
+    sys.stdout.flush()
+    
     # Feature1: Scale to range 0 to 360
     inputs[:, 0] -= inputs[:, 0].min()  # Shift to positive values
     inputs[:, 0] /= inputs[:, 0].max()  # Normalize to 0-1
@@ -69,7 +73,7 @@ def gen_rand_data(npoints=100):
     inputs[:, 3:] = (inputs[:, 3:] - min_vals) / (max_vals - min_vals)
 
     # Convert to pandas DataFrame with specified column names
-    df = pd.DataFrame(inputs.numpy(), columns=["Longitude", "Latitude", "Diviner", "LOLA", "M3", "Mini-RF"])
+    df = pd.DataFrame(inputs.numpy(), columns=["Longitude", "Latitude", "Diviner", "LOLA", "M3", "MiniRF"])
     df['Label'] = 0
 
     # Apply labels (assuming apply_labels is a predefined function)
@@ -103,32 +107,31 @@ def stratified_split_data(features, targets, rand_state=42):
     - train_features, val_features, test_features: Features for training, validation, and test sets
     - train_targets, val_targets, test_targets: Targets for training, validation, and test sets
     """
-    class_counts = Counter(targets)
+    torch.manual_seed(rand_state)
 
-    if all(count >= 2 for count in class_counts.values()):
-        # First split: train and (test + validation)
-        stratified_split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=rand_state)
+    # # First split: train and (test + validation)
+    # stratified_split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=rand_state)
 
-        for train_index, test_val_index in stratified_split.split(features, targets):
-            train_features, test_val_features = features[train_index], features[test_val_index]
-            train_targets, test_val_targets = targets[train_index], targets[test_val_index]
+    # for train_index, test_val_index in stratified_split.split(features, targets):
+    #     train_features, test_val_features = features[train_index], features[test_val_index]
+    #     train_targets, test_val_targets = targets[train_index], targets[test_val_index]
 
-        # Second split: test and validation
-        stratified_split_test_val = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=rand_state)
+    # # Second split: test and validation
+    # stratified_split_test_val = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=rand_state)
 
-        for test_index, val_index in stratified_split_test_val.split(test_val_features, test_val_targets):
-            test_features, val_features = test_val_features[test_index], test_val_features[val_index]
-            test_targets, val_targets = test_val_targets[test_index], test_val_targets[val_index]
+    # for test_index, val_index in stratified_split_test_val.split(test_val_features, test_val_targets):
+    #     test_features, val_features = test_val_features[test_index], test_val_features[val_index]
+    #     test_targets, val_targets = test_val_targets[test_index], test_val_targets[val_index]
 
-        # Print sizes of the sets to verify
-        print(f'Train set size: {len(train_features)}')
-        print(f'Validation set size: {len(val_features)}')
-        print(f'Test set size: {len(test_features)}')
-    else:
-        # Split data into training and validation sets using regular splits
-        train_features, test_val_features, train_targets, test_val_targets = train_test_split(
-            features, targets, test_size=0.2, random_state=rand_state)
-        test_features, val_features, test_targets, val_targets = train_test_split(
-            test_val_features, test_val_targets, test_size=0.5, random_state=rand_state)
+    # # Print sizes of the sets to verify
+    # print(f'Train set size: {len(train_features)}')
+    # print(f'Validation set size: {len(val_features)}')
+    # print(f'Test set size: {len(test_features)}')
+
+    # Split data into training and validation sets using regular splits
+    train_features, test_val_features, train_targets, test_val_targets = train_test_split(
+        features, targets, test_size=0.2, random_state=rand_state)
+    test_features, val_features, test_targets, val_targets = train_test_split(
+        test_val_features, test_val_targets, test_size=0.5, random_state=rand_state)
 
     return train_features, val_features, test_features, train_targets, val_targets, test_targets
