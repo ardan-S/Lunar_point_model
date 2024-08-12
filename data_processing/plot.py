@@ -56,13 +56,23 @@ def choose_data(choice):
         name = 'MiniRF'
         title_prefix = 'Mini-RF CPR values'
 
-
     elif choice == 'Mini-RF-inter':
         home_dir = '../data/Mini-RF/MiniRF_interp_CSVs'
         save_path = '../data/Mini-RF/MiniRF_CPR_interp.png'
         name = 'MiniRF'
         title_prefix = 'Interpolated Mini-RF CPR values'
 
+    elif choice == 'M3-max':
+        home_dir = '../data/M3/M3_CSVs_max'
+        save_path = '../data/M3/M3_max.png'
+        name = 'M3'
+        title_prefix = 'M3 max values'
+
+    elif choice == 'M3-elev':
+        home_dir = '../data/M3/M3_CSVs'
+        save_path = '../data/M3/M3_elev.png'
+        name = 'Elevation'
+        title_prefix = 'M3 elevation values'
 
     else:
         raise ValueError('Invalid choice')
@@ -77,14 +87,14 @@ def main():
     # 'Diviner-raw', 'Diviner-inter'
     # 'M3-raw', 'M3-inter'
 
-    home_dir, save_path, name, title_prefix = choose_data('M3-raw')
+    home_dir, save_path, name, title_prefix = choose_data('M3-elev')
 
     csvs = os.listdir(home_dir)
     dfs = [pd.read_csv(os.path.join(home_dir, csv)) for csv in csvs]
     [print(df.describe(), '\n') for df in dfs]
     df = pd.concat(dfs, ignore_index=True)
 
-    plot_polar_data(df, name, frac=None, title_prefix=title_prefix, save_path=save_path)
+    plot_polar_data(df, name, frac=0.75, title_prefix=title_prefix, save_path=save_path)
 
 
 if __name__ == '__main__':

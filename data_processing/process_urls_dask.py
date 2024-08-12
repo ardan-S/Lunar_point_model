@@ -5,6 +5,7 @@ import pandas as pd
 import dask.dataframe as dd
 import os
 from filelock import FileLock
+import gc
 
 import aiohttp
 import asyncio
@@ -141,7 +142,10 @@ def process_urls_in_parallel(client, lbl_urls, data_type, output_dir):
     for file_name in file_names:
         if not os.path.isfile(file_name):
             with open (file_name, 'w') as f:
-                f.write(f'Longitude,Latitude,{data_type}\n')
+                if data_type == 'M3':
+                    f.write(f'Longitude,Latitude,{data_type},Elevation\n')
+                else:
+                    f.write(f'Longitude,Latitude,{data_type}\n')
 
     # Submit tasks to the Dask scheduler
     futures = [
@@ -156,11 +160,16 @@ def process_urls_in_parallel(client, lbl_urls, data_type, output_dir):
             for (start, end), file_name in zip(lon_ranges, file_names):
                 filtered_df = result_df[(result_df['Longitude'] >= start) & (result_df['Longitude'] < end)]
                 if not filtered_df.empty:
-                    # lock = FileLock(file_name + '.lock')
-                    # with lock:
+                    print(f"Details for longitude range {start} - {end}:")
+                    print(filtered_df.describe())
                     filtered_df.to_csv(file_name, mode='a', header=False, index=False)
+
                 else:
                     if data_type != 'M3':
                         print(f'No data for longitude range {start} - {end}')
+
+            # After the entire df is saved to CSV, remove from memory
+            del result_df
+            gc.collect()
     
     print('Files saved into respective CSVs')

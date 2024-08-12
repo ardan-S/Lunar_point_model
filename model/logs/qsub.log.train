@@ -1,72 +1,27 @@
-Generating 1000 random examples...
-Random examples generated
-3 largest values in Label column
-      Longitude   Latitude     Diviner      LOLA        M3    MiniRF     Label
-421  159.074707  84.477722  105.940269  0.610902  0.474229  0.501761  0.428571
-457  241.548843  80.634750   35.000000  0.102097  0.607781  0.361262  0.428571
-595  189.433334  83.513451   75.880974  0.553055  0.587044  0.720840  0.428571
-
-3 smallest values in Label column
-     Longitude   Latitude     Diviner      LOLA        M3    MiniRF  Label
-0   309.400208 -79.483414  250.901703  0.116000  0.669201  0.244511    0.0
-1   194.688889  78.437897  172.152267  0.761591  0.510333  0.215255    0.0
-12  187.170120 -81.689232  210.685150  0.551379  0.653860  0.347099    0.0
-
-Description of labeled data
-         Longitude     Latitude  ...       MiniRF        Label
-count  1000.000000  1000.000000  ...  1000.000000  1000.000000
-mean    194.771271    -0.338980  ...     0.458417     0.107714
-std      62.432171    82.533638  ...     0.176468     0.072244
-min       0.000000   -89.989189  ...     0.000000     0.000000
-25%     153.771236   -82.786188  ...     0.337543     0.000000
-50%     196.504372    -0.905090  ...     0.453415     0.142857
-75%     238.011845    82.094975  ...     0.575262     0.142857
-max     360.000000    90.000000  ...     1.000000     0.428571
-
-[8 rows x 7 columns]
-
-Entering training loop after 454.94 seconds
-Epoch [1/30], Loss: 0.0000, Val loss: 0.0014, Time: 0.53s
-Epoch [2/30], Loss: 0.0003, Val loss: 0.0060, Time: 0.26s
-Epoch [3/30], Loss: 0.0000, Val loss: 0.0031, Time: 0.25s
-Epoch [4/30], Loss: 0.0023, Val loss: 0.0015, Time: 0.25s
-Epoch [5/30], Loss: 0.0003, Val loss: 0.0010, Time: 0.25s
-Epoch [6/30], Loss: 0.0017, Val loss: 0.0009, Time: 0.25s
-Epoch [7/30], Loss: 0.0013, Val loss: 0.0007, Time: 0.25s
-Epoch [8/30], Loss: 0.0004, Val loss: 0.0006, Time: 0.26s
-Epoch [9/30], Loss: 0.0012, Val loss: 0.0006, Time: 0.25s
-Epoch [10/30], Loss: 0.0001, Val loss: 0.0004, Time: 0.25s
-Epoch [11/30], Loss: 0.0004, Val loss: 0.0003, Time: 0.25s
-Epoch [12/30], Loss: 0.0012, Val loss: 0.0003, Time: 0.25s
-Epoch [13/30], Loss: 0.0007, Val loss: 0.0002, Time: 0.25s
-Epoch [14/30], Loss: 0.0001, Val loss: 0.0002, Time: 0.25s
-Epoch [15/30], Loss: 0.0001, Val loss: 0.0002, Time: 0.26s
-Epoch [16/30], Loss: 0.0001, Val loss: 0.0001, Time: 0.25s
-Epoch [17/30], Loss: 0.0005, Val loss: 0.0001, Time: 0.25s
-Epoch [18/30], Loss: 0.0001, Val loss: 0.0001, Time: 0.26s
-Epoch [19/30], Loss: 0.0000, Val loss: 0.0001, Time: 0.25s
-Epoch [20/30], Loss: 0.0000, Val loss: 0.0001, Time: 0.25s
-Epoch [21/30], Loss: 0.0000, Val loss: 0.0001, Time: 0.26s
-Epoch [22/30], Loss: 0.0000, Val loss: 0.0001, Time: 0.25s
-Epoch [23/30], Loss: 0.0000, Val loss: 0.0001, Time: 0.26s
-Epoch [24/30], Loss: 0.0000, Val loss: 0.0001, Time: 0.25s
-Epoch [25/30], Loss: 0.0000, Val loss: 0.0001, Time: 0.25s
-Epoch [26/30], Loss: 0.0000, Val loss: 0.0001, Time: 0.25s
-Epoch [27/30], Loss: 0.0000, Val loss: 0.0001, Time: 0.25s
-Epoch [28/30], Loss: 0.0001, Val loss: 0.0000, Time: 0.25s
-Epoch [29/30], Loss: 0.0001, Val loss: 0.0000, Time: 0.26s
-Epoch [30/30], Loss: 0.0001, Val loss: 0.0000, Time: 0.25s
-Training completed in 462.86 seconds
-Mean Squared Error (MSE): 0.0215
-Mean Absolute Error (MAE): 0.1278
-R-squared (R²): 0.3361
-Completed at Sat 20 Jul 11:20:36 BST 2024
+/var/spool/pbs/mom_priv/jobs/13875.pbs-7.SC: line 27: ./logs/update_venv.log: No such file or directory
+Features: ['LOLA', 'Diviner', 'M3', 'MiniRF']
+Input dimension: 4
+Entering training loop after 190.07 seconds
+Traceback (most recent call last):
+  File "/rds/general/user/as5023/home/irp-as5023/model/model_scripts/../src/trainFCNN.py", line 135, in <module>
+    if __name__ == '__main__':
+        ^^^^^^
+  File "/rds/general/user/as5023/home/irp-as5023/model/model_scripts/../src/trainFCNN.py", line 122, in main
+    train(args)
+  File "/rds/general/user/as5023/home/irp-as5023/model/model_scripts/../src/trainFCNN.py", line 96, in train
+    val_loss, val_mse, val_r2 = validate(device, model, criterion, test_loader)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/as5023/home/irp-as5023/model/src/evaluate.py", line 22, in validate
+    inputs, targets = inputs.to(device), targets.to(device)
+                      ^^^^^^
+UnboundLocalError: cannot access local variable 'inputs' where it is not associated with a value
+Completed on Sun 11 Aug 13:40:21 BST 2024
 
 ====================================
-CPU Time used: 00:07:09
-CPU Percent: 67%
-Memory usage: 463820kb
-Approx Power usage: 0.0014
-Walltime usage: 00:08:22
+CPU Time used: 04:36:56
+CPU Percent: 98%
+Memory usage: 37198088kb
+Approx Power usage: 0.0552
+Walltime usage: 04:40:02
 
 ====================================

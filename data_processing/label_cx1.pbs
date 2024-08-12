@@ -4,14 +4,14 @@
 #PBS -N Label
 
 # Resource requirements
-#PBS -l select=1:ncpus=128:mem=128GB
+#PBS -l select=1:ncpus=64:mem=128GB
 
 # Time required
-#PBS -l walltime=24:00:00
+#PBS -l walltime=00:30:00
 
 # File to contain standard out and error
 #PBS -j oe
-#PBS -o ./logs/qsub.log.label
+#PBS -o ./logs/qsub.log.label_cx1
 
 # Email when job starts and ends
 ##PBS -M as5023@ic.ac.uk
@@ -30,10 +30,10 @@ module load Python/3.11.5-GCCcore-13.2.0
 ../update_venv.sh > ./logs/update_venv.log
 
 # Delete old CSV files
-rm -rf ../data/Combined_CSVs
+# rm -rf ../data/Combined_CSVs
 
 # Run the Python script
-python label.py --n_workers 128 \
+python label.py --n_workers 64 \
                 --dataset1 ../data/Diviner-temp/Diviner_interp_CSVs \
                 --dataset2 ../data/LOLA-Albedo/LOLA_interp_CSVs \
                 --dataset3 ../data/M3/M3_interp_CSVs \

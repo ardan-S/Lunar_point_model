@@ -1,17 +1,17 @@
 #!/bin/bash
 
 # Job name
-#PBS -N intrp_MRF
+#PBS -N intrp_M3
 
 # Resource requirements
-#PBS -l select=1:ncpus=64:mem=128GB
+#PBS -l select=1:ncpus=128:mem=128GB
 
 # Time required
-#PBS -l walltime=03:00:00
+#PBS -l walltime=08:00:00
 
 # File to contain standard out and error
 #PBS -j oe
-#PBS -o ./logs/qsub.log.interp.MRF
+#PBS -o ./logs/qsub.log.interp.M3
 #PBS -M ardan.suphi23@imperial.ac.uk
 #PBS -m abe
 
@@ -21,8 +21,11 @@ cd $PBS_O_WORKDIR
 # Load required modules
 module load Python/3.11.5-GCCcore-13.2.0
 
+# Delete old CVS files
+rm -rf ../data/M3/M3_interp_CSVs
+
 # Update virtual environment
-../update_venv.sh
+../update_venv.sh > ./logs/update_venv.log
 
 # Activate virtual environment
 source ~/venv/IRP/bin/activate
@@ -40,10 +43,16 @@ source ~/venv/IRP/bin/activate
 #                         --n_workers 64 \
 #                         --filenum 0
 
-python interpolate.py   --data_type MiniRF \
-                        --data_path ../data/Mini-RF/MiniRF_CSVs \
-                        --output_csv_path ../data/Mini-RF/MiniRF_interp_CSVs \
-                        --n_workers 64 \
+# python interpolate.py   --data_type MiniRF \
+#                         --data_path ../data/Mini-RF/MiniRF_CSVs \
+#                         --output_csv_path ../data/Mini-RF/MiniRF_interp_CSVs \
+#                         --n_workers 64 \
+#                         --filenum 0
+
+python interpolate.py   --data_type M3 \
+                        --data_path ../data/M3/M3_CSVs \
+                        --output_csv_path ../data/M3/M3_interp_CSVs \
+                        --n_workers 128 \
                         --filenum 0
 
 echo "Completed on $(date)"

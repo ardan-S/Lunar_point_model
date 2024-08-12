@@ -1,3 +1,5 @@
 # Ignore all CSV files
 *.csv
 example_code/
+__pycache__/
+logs/

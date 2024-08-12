@@ -8,7 +8,6 @@ pandas
 pybryt
 pytest
 glymur
-
 dask
 dask[distributed]
 dask[dataframe]
@@ -16,3 +15,6 @@ aiohttp
 asyncio
 scikit-learn
 torch
+memory_profiler
+scikit-image
+torch_geometric

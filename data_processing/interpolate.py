@@ -4,7 +4,6 @@ import os
 import sys
 import argparse
 import time
-from dask.distributed import Client
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from scipy.spatial import KDTree
 import signal
@@ -14,7 +13,7 @@ from multiprocessing import Value, Lock, Manager
 sys.path.append(os.path.abspath('.'))
 from utils_dask import generate_mesh
 
-# Gracefully handle exits when walltime limit is reached
+# Gracefully handle exits if walltime limit is reached
 def handle_signal(signum, frame):
     sys.exit(0)
 
@@ -67,12 +66,8 @@ def interpolate_point(data, tree, point, data_type, power=2):
     del filtered_data
     del normalised_weights
     del data_values
+
     return [point[0], point[1], interpolated_value]
-
-
-# def process_point(point, data, tree, data_type, power):
-#     result = interpolate_point(data, tree, point, data_type, power)
-#     return result
 
 
 def interpolate(data_type, data, mesh, power=2):
@@ -141,6 +136,9 @@ def process_file(file_index, data_type, data_path, output_csv_path, meshes):
     print(f'Start interpolating CSV {all_csvs[file_index]} after {(time.time() - start_time)/60:.2f} mins')
     sys.stdout.flush()
     interpolated_data = interpolate(data_type, data, mesh)
+    if data_type == 'M3':
+        interp_elev_data = interpolate('Elevation', data, mesh)
+        interpolated_data['Elevation'] = interp_elev_data['Elevation']
     print(f'Finished interpolating CSV {all_csvs[file_index]} after {(time.time() - start_time)/60:.2f} mins. Saving...')
     output_file = os.path.join(output_csv_path, all_csvs[file_index])
     interpolated_data.to_csv(output_file, index=False)
@@ -164,7 +162,7 @@ def main(data_type, data_path, output_csv_path, n_workers, filenum=0):
     meshes = generate_mesh()
     os.makedirs(output_csv_path, exist_ok=True)
 
-    # Parallel processing
+    # Parallel processing of files
     with ProcessPoolExecutor(max_workers=n_workers) as executor:
         futures = [executor.submit(process_file, i, data_type, data_path, output_csv_path, meshes) for i in range(num_files)]
         for future in as_completed(futures):

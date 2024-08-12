@@ -3,8 +3,11 @@ from torch.utils.data import DataLoader, TensorDataset
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 from collections import Counter
+from torch_geometric.data import Data
+from torch_geometric.loader import DataLoader as GeoDataLoader  # Avoid name conflict with PyTorch DataLoader
 
 import pandas as pd
+import matplotlib.pyplot as plt
 import sys
 import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
@@ -12,13 +15,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 from data_processing.label import apply_labels
 
 
-def create_data_loader(inputs, targets, batch_size=32, shuffle=True):
+def create_FCNN_loader(inputs, targets, device, batch_size=32, shuffle=True, num_workers=1):
     """
     Create a DataLoader for the given dataset.
 
     Args:
     - inputs: Tensor of input features.
-    - targets: Tensor of target labels.
+    - targets: Tensor of input labels.
     - batch_size: Size of the batches.
     - shuffle: Whether to shuffle the data.
 
@@ -33,23 +36,50 @@ def create_data_loader(inputs, targets, batch_size=32, shuffle=True):
     targets = normalise_scalar.fit_transform(standardise_scalar.fit_transform(targets.reshape(-1, 1))).reshape(-1)
 
     # Convert inputs and targets to tensors
-    inputs = torch.tensor(inputs, dtype=torch.float32)
-    targets = torch.tensor(targets, dtype=torch.float32)
+    inputs = torch.tensor(inputs, dtype=torch.float32) if not torch.is_tensor(inputs) else inputs
+    targets = torch.tensor(targets, dtype=torch.float32) if not torch.is_tensor(targets) else targets
 
     # Create dataset and data loader
     dataset = TensorDataset(inputs, targets)
-    data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+    if device == 'cuda':
+        data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=(device.type == 'cuda'))
+    else:
+        data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
 
     return data_loader
 
 
+def create_GCN_loader(data, device, batch_size=32, shuffle=True, num_workers=1):
+    """
+    Create a DataLoader for the given graph dataset for GCN.
+
+    Args:
+    - features: Tensor of input features.
+    - targets: Tensor of input labels.
+    - edge_index: Tensor of edge indices.
+    - batch_size: Size of the batches.
+    - shuffle: Whether to shuffle the data.
+
+    Returns:
+    - DataLoader for the dataset.
+    """
+
+    if device == 'cuda':
+        print("Start of data loader")
+        data_loader = GeoDataLoader(data, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=(device.type == 'cuda'))
+        print("End of data loader")
+    else:
+        data_loader = GeoDataLoader(data, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
+
+    print("Data loader created")
+    return data_loader
+
 def gen_rand_data(npoints=100, rand_state=42):
     torch.manual_seed(rand_state)
+    print("!!!! TRAINING ON RANDOM DATA !!!!")
     print(f"Generating {npoints} random examples...")
     sys.stdout.flush()
     inputs = torch.randn(npoints, 6)  # 6 features per example
-    print("Random examples generated")
-    sys.stdout.flush()
     
     # Feature1: Scale to range 0 to 360
     inputs[:, 0] -= inputs[:, 0].min()  # Shift to positive values
@@ -109,25 +139,6 @@ def stratified_split_data(features, targets, rand_state=42):
     """
     torch.manual_seed(rand_state)
 
-    # # First split: train and (test + validation)
-    # stratified_split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=rand_state)
-
-    # for train_index, test_val_index in stratified_split.split(features, targets):
-    #     train_features, test_val_features = features[train_index], features[test_val_index]
-    #     train_targets, test_val_targets = targets[train_index], targets[test_val_index]
-
-    # # Second split: test and validation
-    # stratified_split_test_val = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=rand_state)
-
-    # for test_index, val_index in stratified_split_test_val.split(test_val_features, test_val_targets):
-    #     test_features, val_features = test_val_features[test_index], test_val_features[val_index]
-    #     test_targets, val_targets = test_val_targets[test_index], test_val_targets[val_index]
-
-    # # Print sizes of the sets to verify
-    # print(f'Train set size: {len(train_features)}')
-    # print(f'Validation set size: {len(val_features)}')
-    # print(f'Test set size: {len(test_features)}')
-
     # Split data into training and validation sets using regular splits
     train_features, test_val_features, train_targets, test_val_targets = train_test_split(
         features, targets, test_size=0.2, random_state=rand_state)
@@ -135,3 +146,31 @@ def stratified_split_data(features, targets, rand_state=42):
         test_val_features, test_val_targets, test_size=0.5, random_state=rand_state)
 
     return train_features, val_features, test_features, train_targets, val_targets, test_targets
+
+
+def plot_metrics(num_epochs, train_losses, val_losses, val_mses, val_r2s, test_mse, test_mae, test_r2, save_path='../figs/training_metrics.png'):
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
+
+    ax1.plot(range(1, num_epochs + 1), train_losses, label='Training Loss')
+    ax1.plot(range(1, num_epochs + 1), val_losses, label='Validation Loss')
+    ax1.scatter(num_epochs, test_mae, color='blue', label='Test Loss', zorder=5)
+    ax1.annotate(f'{test_mae:.4f}', (num_epochs, test_mae), textcoords="offset points", xytext=(0,10), ha='center', color='blue')
+    ax1.set_xlabel('Epoch')
+    ax1.set_ylabel('Loss')
+    ax1.set_title('Training and Validation Loss')
+    ax1.legend()
+
+    ax2.plot(range(1, num_epochs + 1), val_mses, label='Validation MSE')
+    ax2.plot(range(1, num_epochs + 1), val_r2s, label='Validation R²')
+    ax2.scatter(num_epochs, test_mse, color='blue', label='Test MSE', zorder=5)
+    ax2.scatter(num_epochs, test_r2, color='blue', label='Test R²', zorder=5)
+    ax2.annotate(f'{test_mse:.4f}', (num_epochs, test_mse), textcoords="offset points", xytext=(0,10), ha='center', color='blue')
+    ax2.annotate(f'{test_r2:.4f}', (num_epochs, test_r2), textcoords="offset points", xytext=(0,10), ha='center', color='blue')
+    ax2.set_xlabel('Epoch')
+    ax2.set_ylabel('Metric')
+    ax2.set_title('Validation MSE and R²')
+    ax2.legend()
+
+    plt.tight_layout()
+    plt.savefig(save_path)
+    plt.show()

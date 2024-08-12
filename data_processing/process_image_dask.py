@@ -9,7 +9,6 @@ from urllib.parse import urljoin
 import io
 from requests.exceptions import ChunkedEncodingError, ConnectionError
 from urllib3.exceptions import IncompleteRead
-import time
 import sys
 import os
 from pathlib import Path
@@ -201,7 +200,6 @@ def extract_M3_image(image_url, metadata):
 
     response = fetch_url(calib_file_url)
 
-    # Read the .TAB file into a pandas DataFrame
     calib_data = pd.read_csv(io.StringIO(response.text), sep=r'\s+', header=None, names=["Channel", "Wavelength"])
     calib_data["Channel"] = calib_data["Channel"].astype(int)
     calib_data["Wavelength"] = calib_data["Wavelength"].astype(float)
@@ -209,73 +207,62 @@ def extract_M3_image(image_url, metadata):
     target_wavelengths = [1300, 1500, 2000]     # Target wavelengths taken from Brown et al. (2022)
     closest_channels = [calib_data.iloc[(calib_data['Wavelength'] - wavelength).abs().argmin()]['Channel'] for wavelength in target_wavelengths]
     test_channels = np.array(closest_channels).astype(int)
-    ref_channels_up = np.where(np.isin(test_channels + 1, test_channels), np.nan, test_channels + 1)    # If the next channel is the same, set to nan
-    ref_channels_down = np.where(np.isin(test_channels - 1, test_channels), np.nan, test_channels - 1)    # If the previous channel is the same, set to nan
 
-    # Adjust indices for 0-based
-    up_indices = ref_channels_up - 1
-    down_indices = ref_channels_down - 1
+    del calib_data, response
 
-    if image_url.split('.')[-1].lower() != 'img':
+    if len(set(closest_channels)) < len(closest_channels):  # Check for adjacent channels
+        raise ValueError("Adjacent channels found in the closest channels list. Not supported.")
+
+    if np.any(test_channels < 1) or np.any(test_channels > bands):  # Check for out of bounds channels
+        raise ValueError("Channel index out of bounds")
+
+    if image_url.split('.')[-1].lower() != 'img':   # Check for valid file extension
         raise ValueError("Unsupported file extension: {}".format(image_url.split('.')[-1].lower()))
 
     if sample_type == 'PC_REAL' and sample_bits == 32:
-        dtype = np.float32
+        dtype = '<f4'   # Little-endian 32-bit float (as in M3 documentation)
     else:
         raise ValueError(f"Unsupported combination of SAMPLE_TYPE: {sample_type} and SAMPLE_BITS: {sample_bits}")
 
     with open(image_url, 'rb') as f:
-        image_data = np.fromfile(f, dtype='<f4')
+        image_data = np.fromfile(f, dtype=dtype)
 
-        if (lines * line_samples * bands) != image_data.size:
-            raise ValueError(f"Mismatch in data size: expected {lines * line_samples * bands}, got {image_data.size}")
-    
-        # image_data = image_data.reshape((lines, line_samples, bands))
-        # extracted_bands = image_data[:, :, test_channels - 1]  # -1 to convert to 0-based index
+    if (lines * line_samples * bands) != image_data.size:   # Check for mismatch in data size
+        raise ValueError(f"Mismatch in data size: expected {lines * line_samples * bands}, got {image_data.size}")
 
-        bands_data = np.empty((lines, line_samples, bands))
+    # Define bands
+    extracted_bands = np.empty((lines, line_samples, len(test_channels)))
+    reference_band_up = np.full((lines, line_samples, len(test_channels)), np.nan)
+    reference_band_down = np.full((lines, line_samples, len(test_channels)), np.nan)
 
-        index = 0
+    for idx, channel in enumerate(test_channels):
+        channel_start_idx = channel - 1    # Convert to 0-based index
+        
         for i in range(lines):
-            for band in range(bands):
-                bands_data[i, :, band] = image_data[index:index + line_samples]
-                index += line_samples
+            start_idx = (i * bands + channel_start_idx) * line_samples
+            end_idx = start_idx + line_samples
+            extracted_bands[i, :, idx] = image_data[start_idx:end_idx]
 
-        extracted_bands = bands_data[:, :, test_channels - 1]  # -1 to convert to 0-based index
+            up_start_idx = (i * bands + channel_start_idx + 1) * line_samples
+            up_end_idx = up_start_idx + line_samples
+            reference_band_up[i, :, idx] = image_data[up_start_idx:up_end_idx]
 
+            down_start_idx = (i * bands + channel_start_idx - 1) * line_samples
+            down_end_idx = down_start_idx + line_samples
+            reference_band_down[i, :, idx] = image_data[down_start_idx:down_end_idx]
 
-        # Initialize reference bands with NaNs to handle invalid indices
-        reference_band_up = np.full((lines, line_samples, len(test_channels)), np.nan)
-        reference_band_down = np.full((lines, line_samples, len(test_channels)), np.nan)
+    del image_data
 
-        # Select valid indices and update reference bands
-        valid_up_indices = ~np.isnan(up_indices)
-        valid_down_indices = ~np.isnan(down_indices)    
-
-        # for i, (up_idx, down_idx) in enumerate(zip(up_indices, down_indices)):
-        #     if valid_up_indices[i]:
-        #         reference_band_up[:, :, i] = image_data[:, :, int(up_idx)]
-        #     if valid_down_indices[i]:
-        #         reference_band_down[:, :, i] = image_data[:, :, int(down_idx)]
-
-        for i, (up_idx, down_idx) in enumerate(zip(up_indices, down_indices)):
-            if valid_up_indices[i]:
-                reference_band_up[:, :, i] = bands_data[:, :, int(up_idx)]
-            if valid_down_indices[i]:
-                reference_band_down[:, :, i] = bands_data[:, :, int(down_idx)]
-        
-        # Element-wise operation to handle NaNs and sum the bands
-        reference_bands = np.where(np.isnan(reference_band_up), 2 * reference_band_down, 
-                                   np.where(np.isnan(reference_band_down), 2 * reference_band_up, 
-                                            reference_band_up + reference_band_down))
-        
-        # Remove values which are invalid or 2 * invalid_constant
-        extracted_bands = np.where((extracted_bands == invalid_constant) | (extracted_bands == 2 * invalid_constant), np.nan, extracted_bands)
-        reference_bands = np.where((reference_bands == invalid_constant) | (reference_bands == 2 * invalid_constant), np.nan, reference_bands)
-
-        # Remove all values outside the range of [1e-6, 1.5] (1e-6 prevents div by 0 error)
-        extracted_bands = np.where((extracted_bands < 1e-6) | (extracted_bands > 1.5), np.nan, extracted_bands)
-        reference_bands = np.where((reference_bands < 1e-6) | (reference_bands > 1.5), np.nan, reference_bands)
+    # Element-wise operation to handle NaNs and sum the bands
+    reference_bands = np.where(np.isnan(reference_band_up), 2 * reference_band_down, 
+                                np.where(np.isnan(reference_band_down), 2 * reference_band_up, 
+                                        reference_band_up + reference_band_down))
+    
+    # Remove invalid and out of range values
+    extracted_bands = np.where((extracted_bands == invalid_constant) | (extracted_bands == 2 * invalid_constant), np.nan, extracted_bands)
+    reference_bands = np.where((reference_bands == invalid_constant) | (reference_bands == 2 * invalid_constant), np.nan, reference_bands)
+    extracted_bands = np.where((extracted_bands < 1e-6) | (extracted_bands > 1.5), np.nan, extracted_bands)
+    reference_bands = np.where((reference_bands < 1e-6) | (reference_bands > 1.5), np.nan, reference_bands)
 
     return extracted_bands, reference_bands
 
@@ -303,18 +290,17 @@ def process_LRO_image(image_data, metadata, address, data_type):
     return output_vals
 
 
-# Future inputs
 def process_M3_image(trough, shoulder):
     BDRs = shoulder / (2*trough)    # Band depth ratio
-    # output_vals = np.min(BDRs, axis=2)    # Take the band with the minimum BDR for each point
-    output_vals = np.max(BDRs, axis=2)    # Take the band with the maximum BDR for each point
+    output_vals = np.min(BDRs, axis=2)    # Take the band with the minimum BDR for each point
+    # output_vals = np.max(BDRs, axis=2)    # Take the band with the maximum BDR for each point
     max = 1.75
-    """Assuming valid reflectance range of [1e-6, 1.5], max BDR is 3/1e-6 = 3e6 and lowest approaches 0."""
-    print(f"\nNumber of calc vals above 2: {np.sum(output_vals > 2)} out of {output_vals.size} ({((np.sum(output_vals > 2)) / output_vals.size) *100:.2f}%)")
-    print(f"Val at 1st percentile: {np.nanpercentile(output_vals, 1):.3f}, 99th percentile: {np.nanpercentile(output_vals, 99):.3f}")
-    print(f"Val at 25th percentile: {np.nanpercentile(output_vals, 25):.3f}, 75th percentile: {np.nanpercentile(output_vals, 75):.3f}")
-    
     output_vals = np.clip(output_vals, None, max)  # Clip values to [0, max]
+
+    print(f"\nNumber of calc vals above {max} before clip: {np.sum(output_vals > max)} out of {output_vals.size} ({((np.sum(output_vals > max)) / output_vals.size) *100:.2f}%)")
+    print(f"Range of values: {np.nanmin(output_vals):.3f} to {np.nanmax(output_vals):.3f}")
+    print(f"1st percentile: {np.nanpercentile(output_vals, 1):.3f}, 99th percentile: {np.nanpercentile(output_vals, 99):.3f}")
+    print(f"25th percentile: {np.nanpercentile(output_vals, 25):.3f}, 75th percentile: {np.nanpercentile(output_vals, 75):.3f}")
     return output_vals
 
 
@@ -425,41 +411,6 @@ def generate_M3_coords(image_shape, metadata):
     with open(loc_img_url, 'rb') as f:
         loc_data = np.fromfile(f, dtype='<f8')
 
-
-    # def determine_segment_lengths(data, threshold=360.0):
-    #     below_threshold_lengths = []
-    #     above_threshold_lengths = []
-    #     current_length = 1
-    #     current_segment_type = None  # None initially, 'below' or 'above' during iteration
-
-    #     if data[0] <= threshold:
-    #         current_segment_type = 'below'
-    #     else:
-    #         current_segment_type = 'above'
-
-    #     for i in range(1, len(data)):
-    #         if (data[i] <= threshold and current_segment_type == 'below') or (data[i] > threshold and current_segment_type == 'above'):
-    #             current_length += 1
-    #         else:
-    #             if current_segment_type == 'below':
-    #                 below_threshold_lengths.append(current_length)
-    #             else:
-    #                 above_threshold_lengths.append(current_length)
-    #             current_length = 1
-    #             current_segment_type = 'below' if data[i] <= threshold else 'above'
-
-    #     # Append the last segment length
-    #     if current_segment_type == 'below':
-    #         below_threshold_lengths.append(current_length)
-    #     else:
-    #         above_threshold_lengths.append(current_length)
-
-    #     return below_threshold_lengths, above_threshold_lengths
-
-    # coord_seg_lenths, radii_seg_lengths = determine_segment_lengths(loc_data)
-    # print(f"Coordinate segment lengths: {Counter(coord_seg_lenths)}")
-    # print(f"Radii segment lengths: {Counter(radii_seg_lengths)}")
-
     if loc_data.size != lines * line_samples * bands:
         raise ValueError(f"Mismatch in data size: expected {lines * line_samples * bands}, got {loc_data.size}")
 
@@ -471,26 +422,19 @@ def generate_M3_coords(image_shape, metadata):
     index = 0
 
     for i in range(lines):
-        lons[i, :] = loc_data[index:index + line_samples]
-        index += line_samples
-        lats[i, :] = loc_data[index:index + line_samples]
-        index += line_samples
-        radii[i, :] = loc_data[index:index + line_samples]
-        index += line_samples
-
-    print(f"Shape of lons: {lons.shape}, lats: {lats.shape}, radii: {radii.shape}")
-    print(f"Lon range: {np.nanmin(lons):.3f} to {np.nanmax(lons):.3f}, Lat range: {np.nanmin(lats):.3f} to {np.nanmax(lats):.3f}, Radii range: {np.nanmin(radii):.3f} to {np.nanmax(radii):.3f}")
+        for arr in (lons, lats, radii):
+            arr[i, :] = loc_data[index:index + line_samples]
+            index += line_samples
 
     # Raise if any lon or lat values are out of bounds
-    if np.any(lons < 0) or np.any(lons > 360):
-        raise ValueError("Some longitude values are out of bounds")
-    
-    if np.any(lats < -90) or np.any(lats > 90):
-        raise ValueError("Some latitude values are out of bounds")
+    if np.any(lons < 0) or np.any(lons > 360) or np.any(lats < -90) or np.any(lats > 90):
+        raise ValueError(f"Some coordinate values are out of bounds.\nMin/max for lon, lat: {np.min(lons)}, {np.max(lons)}, {np.min(lats)}, {np.max(lats)}")
 
-    print(f"Num with lat within ranges [-75, -90] or [75, 90]: {np.sum((lats <= -75) & (lats >= -90) | (lats <= 90) & (lats >= 75))}")
-    sys.stdout.flush()
-    return lons, lats, radii
+    reference_elevation = 1737400   # https://pds-imaging.jpl.nasa.gov/documentation/Isaacson_M3_Workshop_Final.pdf (pg.26, accessed 30/07/2024)
+    elev = radii - reference_elevation
+
+    del loc_data, loc_metadata
+    return lons, lats, elev
 
 
 # done
@@ -511,7 +455,7 @@ def process_image(metadata, image_path, data_type, output_csv_path=None):
     if data_type == 'M3':
         image_data, ref_data = extract_M3_image(image_path, metadata)
         output_vals = process_M3_image(image_data, ref_data)
-        lons, lats, _ = generate_M3_coords(image_data.shape, metadata)
+        lons, lats, elev = generate_M3_coords(image_data.shape, metadata)
     else:
         address = 'IMAGE' if data_type == 'MiniRF' else 'UNCOMPRESSED_FILE.IMAGE'
         image_data = extract_LRO_image(image_path, address, metadata)
@@ -524,6 +468,9 @@ def process_image(metadata, image_path, data_type, output_csv_path=None):
         'Latitude': lats.flatten(),
         data_type: output_vals.flatten()
     })
+
+    if data_type == 'M3':
+        df['Elevation'] = elev.flatten()
 
     # Raise if error with coordinate generation
     if np.any(df['Longitude'] < 0) or np.any(df['Longitude'] > 360):

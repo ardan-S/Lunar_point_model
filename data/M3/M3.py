@@ -41,19 +41,19 @@ def main(n_workers, threads_per_worker, memory_limit):
     async def process():
         # M3_urls = await get_M3_urls_async(M3_home, '.LBL', 'DATA')    # For retrieving from web
         M3_lbl_urls = [(os.path.join(M3_home, f)) for f in os.listdir(M3_home) if f.endswith('_L2.LBL')]    # For retrieving from local directory
-        # M3_lbl_urls = M3_lbl_urls[:n_workers]
         csv_path = '/rds/general/user/as5023/home/irp-as5023/data/M3/M3_CSVs'
         iter = 1
         start_time = time.time()
 
-        for lbl_urls_in_chunk in chunks(M3_lbl_urls, n_workers):
+        for lbl_urls_in_chunk in chunks(M3_lbl_urls, 20):
             check_time = time.time()
             print(f'Processing chunk {iter}...')
             sys.stdout.flush()
             process_urls_in_parallel(client, lbl_urls_in_chunk, 'M3', csv_path)
-            iter += 1
-            print(f'Chunk {iter-1} completed in {(time.time() - check_time)/60:.2f} mins. Total time: {(time.time() - start_time)/60:.2f} mins.\n')
+            print(f'Chunk {iter} completed in {(time.time() - check_time)/60:.2f} mins. Total time: {(time.time() - start_time)/60:.2f} mins.\n')
             sys.stdout.flush()
+            iter += 1
+
 
     asyncio.run(process())
     print('Closing client...')

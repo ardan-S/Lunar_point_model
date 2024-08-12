@@ -4,7 +4,7 @@
 #PBS -N run_M3
 
 # Resource requirements
-#PBS -l select=1:ncpus=128:mem=256GB
+#PBS -l select=1:ncpus=64:mem=256GB
 
 # Time required
 #PBS -l walltime=00:45:00
@@ -28,7 +28,7 @@ rm -rf ./M3/M3_CSVs
 module load Python/3.11.5-GCCcore-13.2.0
 
 # Update virtual environment
-../update_venv.sh
+../update_venv.sh > ./logs/update_venv.log
 
 # Activate virtual environment
 source ~/venv/IRP/bin/activate
@@ -36,7 +36,7 @@ source ~/venv/IRP/bin/activate
 # Run the Python script
 # python Diviner-temp/Diviner.py --n_workers 4 --threads_per_worker 2 --memory_limit 128GB
 # python LOLA-Albedo/LOLA.py --n_workers 4 --threads_per_worker 2 --memory_limit 8GB
-python M3/M3.py --n_workers 64 --threads_per_worker 2 --memory_limit 4GB
+python M3/M3.py --n_workers 32 --threads_per_worker 2 --memory_limit 8GB
 # python Mini-RF/Mini-RF.py --n_workers 4 --threads_per_worker 2 --memory_limit 128GB
 
 echo "Completed at $(date)"

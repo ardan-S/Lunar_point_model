@@ -23,5 +23,6 @@ if [ "$NEW_HASH" != "$OLD_HASH" ]; then
     echo $NEW_HASH > $HASH_FILE
 else
     echo "No updates needed for virtual environment"
+    echo "Packages: $(cat $REQUIREMENTS_FILE)"
 fi
-} > /dev/null 2>&1
+} # > /dev/null 2>&1

@@ -11,218 +11,218 @@ Mesh 10: 7,193,424 points per pole. Total: 14,386,848 points.
 Mesh 11: 7,193,424 points per pole. Total: 14,386,848 points.
 Mesh 12: 7,193,424 points per pole. Total: 14,386,848 points.
 Total points: 172,642,176
-Start interpolating CSV lon_000_030.csv after 0.07 mins
-Start interpolating CSV lon_030_060.csv after 0.07 mins
-Reached point (0.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_060_090.csv after 0.06 mins
-Reached point (30.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_090_120.csv after 0.07 mins
+Start interpolating CSV lon_000_030.csv after 0.10 mins
+Start interpolating CSV lon_060_090.csv after 0.05 mins
+Start interpolating CSV lon_090_120.csv after 0.04 mins
+Start interpolating CSV lon_030_060.csv after 0.14 mins
 Reached point (60.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_120_150.csv after 0.07 mins
 Reached point (90.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_150_180.csv after 0.07 mins
+Start interpolating CSV lon_120_150.csv after 0.06 mins
+Reached point (0.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
+Start interpolating CSV lon_150_180.csv after 0.06 mins
 Reached point (120.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_180_210.csv after 0.07 mins
+Start interpolating CSV lon_180_210.csv after 0.10 mins
 Reached point (150.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_210_240.csv after 0.06 mins
+Start interpolating CSV lon_210_240.csv after 0.12 mins
+Reached point (30.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
 Reached point (180.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_240_270.csv after 0.06 mins
+Start interpolating CSV lon_270_300.csv after 0.14 mins
+Start interpolating CSV lon_240_270.csv after 0.21 mins
+Start interpolating CSV lon_300_330.csv after 0.15 mins
 Reached point (210.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_270_300.csv after 0.06 mins
-Reached point (240.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_300_330.csv after 0.06 mins
+Start interpolating CSV lon_330_360.csv after 0.17 mins
 Reached point (270.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Start interpolating CSV lon_330_360.csv after 0.06 mins
 Reached point (300.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
 Reached point (330.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
-Reached point (51.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.06 mins
-Reached point (81.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.07 mins
-Reached point (21.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.24 mins
-Reached point (111.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.06 mins
-Reached point (201.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 7.99 mins
-Reached point (141.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.13 mins
-Reached point (171.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.17 mins
-Reached point (261.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.01 mins
-Reached point (291.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.02 mins
-Reached point (231.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.15 mins
-Reached point (321.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.10 mins
-Reached point (351.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.18 mins
-Reached point (42.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.13 mins
-Reached point (72.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.14 mins
-Reached point (102.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.15 mins
-Reached point (192.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.02 mins
-Reached point (12.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.50 mins
-Reached point (252.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.03 mins
-Reached point (132.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.27 mins
-Reached point (282.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.04 mins
-Reached point (162.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.36 mins
-Reached point (222.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.31 mins
-Reached point (312.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.23 mins
-Reached point (342.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.36 mins
-Reached point (34.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.15 mins
-Reached point (64.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.20 mins
-Reached point (184.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.05 mins
-Reached point (94.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.23 mins
-Reached point (244.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.07 mins
-Reached point (274.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.03 mins
-Reached point (124.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.41 mins
-Reached point (4.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.76 mins
-Reached point (154.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.54 mins
-Reached point (214.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.46 mins
-Reached point (304.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.37 mins
-Reached point (334.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 24.53 mins
-Reached point (55.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.18 mins
-Reached point (85.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.27 mins
-Reached point (205.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.07 mins
-Reached point (115.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.33 mins
-Reached point (265.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.10 mins
-Reached point (295.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.04 mins
-Reached point (145.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.56 mins
-Reached point (25.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 33.03 mins
-Reached point (175.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.73 mins
-Reached point (235.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.62 mins
-Reached point (325.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.51 mins
-Reached point (355.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 32.71 mins
-Reached point (46.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.19 mins
-Reached point (76.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.30 mins
-Reached point (196.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.07 mins
-Reached point (106.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.43 mins
-Reached point (286.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.07 mins
-Reached point (256.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.13 mins
-Reached point (136.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.69 mins
-Reached point (226.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.78 mins
-Reached point (166.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.90 mins
-Reached point (316.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.65 mins
-Reached point (16.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 41.30 mins
-Reached point (346.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 40.89 mins
-Reached point (38.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 48.19 mins
-Reached point (68.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 48.32 mins
-Reached point (188.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 48.08 mins
-Reached point (248.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 48.16 mins
-Reached point (278.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 48.11 mins
-Reached point (98.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 48.52 mins
-Reached point (128.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 48.81 mins
-Reached point (218.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 48.94 mins
-Reached point (158.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 49.06 mins
-Reached point (308.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 48.79 mins
-Reached point (8.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 49.56 mins
-Reached point (338.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 49.06 mins
-Reached point (59.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 56.05 mins
-Reached point (209.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 55.99 mins
-Reached point (89.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 56.24 mins
-Reached point (269.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 56.09 mins
-Reached point (299.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 56.12 mins
-Reached point (119.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 56.61 mins
-Reached point (149.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 56.93 mins
-Reached point (239.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 56.98 mins
-Reached point (329.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 56.88 mins
-Reached point (179.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 57.20 mins
-Reached point (29.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 57.70 mins
-Reached point (359.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 57.15 mins
-Reached point (51.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 64.02 mins
-Reached point (201.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 63.79 mins
-Reached point (81.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 64.32 mins
-Reached point (111.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 64.62 mins
-Reached point (291.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 64.27 mins
-Reached point (261.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 64.47 mins
-Reached point (141.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 64.94 mins
-Reached point (231.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 64.90 mins
-Reached point (171.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 65.24 mins
-Reached point (321.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 64.97 mins
-Reached point (21.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 66.00 mins
-Reached point (351.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 65.38 mins
-Reached point (192.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 71.68 mins
-Reached point (42.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 72.01 mins
-Reached point (72.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 72.32 mins
-Reached point (282.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 72.28 mins
-Reached point (102.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 72.69 mins
-Reached point (252.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 72.49 mins
-Reached point (132.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 73.06 mins
-Reached point (222.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 72.96 mins
-Reached point (162.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 73.33 mins
-Reached point (312.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 73.07 mins
-Reached point (342.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 73.51 mins
-Reached point (12.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 74.20 mins
-Reached point (183.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 79.67 mins
-Reached point (33.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 80.03 mins
-Reached point (63.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 80.33 mins
-Reached point (273.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 80.31 mins
-Reached point (93.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 80.78 mins
-Reached point (243.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 80.52 mins
-Reached point (123.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 81.20 mins
-Reached point (213.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 81.05 mins
-Reached point (303.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 81.20 mins
-Reached point (153.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 81.51 mins
-Reached point (333.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 81.68 mins
-Reached point (3.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 82.42 mins
-Reached point (205.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 87.66 mins
-Reached point (55.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 88.04 mins
-Reached point (85.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 88.34 mins
-Reached point (295.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 88.33 mins
-Reached point (265.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 88.55 mins
-Reached point (115.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 88.86 mins
-Reached point (235.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 89.13 mins
-Reached point (145.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 89.33 mins
-Reached point (325.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 89.32 mins
-Reached point (175.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 89.67 mins
-Reached point (355.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 89.84 mins
-Reached point (25.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 90.64 mins
-Reached point (196.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 95.67 mins
-Reached point (46.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 96.06 mins
-Reached point (76.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 96.36 mins
-Reached point (286.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 96.37 mins
-Reached point (256.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 96.59 mins
-Reached point (106.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 96.97 mins
-Reached point (226.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 97.23 mins
-Reached point (136.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 97.47 mins
-Reached point (316.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 97.46 mins
-Reached point (166.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 97.85 mins
-Reached point (346.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 98.03 mins
-Reached point (16.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 98.88 mins
-Reached point (188.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 103.67 mins
-Reached point (38.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 104.07 mins
-Reached point (68.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 104.37 mins
-Reached point (278.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 104.39 mins
-Reached point (248.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 104.61 mins
-Reached point (98.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 105.05 mins
-Reached point (218.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 105.32 mins
-Reached point (128.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 105.61 mins
-Reached point (308.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 105.58 mins
-Reached point (158.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 106.01 mins
-Reached point (338.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 106.20 mins
-Reached point (8.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 107.11 mins
-Reached point (209.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 111.67 mins
-Reached point (59.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 112.08 mins
-Reached point (89.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 112.38 mins
-Reached point (299.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 112.41 mins
-Reached point (269.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 112.64 mins
-Reached point (119.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 113.13 mins
-Reached point (239.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 113.40 mins
-Reached point (149.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 113.70 mins
-Reached point (329.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 113.71 mins
-Reached point (179.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 114.16 mins
-Reached point (359.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 114.36 mins
-Reached point (29.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 115.32 mins
-Finished interpolating CSV lon_180_210.csv after 114.99 mins. Saving...
-Finished interpolating CSV lon_030_060.csv after 115.40 mins. Saving...
-Finished interpolating CSV lon_060_090.csv after 115.70 mins. Saving...
-Finished interpolating CSV lon_270_300.csv after 115.73 mins. Saving...
-Finished interpolating CSV lon_240_270.csv after 115.95 mins. Saving...
-Finished interpolating CSV lon_090_120.csv after 116.48 mins. Saving...
-Finished interpolating CSV lon_210_240.csv after 116.74 mins. Saving...
-Finished interpolating CSV lon_120_150.csv after 117.07 mins. Saving...
-Finished interpolating CSV lon_300_330.csv after 117.08 mins. Saving...
-Finished interpolating CSV lon_150_180.csv after 117.54 mins. Saving...
-Finished interpolating CSV lon_330_360.csv after 117.74 mins. Saving...
-Finished interpolating CSV lon_000_030.csv after 118.72 mins. Saving...
-Finished all interpolations after 119.47 mins
-Completed on Sun 21 Jul 11:08:16 BST 2024
+Reached point (240.0000, 75.0000) (iter: 0 of 14,386,848) after 0.00 mins
+Reached point (111.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.44 mins
+Reached point (81.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.69 mins
+Reached point (141.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.92 mins
+Reached point (171.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 8.89 mins
+Reached point (21.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 9.19 mins
+Reached point (231.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 9.04 mins
+Reached point (201.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 9.31 mins
+Reached point (51.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 9.83 mins
+Reached point (291.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 9.58 mins
+Reached point (321.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 10.31 mins
+Reached point (351.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 10.34 mins
+Reached point (261.4013, 77.0816) (iter: 1,000,000 of 14,386,848) after 10.86 mins
+Reached point (102.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 16.79 mins
+Reached point (72.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 17.38 mins
+Reached point (132.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 17.82 mins
+Reached point (162.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 17.81 mins
+Reached point (12.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 18.41 mins
+Reached point (222.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 18.09 mins
+Reached point (192.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 18.62 mins
+Reached point (282.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 19.18 mins
+Reached point (42.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 19.67 mins
+Reached point (312.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 20.62 mins
+Reached point (342.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 20.69 mins
+Reached point (252.7901, 79.1710) (iter: 2,000,000 of 14,386,848) after 21.73 mins
+Reached point (94.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 25.08 mins
+Reached point (64.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 26.04 mins
+Reached point (154.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 26.60 mins
+Reached point (124.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 26.67 mins
+Reached point (214.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 27.12 mins
+Reached point (4.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 27.63 mins
+Reached point (184.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 27.79 mins
+Reached point (274.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 28.76 mins
+Reached point (34.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 29.48 mins
+Reached point (304.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 30.87 mins
+Reached point (334.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 30.99 mins
+Reached point (244.1790, 81.2605) (iter: 3,000,000 of 14,386,848) after 32.45 mins
+Reached point (115.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 33.41 mins
+Reached point (85.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 34.67 mins
+Reached point (145.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 35.46 mins
+Reached point (175.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 35.50 mins
+Reached point (235.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 36.04 mins
+Reached point (25.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 36.89 mins
+Reached point (205.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 36.75 mins
+Reached point (295.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 38.32 mins
+Reached point (55.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 39.20 mins
+Reached point (106.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 41.62 mins
+Reached point (325.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 41.10 mins
+Reached point (355.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 41.20 mins
+Reached point (76.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 43.24 mins
+Reached point (265.5803, 83.3421) (iter: 4,000,000 of 14,386,848) after 42.89 mins
+Reached point (166.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 44.19 mins
+Reached point (136.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 44.23 mins
+Reached point (226.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 44.72 mins
+Reached point (196.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 45.62 mins
+Reached point (16.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 46.12 mins
+Reached point (286.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 47.63 mins
+Reached point (46.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 48.83 mins
+Reached point (98.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 49.91 mins
+Reached point (316.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 51.11 mins
+Reached point (68.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 51.86 mins
+Reached point (346.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 51.29 mins
+Reached point (158.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 52.67 mins
+Reached point (128.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 52.98 mins
+Reached point (256.9691, 85.4316) (iter: 5,000,000 of 14,386,848) after 52.74 mins
+Reached point (218.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 53.30 mins
+Reached point (188.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 54.25 mins
+Reached point (8.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 55.35 mins
+Reached point (278.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 56.62 mins
+Reached point (38.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 58.06 mins
+Reached point (119.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 58.28 mins
+Reached point (89.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 60.50 mins
+Reached point (179.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 60.78 mins
+Reached point (308.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 60.68 mins
+Reached point (149.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 61.26 mins
+Reached point (338.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 60.95 mins
+Reached point (239.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 61.43 mins
+Reached point (209.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 62.22 mins
+Reached point (248.3579, 87.5210) (iter: 6,000,000 of 14,386,848) after 62.33 mins
+Reached point (29.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 64.03 mins
+Reached point (299.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 65.03 mins
+Reached point (111.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 66.27 mins
+Reached point (59.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 66.83 mins
+Reached point (81.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 68.48 mins
+Reached point (171.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 68.85 mins
+Reached point (141.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 69.32 mins
+Reached point (329.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 69.24 mins
+Reached point (231.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 69.84 mins
+Reached point (359.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 69.72 mins
+Reached point (201.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 70.41 mins
+Reached point (269.7592, 89.6026) (iter: 7,000,000 of 14,386,848) after 70.80 mins
+Reached point (21.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 72.12 mins
+Reached point (291.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 73.59 mins
+Reached point (102.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 74.11 mins
+Reached point (51.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 74.87 mins
+Reached point (72.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 76.59 mins
+Reached point (162.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 76.99 mins
+Reached point (132.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 77.25 mins
+Reached point (321.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 77.46 mins
+Reached point (351.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 77.73 mins
+Reached point (222.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 78.73 mins
+Reached point (192.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 79.00 mins
+Reached point (261.1481, -88.3221) (iter: 8,000,000 of 14,386,848) after 79.37 mins
+Reached point (12.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 80.16 mins
+Reached point (93.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 82.15 mins
+Reached point (42.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 83.08 mins
+Reached point (282.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 82.85 mins
+Reached point (63.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 84.80 mins
+Reached point (153.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 85.10 mins
+Reached point (123.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 85.48 mins
+Reached point (312.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 86.13 mins
+Reached point (342.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 86.09 mins
+Reached point (183.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 87.73 mins
+Reached point (213.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 88.24 mins
+Reached point (3.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 88.63 mins
+Reached point (252.5369, -86.2326) (iter: 9,000,000 of 14,386,848) after 88.81 mins
+Reached point (115.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 90.31 mins
+Reached point (273.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 91.69 mins
+Reached point (33.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 92.21 mins
+Reached point (85.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 93.42 mins
+Reached point (175.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 93.33 mins
+Reached point (145.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 93.81 mins
+Reached point (303.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 94.31 mins
+Reached point (333.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 95.32 mins
+Reached point (205.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 96.61 mins
+Reached point (25.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 97.13 mins
+Reached point (235.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 97.85 mins
+Reached point (106.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 98.59 mins
+Reached point (243.9257, -84.1431) (iter: 10,000,000 of 14,386,848) after 98.38 mins
+Reached point (295.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 101.07 mins
+Reached point (166.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 101.63 mins
+Reached point (55.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 101.73 mins
+Reached point (136.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 102.17 mins
+Reached point (76.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 103.27 mins
+Reached point (325.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 103.48 mins
+Reached point (355.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 104.57 mins
+Reached point (196.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 105.61 mins
+Reached point (16.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 105.92 mins
+Reached point (98.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 106.87 mins
+Reached point (226.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 107.37 mins
+Reached point (265.3270, -82.0616) (iter: 11,000,000 of 14,386,848) after 108.52 mins
+Reached point (158.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 110.12 mins
+Reached point (128.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 110.52 mins
+Reached point (46.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 110.90 mins
+Reached point (286.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 110.75 mins
+Reached point (68.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 112.20 mins
+Reached point (316.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 112.90 mins
+Reached point (346.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 114.07 mins
+Reached point (8.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 114.84 mins
+Reached point (188.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 114.61 mins
+Reached point (119.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 115.19 mins
+Reached point (218.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 116.89 mins
+Reached point (179.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 118.58 mins
+Reached point (149.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 118.87 mins
+Finished interpolating CSV lon_090_120.csv after 118.63 mins. Saving...
+Reached point (256.7158, -79.9721) (iter: 12,000,000 of 14,386,848) after 118.96 mins
+Reached point (89.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 120.67 mins
+Reached point (38.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 120.54 mins
+Reached point (278.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 120.48 mins
+Reached point (308.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 122.23 mins
+Finished interpolating CSV lon_150_180.csv after 122.12 mins. Saving...
+Finished interpolating CSV lon_120_150.csv after 122.37 mins. Saving...
+Reached point (29.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 123.78 mins
+Reached point (209.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 123.65 mins
+Reached point (338.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 123.62 mins
+Finished interpolating CSV lon_060_090.csv after 124.23 mins. Saving...
+Reached point (239.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 126.51 mins
+Finished interpolating CSV lon_000_030.csv after 127.61 mins. Saving...
+Finished interpolating CSV lon_180_210.csv after 127.54 mins. Saving...
+Reached point (248.1046, -77.8826) (iter: 13,000,000 of 14,386,848) after 129.29 mins
+Reached point (59.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 130.17 mins
+Reached point (299.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 130.24 mins
+Finished interpolating CSV lon_210_240.csv after 130.61 mins. Saving...
+Reached point (329.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 131.72 mins
+Reached point (359.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 133.24 mins
+Finished interpolating CSV lon_030_060.csv after 134.39 mins. Saving...
+Finished interpolating CSV lon_270_300.csv after 134.59 mins. Saving...
+Finished interpolating CSV lon_300_330.csv after 135.94 mins. Saving...
+Finished interpolating CSV lon_330_360.csv after 137.59 mins. Saving...
+Reached point (269.5060, -75.8010) (iter: 14,000,000 of 14,386,848) after 140.03 mins
+Finished interpolating CSV lon_240_270.csv after 144.90 mins. Saving...
+Finished all interpolations after 146.04 mins
+Completed on Wed 24 Jul 10:33:14 BST 2024
 
 ====================================
-CPU Time used: 23:20:14
-CPU Percent: 1186%
-Memory usage: 88070424kb
-Approx Power usage: 0.28
-Walltime usage: 01:59:47
+CPU Time used: 25:58:53
+CPU Percent: 1074%
+Memory usage: 93713020kb
+Approx Power usage: 0.3116
+Walltime usage: 02:26:33
 
 ====================================

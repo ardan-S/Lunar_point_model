@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Job name
+#PBS -N GCN-TrainPointRankingModel
+
+# Resource requirements
+#PBS -l select=1:ncpus=2:mem=128GB:ngpus=2
+
+# Time required
+#PBS -l walltime=00:30:00
+
+# File to contain standard out and error
+#PBS -j oe
+#PBS -o ../logs/qsub.log.train_GNN
+
+# Email when job starts and ends
+##PBS -M as5023@ic.ac.uk
+##PBS -m abe
+
+# Change to the directory where the job was submitted
+cd $PBS_O_WORKDIR
+
+# Load required modules
+module load Python/3.11.5-GCCcore-13.2.0
+
+# Update virtual environment
+../../update_venv.sh > ./logs/update_venv.log
+
+# Activate virtual environment
+source ~/venv/IRP/bin/activate
+
+export CUDA_LAUNCH_BLOCKING=1
+
+echo "USING TEMP DATA"
+
+# Run the Python script
+python ../src/trainGNN.py --data_path ../../data/Combined_CSVs_temp\
+                --hidden_dim 256\
+                --num_epochs 50\
+                --learning_rate 0.001\
+                --dropout_rate 0.3\
+                --batch_size 32 \
+                --k 30 \
+                --n_workers 2
+   
+
+echo "Completed on $(date)"
+
+# Deactivate virtual environment
+deactivate

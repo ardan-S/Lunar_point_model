@@ -2,6 +2,22 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+"""
+NOTES:
+Try and use loss functions which are less sensitive to outliers such as MAE or Huber loss over MSE. This will reduce the effect of mislabeled datapoints. """
+
+class HuberLoss(nn.Module):
+    def __init__(self, delta=1.0):
+        super(HuberLoss, self).__init__()
+        self.delta = delta
+
+    def forward(self, output, target):
+        abs_diff = torch.abs(output - target)
+        quadratic = torch.min(abs_diff, torch.tensor(self.delta))
+        linear = abs_diff - quadratic
+        loss = 0.5 * quadratic**2 + self.delta * linear
+        return loss.mean()
+
 
 class PairwiseRankingLoss(nn.Module):
     def __init__(self, margin=1.0):
