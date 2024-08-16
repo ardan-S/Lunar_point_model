@@ -87,41 +87,6 @@ def interpolate(data_type, data, mesh, power=2):
     return pd.DataFrame(interpolated_values, columns=['Longitude', 'Latitude', data_type])
 
 
-# def main(data_type, data_path, output_csv_path, n_workers, filenum=0):
-#     start_time = time.time()
-
-#     # Validate input
-#     num_files = len([f for f in os.listdir(data_path) if f.endswith('.csv')])
-#     if filenum >= num_files:
-#         raise ValueError(f'File number {filenum} is outside the range of the number of files in {data_path} ({num_files})')
- 
-#     accepted_data_types = ['Diviner', 'LOLA', 'M3', 'MiniRF']
-#     if data_type not in accepted_data_types:
-#         raise ValueError(f"Invalid data type '{data_type}'. Accepted values are: {accepted_data_types}")
- 
-#     if data_path == output_csv_path:
-#         raise ValueError('Input and output directories cannot be the same')
-
-#     # CSV, mesh and directories
-#     all_csvs = sorted([f for f in os.listdir(data_path) if f.endswith('.csv')])
-#     filepaths = [os.path.join(data_path, f) for f in all_csvs]
-#     meshes = generate_mesh()
-#     os.makedirs(output_csv_path, exist_ok=True)
-
-#     # Interpolate
-#     data = pd.read_csv(filepaths[filenum])
-#     mesh = meshes[filenum]
-#     gc.collect()
-
-#     print(f'Start interpolating CSV {all_csvs[filenum]} after {(time.time() - start_time)/60:.2f} mins')
-#     sys.stdout.flush()
-#     interpolated_data = interpolate(data_type, data, mesh)
-#     print(f'Finished interpolating CSV {all_csvs[filenum]} after {(time.time() - start_time)/60:.2f} mins. Saving...')
-#     output_file = os.path.join(output_csv_path, all_csvs[filenum])
-#     interpolated_data.to_csv(output_file, index=False)
-#     sys.stdout.flush()
-#     gc.collect()
-
 def process_file(file_index, data_type, data_path, output_csv_path, meshes):
     start_time = time.time()
 

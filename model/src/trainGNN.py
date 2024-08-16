@@ -1,23 +1,23 @@
 import torch
 import torch.optim as optim
 import torch_geometric.data as geo_data
-import torch_geometric.loader as geo_loader
-from torch_geometric.utils import subgraph
+# import torch_geometric.loader as geo_loader
+# from torch_geometric.utils import subgraph
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
 
 import time
 import argparse
-import os
-import pandas as pd
-import matplotlib.pyplot as plt
+# import os
+# import pandas as pd
+# import matplotlib.pyplot as plt
 import numpy as np
 import sys
 
 from models import GCN
 from custom_loss import FocalLoss, HuberLoss
-from utils import create_GCN_loader, gen_rand_data, stratified_split_data, plot_metrics
+from utils import load_data, create_GCN_loader, gen_rand_data, stratified_split_data, plot_metrics, change_grid_resolution
 from evaluate import evaluate, validate
 
 
@@ -28,88 +28,76 @@ Cross-Validation: Use k-fold cross-validation to ensure the model's performance 
 Batch Normalization and Layer Normalization: Experiment with different normalization techniques to stabilize and accelerate training.
 """
 
-def load_data(data_path):
-    if not os.path.isdir(data_path):
-        raise FileNotFoundError(f"Directory {data_path} not found")
-    
-    all_csvs = [f for f in os.listdir(data_path) if f.endswith('.csv')]
-    filepaths = [os.path.join(data_path, f) for f in all_csvs]
 
-    data = pd.concat([pd.read_csv(file) for file in filepaths], ignore_index=True)
+def prepare_data(coords, features, labels, k, normalise_scalar=None, standardise_scalar=None):
+    # Apply scalars if they are not None
+    if standardise_scalar is not None and normalise_scalar is not None:
+        features = normalise_scalar.transform(standardise_scalar.transform(features))
+    else:
+        standardise_scalar = StandardScaler()
+        normalise_scalar = MinMaxScaler()
+        features = normalise_scalar.fit_transform(standardise_scalar.fit_transform(features))
 
-    return data
+    x = torch.tensor(np.hstack((coords, features)), dtype=torch.float)
+    y = torch.tensor(labels, dtype=torch.float)
 
-def prepare_data(labeled_data, k):
-    global start_time
-    coords = labeled_data[['Latitude', 'Longitude']].values  # Shape: (num_nodes, 2)
-    features = labeled_data[['Diviner', 'LOLA', 'M3', 'MiniRF']].values  # Shape: (num_nodes, 4)
-    labels = labeled_data['Label'].values  # Shape: (num_nodes,)
-    print(f"Num unique labels: {len(np.unique(labels))}")
-    print(f"Labels before conversion: {np.unique(labels)}")
-    sys.stdout.flush()
-    
-    standardise_scalar = StandardScaler()
-    normalise_scalar = MinMaxScaler()
-    features = normalise_scalar.fit_transform(standardise_scalar.fit_transform(features))
-    print("Standardised and normalised features")
-    sys.stdout.flush()
-
-    # Combine coordinates and features into a single tensor
-    x = torch.tensor(np.hstack((coords, features)), dtype=torch.float)  # Shape: (num_nodes, 6)
-    y = torch.tensor(labels, dtype=torch.float)  # Shape: (num_nodes,)
-
-    print(f"Num inque labels after conversion: {len(torch.unique(y))}")
-    print(f"Labels after conversion: {torch.unique(y)}. Completed after {time.time() - start_time :.2f} seconds")
-    sys.stdout.flush()
-    
-    # Fully connected graph
-    # num_nodes = x.size(0)
-    # edge_index = torch.tensor([[i, j] for i in range(num_nodes) for j in range(num_nodes) if i != j], dtype=torch.long).t().contiguous()
-
-    # K nearest neighbours graph
     nbrs = NearestNeighbors(n_neighbors=k, algorithm='ball_tree').fit(coords)
-    # distances, indices = nbrs.kneighbors(coords)
 
-    batch_size = 1000  #    OPTIMISE !!!!!!!!!!!!!!!!!!!!
+    batch_size = 2000  #    OPTIMISE !!!!!!!!!!!!!!!!!!!!
     num_batches = int(np.ceil(len(coords) / batch_size))
 
-    distances = []
-    indices = []
+    indices = np.zeros((len(coords), k), dtype=int)
 
     for i in range(num_batches):
         start_idx = i * batch_size
         end_idx = min((i + 1) * batch_size, len(coords))
-        batch_distances, batch_indices = nbrs.kneighbors(coords[start_idx:end_idx])
-        distances.append(batch_distances)
-        indices.append(batch_indices)
-        print(f"Batch {i+1}/{num_batches} completed after {time.time() - start_time :.2f} seconds")
-        sys.stdout.flush()
+        _, batch_indices = nbrs.kneighbors(coords[start_idx:end_idx])   # Distances are unused 
+        indices[start_idx:end_idx] = batch_indices
+        if num_batches >= 10 and i % (num_batches // 10) == 0:
+            torch.cuda.empty_cache()
+            del batch_indices
 
-    distances = np.vstack(distances)
     indices = np.vstack(indices)
 
-    print("Nearest neighbours calculated")
-    sys.stdout.flush()
+    num_edges = len(coords) * (k - 1)
 
-    edge_index = []
-    for i in range(len(indices)):
-        for j in range(1, k):
-            edge_index.append([i, indices[i, j]])
+    edge_index = torch.empty((2, num_edges), dtype=torch.long)
+    chunk_size = 10_000
+    idx = 0
+    num_nodes = x.size(0)
+    num_chunks = int(np.ceil(len(coords) / chunk_size))
 
-    edge_index = torch.tensor(edge_index, dtype=torch.long).t().contiguous()
+    for chunk_start in range(0, len(coords), chunk_size):
+        chunk_end = min(chunk_start + chunk_size, len(coords))
+        _, batch_indices = nbrs.kneighbors(coords[chunk_start:chunk_end])
 
-    print(f"x shape: {x.shape}")
-    print(f"edge index shape: {edge_index.shape}")
-    print(f"edge_index max value: {edge_index.max()}")
-    print(f"edge_index min value: {edge_index.min()}")
-    print(f"y shape: {y.shape}")
-    print(f"y unique values: {torch.unique(y)}")
-    sys.stdout.flush()
+        batch_indices = torch.tensor(batch_indices, dtype=torch.long)   # Shape: (batch_size, k) - contains the k nearest neighbours for each node in the batch
+
+        for i in range(batch_indices.shape[0]):
+            for j in range(1, k):
+                node_idx = chunk_start + i
+                neighbor_idx = batch_indices[i, j]
+
+                # Additional check to ensure indices are within bounds
+                if node_idx >= num_nodes or neighbor_idx >= num_nodes:
+                    raise ValueError(f"Invalid index detected: node_idx ({node_idx}) or neighbor_idx ({neighbor_idx}) is out of bounds with num_nodes ({num_nodes}).")
+
+                edge_index[0, idx] = node_idx
+                edge_index[1, idx] = neighbor_idx
+                idx += 1
+
+        del batch_indices
+        torch.cuda.empty_cache()
+
+    # Trim the tensor to the actual number of edges, if necessary
+    edge_index = edge_index[:, :idx].clone().detach().t().contiguous()
 
     # Check for any indices out of bounds
     num_nodes = x.size(0)
-    if edge_index.max() >= num_nodes or edge_index.min() < 0:
-        raise ValueError("edge_index contains invalid node indices.")
+    if edge_index.max().item() >= num_nodes or edge_index.min().item() < 0:
+        print("ERROR: edge_index contains invalid node indices.")
+        print(f"indices.max ({edge_index.max()}) >= num_nodes ({num_nodes}) or indices.min ({edge_index.min()}) < 0")
+        raise ValueError("fix it")
 
     """
     Comparing fully connected GCN with K nearest neighbours GCN:
@@ -118,6 +106,7 @@ def prepare_data(labeled_data, k):
     Each node recieves information from all other nodes, this can capture global dependencies. 
     High computational complexity O(n^2) where n is the number of nodes.
     High redundancy if not all connections carry meaningful information.
+    Given the memory issues with knn, this was discounted as not feasible
 
     K nearest neighbours GCN:
     Each node recieves information from a fixed number of neighbours, this can capture local dependencies.
@@ -129,100 +118,118 @@ def prepare_data(labeled_data, k):
     return geo_data.Data(x=x, edge_index=edge_index, y=y)
 
 
-def train(args):
-    global start_time
-    start_time = time.time()
-
+def setup_GCN_data(args):
     rand_state = 42
     torch.manual_seed(rand_state)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    output_dim = 1 
 
     # Example data
     # npoints = 1_000
     # labeled_data = gen_rand_data(npoints, rand_state) 
 
-    print("Loading data...")
-    sys.stdout.flush()
     # Load data
     labeled_data = load_data(args.data_path)
 
-    print("Preparing data...")
-    sys.stdout.flush()
-    graph_data = prepare_data(labeled_data, args.k)
+    labeled_data = labeled_data[labeled_data["Latitude"] < 0]   # Only train on southern hemisphere and really close to the pole
+    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.0002, random_state=rand_state)
+    _, test_index = next(sss.split(labeled_data, labeled_data["Label"]))
+    labeled_data = labeled_data.iloc[test_index]
+    print(f"Size of selected dataset: {labeled_data.shape[0]}")
 
-    input_dim = graph_data.x.size(1)
-    print(f"Input dimension: {input_dim}")
-    sys.stdout.flush()
+    labeled_x = labeled_data[['Latitude', 'Longitude', 'Diviner', 'LOLA', 'M3', 'MiniRF']]
+    labeled_y = labeled_data['Label']
 
-    train_features, val_features, test_features, train_targets, val_targets, test_targets = stratified_split_data(graph_data.x, graph_data.y)
-    print(f"Data split after {time.time() - start_time :.2f} seconds")
-    sys.stdout.flush()
+    input_dim = labeled_x.shape[1]
 
-    def create_subgraph(features, targets, edge_index):
-        subset = torch.arange(features.size(0))
-        edge_index, _ = subgraph(subset, edge_index, relabel_nodes=True)
-        return geo_data.Data(x=features, edge_index=edge_index, y=targets)
+    train_x, val_x, test_x, train_y, val_y, test_y = stratified_split_data(labeled_x, labeled_y, rand_state=rand_state)
 
-    train_data = create_subgraph(train_features, train_targets, graph_data.edge_index)
-    val_data = create_subgraph(val_features, val_targets, graph_data.edge_index)
-    test_data = create_subgraph(test_features, test_targets, graph_data.edge_index)
-    print(f"Subgraphs created after {time.time() - start_time :.2f} seconds")
-    sys.stdout.flush()
+    def split_data(data_x, data_y):
+        coords = data_x[['Latitude', 'Longitude']]
+        features = data_x[['Diviner', 'LOLA', 'M3', 'MiniRF']]
+        labels = data_y.values
+        return coords, features, labels
+    
+    train_coords, train_features, train_targets = split_data(train_x, train_y)
+    val_coords, val_features, val_targets = split_data(val_x, val_y)
+    test_coords, test_features, test_targets = split_data(test_x, test_y)
 
-    train_loader = create_GCN_loader([train_data], device, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers)
-    test_loader = create_GCN_loader([test_data], device, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers)
-    val_loader = create_GCN_loader([val_data], device, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers)
-    print(f"Data loaders created after {time.time() - start_time :.2f} seconds")
-    sys.stdout.flush()
+    standardise_scalar = StandardScaler().fit(train_features)
+    normalise_scalar = MinMaxScaler().fit(standardise_scalar.transform(train_features))
 
-    model = GCN(input_dim, args.hidden_dim, output_dim, args.dropout_rate)
-    if torch.cuda.device_count() > 1:
-        model = torch.nn.DataParallel(model)
-    model = model.to(device)
+    train_graph_data = prepare_data(train_coords, train_features, train_targets, args.k, normalise_scalar, standardise_scalar)
+    val_graph_data = prepare_data(val_coords, val_features, val_targets, args.k, normalise_scalar, standardise_scalar)
+    test_graph_data = prepare_data(test_coords, test_features, test_targets, args.k, normalise_scalar, standardise_scalar)
+
+    return device, input_dim, train_graph_data, val_graph_data, test_graph_data
+
+
+def setup_GCN_loader(train_graph_data, val_graph_data, test_graph_data, device, args):
+    train_loader = create_GCN_loader([train_graph_data], device, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers)
+    test_loader = create_GCN_loader([test_graph_data], device, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers)
+    val_loader = create_GCN_loader([val_graph_data], device, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers)
+
+    return train_loader, val_loader, test_loader
+
+
+def setup_GCN_model(input_dim, args, device):
+    output_dim = 1
+    model = GCN(input_dim, args.hidden_dim, output_dim, args.dropout_rate).to(device)
+    # if torch.cuda.device_count() > 1:
+    #     model = torch.nn.DataParallel(model)
 
     optimiser = optim.Adam(model.parameters(), lr=args.learning_rate)
-    # criterion = FocalLoss(alpha=1, gamma=2)
     criterion = HuberLoss(delta=1.0)
+    scaler = torch.amp.GradScaler()    # Initialise GradScaler for mixed precision training
 
+    return model, criterion, optimiser, scaler
+
+
+def train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, model_save_path=None, img_save_path=None):
+    start_time = time.time()
     train_losses = []
     val_losses = []
     val_mses = []
     val_r2s = []
 
-    print(f"Entering training loop after {time.time() - start_time :.2f} seconds")
+    print(f"\nEntering training loop after {(time.time() - start_time) / 60 :.2f} mins")
     sys.stdout.flush()
     for epoch in range(args.num_epochs):
         epoch_start = time.time()
         model.train()
         running_loss = 0.0
+
         for data in train_loader:
             data = data.to(device)
             optimiser.zero_grad()
-            print("1")
 
+            # Use autocast to enable mixed precision training
+            with torch.amp.autocast('cuda'):
 
-            if data.edge_index.max() >= data.x.size(0) or data.edge_index.min() < 0:
-                print(f"Invalid edge_index. Max: {data.edge_index.max()}, Min: {data.edge_index.min()}")
-                print(f"Max index: {data.x.size(0) - 1}")
-                raise ValueError("edge_index contains invalid node indices.")
-            
-            max_index = data.x.size(0) - 1
-            if not torch.all((data.edge_index[0] <= max_index) & (data.edge_index[1] <= max_index)):
-                print(f"Edge indices out of bounds. Max index: {max_index}")
-                raise ValueError("edge_index out of bounds in edge_index tensor.")
+                if data.edge_index.max() >= data.x.size(0) or data.edge_index.min() < 0:
+                    print(f"Invalid edge_index. Max: {data.edge_index.max()}, Min: {data.edge_index.min()}")
+                    print(f"Max index: {data.x.size(0) - 1}")
+                    raise ValueError("edge_index contains invalid node indices.")
+                
+                max_index = data.x.size(0) - 1
+                if not torch.all((data.edge_index[0] <= max_index) & (data.edge_index[1] <= max_index)):
+                    print(f"Edge indices out of bounds. Max index: {max_index}")
+                    raise ValueError("edge_index out of bounds in edge_index tensor.")
+                
+                data.edge_index = data.edge_index.t()
 
-            outputs = model(data.x, data.edge_index).squeeze()
+                outputs = model(data.x, data.edge_index).squeeze()
+                loss = criterion(outputs, data.y.float())
 
-            print("2")
-            loss = criterion(outputs, data.y.float())
+            # loss.backward()
+            # optimiser.step()
+            scaler.scale(loss).backward()
+            scaler.step(optimiser)
+            scaler.update()
+
             running_loss += loss.item() * data.num_graphs
 
-            loss.backward()
-            optimiser.step()
-
         epoch_train_loss = running_loss / len(train_loader.dataset)
-        val_loss, val_mse, val_r2 = validate(device, model, criterion, test_loader)
+        val_loss, val_mse, val_r2 = validate(device, model, criterion, val_loader)
         
         train_losses.append(epoch_train_loss)
         val_losses.append(val_loss)
@@ -232,24 +239,33 @@ def train(args):
         print(f'Epoch [{epoch+1:02d}/{args.num_epochs}], Loss: {loss.item():.4f}, Val loss: {val_loss:.4f}, Val mse: {val_mse:.4f}, Val R²: {val_r2:.4f}, Time: {time.time() - epoch_start:.2f}s')
         sys.stdout.flush()
 
-    print(f"Training completed in {time.time() - start_time :.2f} seconds")
-
-    # # Save the model for evaluation
-    # torch.save(model.state_dict(), 'point_ranking_model.pth')
-
-    # Evaluate the model on the test set
+    print(f"Training completed in {(time.time() - start_time)/60 :.2f} mins")
     test_mse, test_mae, test_r2 = evaluate(device, model, test_loader)
+
+    if model_save_path:
+        torch.save(model.state_dict(), model_save_path)
+
+    if img_save_path:
+        plot_metrics(args.num_epochs, train_losses, val_losses, val_mses, val_r2s, test_mse, test_mae, test_r2, save_path=img_save_path)
+
+    return model, test_mse, test_mae, test_r2
+
+def main():
+    args = parse_arguments()
+    start_time = time.time()
+    device, input_dim, train_graph_data, val_graph_data, test_graph_data = setup_GCN_data(args)
+    print(f"Data preparation completed in {(time.time() - start_time) / 60 :.2f} mins")
+    train_loader, val_loader, test_loader = setup_GCN_loader(train_graph_data, val_graph_data, test_graph_data, device, args)
+    print(f"Data loaders setup completed in {(time.time() - start_time) / 60 :.2f} mins")
+    model, criterion, optimiser, scaler = setup_GCN_model(input_dim, args, device)
+    print(f"Model setup completed in {(time.time() - start_time) / 60 :.2f} mins")
+    model, test_mse, test_mae, test_r2 = train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, img_save_path='../figs/training_metrics_GCN.png')
+    print(f"Training completed in {(time.time() - start_time) / 60 :.2f} mins")
     print("\nTest set:")
     print(f'Mean Squared Error (MSE): {test_mse:.4f}')
     print(f'Mean Absolute Error (MAE): {test_mae:.4f}')
     print(f'R-squared (R²): {test_r2:.4f}\n')
-
-    # Plot the training and validation losses
-    plot_metrics(args.num_epochs, train_losses, val_losses, val_mses, val_r2s, test_mse, test_mae, test_r2, save_path='../figs/training_metrics_GCN.png')
-
-def main():
-    args = parse_arguments()
-    train(args)
+    
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Train a PointRankingModel.')

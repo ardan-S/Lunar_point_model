@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Job name
-#PBS -N HypertunePointRankingModel
+#PBS -N FCNN-HypertunePointRankingModel
 
 # Resource requirements
 #PBS -l select=1:ncpus=2:mem=128GB:ngpus=2
@@ -11,7 +11,7 @@
 
 # File to contain standard out and error
 #PBS -j oe
-#PBS -o ../logs/qsub.log.hypertune
+#PBS -o ../logs/qsub.log.hypertune_FCNN
 
 # Email when job starts and ends
 #PBS -M as5023@ic.ac.uk
@@ -30,12 +30,10 @@ module load Python/3.11.5-GCCcore-13.2.0
 source ~/venv/IRP/bin/activate
 
 # Run the Python script
-python ../src/hypertuning.py --data_path ../../data/Combined_CSVs\
+python ../src/FCNN_hypertune.py --data_path ../../data/Combined_CSVs\
                 --hidden_dim 256\
                 --num_epochs 50\
-                --learning_rate 0.001\
-                --dropout_rate 0.3\
-                --batch_size 32
+                --n_workers 2
    
 
 echo "Completed on $(date)"

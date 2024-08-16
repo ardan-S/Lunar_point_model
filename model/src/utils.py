@@ -6,6 +6,7 @@ from collections import Counter
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader as GeoDataLoader  # Avoid name conflict with PyTorch DataLoader
 
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import sys
@@ -13,6 +14,29 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 from data_processing.label import apply_labels
+
+
+def load_data(data_path):
+    if not os.path.isdir(data_path):
+        raise FileNotFoundError(f"Directory {data_path} not found")
+    
+    all_csvs = [f for f in os.listdir(data_path) if f.endswith('.csv')]
+    filepaths = [os.path.join(data_path, f) for f in all_csvs]
+
+    data = pd.concat([pd.read_csv(file) for file in filepaths], ignore_index=True)
+
+    if not isinstance(data, pd.DataFrame):
+        data = pd.DataFrame(data)
+
+    print("3 largest values in Label column")
+    print(data.nlargest(3, 'Label'))
+    print("\n3 smallest values in Label column")
+    print(data.nsmallest(3, 'Label'))
+    print("\nDescription of labeled data")
+    print(data.describe())
+    print()
+
+    return data
 
 
 def create_FCNN_loader(inputs, targets, device, batch_size=32, shuffle=True, num_workers=1):
@@ -33,7 +57,14 @@ def create_FCNN_loader(inputs, targets, device, batch_size=32, shuffle=True, num
     standardise_scalar = StandardScaler()
     normalise_scalar = MinMaxScaler()
     inputs = normalise_scalar.fit_transform(standardise_scalar.fit_transform(inputs))
-    targets = normalise_scalar.fit_transform(standardise_scalar.fit_transform(targets.reshape(-1, 1))).reshape(-1)
+
+    # Ensure targets are 2D
+    if len(targets.shape) == 1:  # If targets is a Series, reshape it to 2D
+        targets = targets.values.reshape(-1, 1)
+    else:
+        targets = targets.reshape(-1, 1)
+
+    targets = normalise_scalar.fit_transform(standardise_scalar.fit_transform(targets)).reshape(-1)
 
     # Convert inputs and targets to tensors
     inputs = torch.tensor(inputs, dtype=torch.float32) if not torch.is_tensor(inputs) else inputs
@@ -42,9 +73,9 @@ def create_FCNN_loader(inputs, targets, device, batch_size=32, shuffle=True, num
     # Create dataset and data loader
     dataset = TensorDataset(inputs, targets)
     if device == 'cuda':
-        data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=(device.type == 'cuda'))
+        data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=(device.type == 'cuda'), prefetch_factor=2)
     else:
-        data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
+        data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, prefetch_factor=2)
 
     return data_loader
 
@@ -66,13 +97,13 @@ def create_GCN_loader(data, device, batch_size=32, shuffle=True, num_workers=1):
 
     if device == 'cuda':
         print("Start of data loader")
-        data_loader = GeoDataLoader(data, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=(device.type == 'cuda'))
+        data_loader = GeoDataLoader(data, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, pin_memory=(device.type == 'cuda'), prefetch_factor=2)
         print("End of data loader")
     else:
         data_loader = GeoDataLoader(data, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers)
 
-    print("Data loader created")
     return data_loader
+
 
 def gen_rand_data(npoints=100, rand_state=42):
     torch.manual_seed(rand_state)
@@ -139,11 +170,31 @@ def stratified_split_data(features, targets, rand_state=42):
     """
     torch.manual_seed(rand_state)
 
-    # Split data into training and validation sets using regular splits
-    train_features, test_val_features, train_targets, test_val_targets = train_test_split(
-        features, targets, test_size=0.2, random_state=rand_state)
-    test_features, val_features, test_targets, val_targets = train_test_split(
-        test_val_features, test_val_targets, test_size=0.5, random_state=rand_state)
+    try: 
+        split1 = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=rand_state)
+        train_index, test_val_index = next(split1.split(features, targets))
+        train_features = features.iloc[train_index]
+        test_val_features = features.iloc[test_val_index]
+        train_targets = targets.iloc[train_index]
+        test_val_targets = targets.iloc[test_val_index]
+
+        split2 = StratifiedShuffleSplit(n_splits=1, test_size=0.5, random_state=rand_state)
+        test_index, val_index = next(split2.split(test_val_features, test_val_targets))
+        test_features = test_val_features.iloc[test_index]
+        val_features = test_val_features.iloc[val_index]
+        test_targets = test_val_targets.iloc[test_index]
+        val_targets = test_val_targets.iloc[val_index]
+
+    except ValueError:
+        print("Stratified splitting failed. Falling back to regular splitting.")
+            # Split data into training and validation sets using regular splits
+        train_features, test_val_features, train_targets, test_val_targets = train_test_split(
+            features, targets, test_size=0.2, random_state=rand_state)
+        test_features, val_features, test_targets, val_targets = train_test_split(
+            test_val_features, test_val_targets, test_size=0.5, random_state=rand_state)
+
+    # train_features = np.array(train_features)
+
 
     return train_features, val_features, test_features, train_targets, val_targets, test_targets
 
@@ -174,3 +225,32 @@ def plot_metrics(num_epochs, train_losses, val_losses, val_mses, val_r2s, test_m
     plt.tight_layout()
     plt.savefig(save_path)
     plt.show()
+
+
+def change_grid_resolution(df, factor):
+    """
+    Change the resolution of the coordinate mesh grid.
+
+    Parameters:
+    df (pd.DataFrame): The input dataframe with latitude and longitude columns.
+    factor (int): The factor by which to decrease the resolution.
+                  (e.g., 2 to double the resolution, 3 to triple the resolution)
+
+    Returns:
+    pd.DataFrame: The dataframe with decreased resolution.
+    """
+
+    original_resolution = 240
+    new_resolution = original_resolution * factor
+    print(f"Grid resolution changed from {original_resolution} to {new_resolution} meters.")
+    
+    # Sorting by latitude and then by longitude
+    df_sorted = df.sort_values(by=['Latitude', 'Longitude']).reset_index(drop=True)
+    
+    # Removing rows to thin out the grid in the longitude direction
+    df_thinned_long = df_sorted.groupby('Latitude').apply(lambda x: x.iloc[::factor, :]).reset_index(drop=True)
+    
+    # Removing groups to thin out the grid in the latitude direction
+    df_thinned = df_thinned_long.iloc[::factor, :].reset_index(drop=True)
+    
+    return df_thinned

@@ -16,7 +16,7 @@ def validate(device, model, criterion, data_loader):
         for batch in data_loader:
             if isinstance(batch, Data):
                 inputs, targets = batch.x.to(device), batch.y.to(device)
-                edge_index = batch.edge_index.to(device)
+                edge_index = batch.edge_index.t().to(device)
                 outputs = model(inputs, edge_index).squeeze()
             else:
                 inputs, targets = batch[0].to(device), batch[1].to(device)
@@ -47,7 +47,7 @@ def evaluate(device, model, test_loader):
         for batch in test_loader:
             if isinstance(batch, Data):
                 inputs, targets = batch.x.to(device), batch.y.to(device)
-                edge_index = batch.edge_index.to(device)
+                edge_index = batch.edge_index.t().to(device)
                 outputs = model(inputs, edge_index).squeeze()
             else:
                 inputs, targets = batch[0].to(device), batch[1].to(device)

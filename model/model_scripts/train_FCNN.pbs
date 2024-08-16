@@ -4,10 +4,10 @@
 #PBS -N FCNN-TrainPointRankingModel
 
 # Resource requirements
-#PBS -l select=1:ncpus=2:mem=128GB:ngpus=4
+#PBS -l select=1:ncpus=16:mem=128GB:ngpus=2
 
 # Time required
-#PBS -l walltime=08:00:00
+#PBS -l walltime=01:00:00
 
 # File to contain standard out and error
 #PBS -j oe
@@ -31,16 +31,16 @@ source ~/venv/IRP/bin/activate
 
 export CUDA_LAUNCH_BLOCKING=1
 
-echo "USING TEMP DATA"
+echo "Starting on $(date)"
 
 # Run the Python script
-python ../src/trainFCNN.py --data_path ../../data/Combined_CSVs_temp\
-                --hidden_dim 256\
-                --num_epochs 5 \
-                --learning_rate 0.001\
-                --dropout_rate 0.3\
+python ../src/trainFCNN.py --data_path ../../data/Combined_CSVs\
+                --hidden_dim 64 \
+                --num_epochs 10 \
+                --learning_rate 0.001 \
+                --dropout_rate 0.2 \
                 --batch_size 256 \
-                --n_workers 2
+                --n_workers 4
 
 echo "Completed on $(date)"
 

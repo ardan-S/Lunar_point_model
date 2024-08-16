@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, global_mean_pool
 from torch_geometric.data import Data
+import time
+import sys
 
 """
 Key
@@ -53,6 +55,7 @@ class FCNN(nn.Module):
         self.fc4 = nn.Linear(hidden_dim, hidden_dim)
         self.bn4 = nn.BatchNorm1d(hidden_dim)
         self.output = nn.Linear(hidden_dim, output_dim)
+
         self.dropout = nn.Dropout(dropout_rate)
         self.self_attention = SelfAttentionLayer(hidden_dim)
         self.residual_fc = nn.Linear(hidden_dim, hidden_dim)
@@ -75,6 +78,7 @@ class FCNN(nn.Module):
         x = self.output(x.squeeze(1))
         return x
 
+
     """The initial FC layers are effective at extracting and transforming raw input features into meaningful high-dimensional representations.
     The self-attention mechanism can then effectively capture dependencies and interactions between these high-dimensional features.
     This structure allows the model to leverage the strengths of both fully connected layers for feature extraction and 
@@ -85,29 +89,23 @@ class GCN(nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, dropout_rate=0.3):
         super(GCN, self).__init__()
         self.conv1 = GCNConv(in_channels, hidden_channels)
-        self.conv2 = GCNConv(hidden_channels, hidden_channels)
-        self.conv3 = GCNConv(hidden_channels, hidden_channels)
-        self.conv4 = GCNConv(hidden_channels, hidden_channels)
-        self.output = nn.Linear(hidden_channels, out_channels)
-        self.dropout = nn.Dropout(dropout_rate)
-
-        # Self-attention layer for node features
-        self.attention = nn.MultiheadAttention(embed_dim=hidden_channels, num_heads=4)
-        
-        # Residual connections
-        self.residual_conv = nn.Linear(hidden_channels, hidden_channels)
-
-        # Batch normalization layers
         self.bn1 = nn.BatchNorm1d(hidden_channels)
+        self.conv2 = GCNConv(hidden_channels, hidden_channels)
         self.bn2 = nn.BatchNorm1d(hidden_channels)
+        self.conv3 = GCNConv(hidden_channels, hidden_channels)
         self.bn3 = nn.BatchNorm1d(hidden_channels)
+        self.conv4 = GCNConv(hidden_channels, hidden_channels)
         self.bn4 = nn.BatchNorm1d(hidden_channels)
+        self.output = nn.Linear(hidden_channels, out_channels)
+
+        self.dropout = nn.Dropout(dropout_rate)
+        self.attention = nn.MultiheadAttention(embed_dim=hidden_channels, num_heads=4)
+        self.residual_conv = nn.Linear(hidden_channels, hidden_channels)
 
     def forward(self, x, edge_index):
         x = F.relu(self.bn1(self.conv1(x, edge_index)))
         x = self.dropout(x)
 
-        # Residual connection
         residual = x
         x = F.relu(self.bn2(self.conv2(x, edge_index)) + self.residual_conv(residual))
         x = self.dropout(x)
@@ -118,10 +116,10 @@ class GCN(nn.Module):
         x = F.relu(self.bn4(self.conv4(x, edge_index)))
         x = self.dropout(x)
         
-        # Self-attention applied to node features
-        x = x.unsqueeze(1)  # Convert to (batch_size, seq_len, feature_dim) format
-        x, _ = self.attention(x, x, x)
-        x = x.squeeze(1)
+        print("Not using attention layer")
+        # x = x.unsqueeze(1)  # Convert to (batch_size, seq_len, feature_dim) format
+        # x, _ = self.attention(x, x, x)
+        # x = x.squeeze(1)
 
         # COULD CONSIDER- Global mean pooling to aggregate node features into graph-level features
         x = self.output(x)

@@ -14,7 +14,6 @@ def main(n_workers, threads_per_worker, memory_limit):
     print('Starting LOLA client...')
     client = Client(n_workers=n_workers, threads_per_worker=threads_per_worker, memory_limit=memory_limit)
 
-    # LOLA_home = 'https://imbrium.mit.edu/DATA/LOLA_GDR/POLAR/JP2/'
     LOLA_home = 'https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/jp2/'
 
     async def process():

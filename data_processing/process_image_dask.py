@@ -275,7 +275,7 @@ def process_LRO_image(image_data, metadata, address, data_type):
     if scaling_factor is None or offset is None:
         raise ValueError(f"Scaling factor and/or offset not found in metadata for data type '{data_type}'")
 
-    # Define missing constants
+    # Define missing constants - named slightly differently in metadata for each data type
     missing_constants = {
         'LOLA': clean_metadata_value(metadata.get('IMAGE_MISSING_CONSTANT', -32768)),
         'MiniRF': clean_metadata_value(metadata.get('MISSING_CONSTANT', -1.7976931E+308)),
@@ -285,7 +285,7 @@ def process_LRO_image(image_data, metadata, address, data_type):
     missing_constant = missing_constants.get(data_type, missing_constants['Diviner'])   # Default to Diviner
 
     mask = (image_data != missing_constant)
-    output_vals = np.where(mask, (image_data * scaling_factor) + offset, np.nan)
+    output_vals = np.where(mask, (image_data * scaling_factor) + offset, np.nan)    # Remove missing values BEFORE applying transform
     output_vals = np.where(output_vals > 1e10, np.nan, output_vals)
     return output_vals
 
@@ -316,7 +316,7 @@ def generate_LRO_coords(image_shape, metadata, data_type):
 
     # Generate pixel coordinates
     x = (np.arange(samples) - sample_proj_offset) / map_res
-    y = (np.arange(lines) - line_proj_offset) / map_res
+    y = (np.arange(lines) - line_proj_offset) / map_res 
     x, y = np.meshgrid(x, y)
 
     if center_lat == 0.0:  # Equatorial (Mini-RF) - Simple Cylindrical
