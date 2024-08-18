@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 from collections import Counter
 
-# done
+
 def parse_metadata_content(file_content):
     if isinstance(file_content, bytes):
         try:
@@ -58,7 +58,6 @@ def parse_metadata_content(file_content):
     return {k: dict(v) for k, v in metadata.items()}
 
 
-# done
 def download_parse_metadata(url):
     response = requests.get(url)
     response.raise_for_status()
@@ -66,7 +65,6 @@ def download_parse_metadata(url):
     return parse_metadata_content(file_content)
 
 
-# done
 def clean_metadata_value(value, string=False):
     if string:
         return str(value)
@@ -79,17 +77,14 @@ def clean_metadata_value(value, string=False):
         return str(value)
 
 
-# done
 def get_metadata_value(metadata, object_path, key, string=False):
     return clean_metadata_value(metadata.get(object_path, {}).get(key), string=string)
 
 
-# done
 def is_url(path):
     return path.startswith('http://') or path.startswith('https://')
 
 
-# done
 def extract_LRO_image(image_url, address, metadata=None, fraction_read=1.0):
 
     lines = get_metadata_value(metadata, address, 'LINES')
@@ -130,7 +125,6 @@ def extract_LRO_image(image_url, address, metadata=None, fraction_read=1.0):
     return image_data
 
 
-# Done
 def process_image_file(file_path, file_extension, lines, line_samples, metadata, address, fraction_read):
     if file_extension == 'jp2':
         image_data = glymur.Jp2k(file_path)[:]
@@ -166,7 +160,6 @@ def process_image_file(file_path, file_extension, lines, line_samples, metadata,
     return image_data
 
 
-# done
 def extract_M3_image(image_url, metadata):
 
     def fetch_url(url, retries=3):
@@ -267,7 +260,6 @@ def extract_M3_image(image_url, metadata):
     return extracted_bands, reference_bands
 
 
-# done
 def process_LRO_image(image_data, metadata, address, data_type):
     address = 'COMPRESSED_FILE' if data_type == 'LOLA' else address
     scaling_factor = get_metadata_value(metadata, address, 'SCALING_FACTOR')
@@ -293,7 +285,6 @@ def process_LRO_image(image_data, metadata, address, data_type):
 def process_M3_image(trough, shoulder):
     BDRs = shoulder / (2*trough)    # Band depth ratio
     output_vals = np.min(BDRs, axis=2)    # Take the band with the minimum BDR for each point
-    # output_vals = np.max(BDRs, axis=2)    # Take the band with the maximum BDR for each point
     max = 1.75
     output_vals = np.clip(output_vals, None, max)  # Clip values to [0, max]
 

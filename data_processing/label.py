@@ -122,7 +122,7 @@ def apply_labels(data):
     return data
 
 
-def label_based_on_area(data, column, threshold, area_threshold):
+def label_based_on_area(data, column, threshold, area_threshold, img_save_path=None):
 
     grid_size = 240  # grid size in meters
     latitudes = data['Latitude'].unique()
@@ -178,41 +178,44 @@ def label_based_on_area(data, column, threshold, area_threshold):
             processed_points.add((lat, lon))
 
 
-    # # Plotting the binary array in polar projection
-    # def plot_polar_binary_array(binary_array, latitudes, longitudes, pole, save_path=f'{column}_polar.png'):
-    #     if pole == 'north':
-    #         latitudes_polar = 90 - latitudes
-    #     else:
-    #         latitudes_polar = 90 + latitudes
+    # Plotting the binary array in polar projection
+    def plot_polar_binary_array(binary_array, latitudes, longitudes, pole, save_path=f'{column}_polar.png'):
+        if pole == 'north':
+            latitudes_polar = 90 - latitudes
+        else:
+            latitudes_polar = 90 + latitudes
     
-    #     theta, r = np.meshgrid(np.deg2rad(longitudes), latitudes_polar)
+        theta, r = np.meshgrid(np.deg2rad(longitudes), latitudes_polar)
         
-    #     sample_size = int(len(theta.flatten()) * 0.01)
-    #     sample_idx = random.sample(range(len(theta.flatten())), sample_size)
+        sample_size = int(len(theta.flatten()) * 0.01)
+        sample_idx = random.sample(range(len(theta.flatten())), sample_size)
 
-    #     theta_sample = theta.flatten()[sample_idx]
-    #     r_sample = r.flatten()[sample_idx]
-    #     binary_array_sample = binary_array.flatten()[sample_idx]
+        theta_sample = theta.flatten()[sample_idx]
+        r_sample = r.flatten()[sample_idx]
+        binary_array_sample = binary_array.flatten()[sample_idx]
         
     
-    #     fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, figsize=(10, 10))
-    #     ax.scatter(theta_sample, r_sample, c=binary_array_sample, cmap='binary_r', s=1)
+        fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, figsize=(10, 10))
+        ax.scatter(theta_sample, r_sample, c=binary_array_sample, cmap='binary_r', s=1)
 
-    #     ax.set_theta_zero_location('N')
-    #     ax.set_theta_direction(-1)
-    #     ax.set_title(f'{column} Distribution - {pole.capitalize()} Pole')
-    #     plt.savefig(save_path)
-    #     plt.close(fig)
+        ax.set_theta_zero_location('N')
+        ax.set_theta_direction(-1)
+        ax.set_title(f'{column} Distribution - {pole.capitalize()} Pole')
+        plt.savefig(save_path)
+        plt.close(fig)
 
-    # # Plot for North Pole
-    # north_latitudes = latitudes[latitudes >= 0]
-    # north_binary_array = binary_array[np.isin(latitudes, north_latitudes)]
-    # plot_polar_binary_array(north_binary_array, north_latitudes, longitudes, 'north', f'{column}_north_polar_binary.png')
+    # Plot for North Pole
+    if img_save_path:
+        np_save_path = os.path.join(img_save_path, column, 'north_polar_binary.png')
+        north_latitudes = latitudes[latitudes >= 0]
+        north_binary_array = binary_array[np.isin(latitudes, north_latitudes)]
+        plot_polar_binary_array(north_binary_array, north_latitudes, longitudes, 'north', np_save_path)
 
-    # # Plot for South Pole
-    # south_latitudes = latitudes[latitudes < 0]
-    # south_binary_array = binary_array[np.isin(latitudes, south_latitudes)]
-    # plot_polar_binary_array(south_binary_array, south_latitudes, longitudes, 'south', f'{column}_south_polar_binary.png')
+        # Plot for South Pole
+        sp_save_path = os.path.join(img_save_path, column, 'south_polar_binary.png')
+        south_latitudes = latitudes[latitudes < 0]
+        south_binary_array = binary_array[np.isin(latitudes, south_latitudes)]
+        plot_polar_binary_array(south_binary_array, south_latitudes, longitudes, 'south', sp_save_path)
 
     return data
 
@@ -260,6 +263,9 @@ def process_data(lon_range, data_list, column_names, output_path):
         print(labeled_data['MiniRF label'].value_counts())
         sys.stdout.flush()
 
+        # Remove the 4 individual label columns after details were printed
+        labeled_data = labeled_data.drop(columns=['Diviner label', 'LOLA label', 'M3 label', 'MiniRF label'])
+
         output_file = f'combined_{lon_range * 30:03d}-{(lon_range + 1) * 30:03d}.csv'
         os.makedirs(output_path, exist_ok=True)
 
@@ -290,8 +296,8 @@ def main(n_workers, dataset1, dataset2, dataset3, dataset4, output_path):
 
         for file in filepaths:
             data = pd.read_csv(file)
-            # data = data.sample(frac=0.05, random_state=42)      # !!!!! SAMPLE 5% OF DATA !!!!!
-            # print('!! Only 5% of data is being used !!')
+            # data = data.sample(frac=0.05, random_state=42)      # !!!!! SAMPLE 5% OF DATA, for debugging
+            # print('!! Only 5% of data is being used !!')        # Gentle reminder while debugging
             lon_range = get_lon_range(file)
             all_data[lon_range].append(data)
 
