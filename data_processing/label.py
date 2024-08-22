@@ -5,11 +5,10 @@ import matplotlib.pyplot as plt
 import random
 
 from scipy.ndimage import label, binary_dilation
-from skimage.morphology import dilation, square
+from skimage.morphology import dilation, square, disk
 # from skimage.measure import label
 
 import argparse
-from sklearn.cluster import MiniBatchKMeans as KMeans
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from functools import reduce
 import time
@@ -33,16 +32,22 @@ def combine_data(data_list, column_names):
     if len(data_list) != len(column_names):
         raise ValueError("Number of column names must match the number of dataframes")
 
-    # Initialize the combined_data with the first DataFrame
-    combined_data = data_list[0][['Longitude', 'Latitude', column_names[0]]].copy()
-    combined_data.columns = ['Longitude', 'Latitude', column_names[0]]
+    M3_idx = column_names.index('M3')
+    combined_data = data_list[M3_idx][['Longitude', 'Latitude', column_names[M3_idx], 'Elevation']].copy()
+    combined_data.columns = ['Longitude', 'Latitude', column_names[M3_idx], 'Elevation']
     
     def merge_dfs(left, right):
-        return pd.merge(left, right, on=['Longitude', 'Latitude'])
+        # Merge on lon and lat for datasets without elevation
+        if 'Elevation' not in right.columns:
+            return pd.merge(left, right, on=['Longitude', 'Latitude'])
+        # Otherwise, merge on lon, lat, and elevation
+        return pd.merge(left, right, on=['Longitude', 'Latitude', 'Elevation'])
     
-    dfs_to_merge = [data[['Longitude', 'Latitude', value_column]].copy() 
-                    for data, value_column in zip(data_list[1:], column_names[1:])]
-    
+    dfs_to_merge = []
+    for i, (data, value_column) in enumerate(zip(data_list, column_names)):
+        if i != M3_idx:
+            dfs_to_merge.append(data[['Longitude', 'Latitude', value_column]].copy())
+
     combined_data = reduce(merge_dfs, [combined_data] + dfs_to_merge)
 
     return combined_data
@@ -50,23 +55,22 @@ def combine_data(data_list, column_names):
 
 def apply_labels(data):
     global start_time
-    # batch_size = 10_000   # Batch size used for KMeans clustering
 
-    def calculate_psr_perc(lats1=[-90, -75], lats2=[75,90], lunar_rad=1737.4, NP_PSR_area=12866, SP_PSR_area=16055):
-        # Source for NP and SP areas - https://doi.org/10.1016/j.icarus.2010.10.030
-        lat1, lat2 = lats1
-        area1 = 2 * math.pi * (lunar_rad ** 2) * (math.sin(math.radians(lat2)) - math.sin(math.radians(lat1)))
+    # def calculate_psr_perc(lats1=[-90, -75], lats2=[75,90], lunar_rad=1737.4, NP_PSR_area=12866, SP_PSR_area=16055):
+    #     # Source for NP and SP areas - https://doi.org/10.1016/j.icarus.2010.10.030
+    #     lat1, lat2 = lats1
+    #     area1 = 2 * math.pi * (lunar_rad ** 2) * (math.sin(math.radians(lat2)) - math.sin(math.radians(lat1)))
         
-        lat1, lat2 = lats2
-        area2 = 2 * math.pi * (lunar_rad ** 2) * (math.sin(math.radians(lat2)) - math.sin(math.radians(lat1)))
+    #     lat1, lat2 = lats2
+    #     area2 = 2 * math.pi * (lunar_rad ** 2) * (math.sin(math.radians(lat2)) - math.sin(math.radians(lat1)))
         
-        total_polar_area = abs(area1) + abs(area2)
-        PSR_perc = (NP_PSR_area + SP_PSR_area) / total_polar_area
+    #     total_polar_area = abs(area1) + abs(area2)
+    #     PSR_perc = (NP_PSR_area + SP_PSR_area) / total_polar_area
         
-        return PSR_perc
+    #     return PSR_perc
 
-    PSR_perc = calculate_psr_perc()
-    print(f"Percentage of the poles covered by PSRs: {PSR_perc * 100:.2f}%")
+    # PSR_perc = calculate_psr_perc()
+    # print(f"Percentage of the poles covered by PSRs: {PSR_perc * 100:.2f}%")
 
     data[['Label', 'Diviner label', 'LOLA label', 'M3 label', 'MiniRF label']] = 0
 
@@ -78,46 +82,30 @@ def apply_labels(data):
         print(f"Diviner labelled after {(time.time() - start_time) / 60 :.2f} mins")
         sys.stdout.flush()
 
-    """ Add 1 to the label if LOLA is above threshold.
-    Add another 1 to the label if the area of the region is larger than 3 km^2"""
-    # lola_val_thresh = data['LOLA'].std()
-    # data_reshaped = data['LOLA'].values.reshape(-1, 1)
-    # kmeans = KMeans(n_clusters=2, random_state=0, batch_size=batch_size).fit(data_reshaped)
-    # lola_val_thresh = np.mean(kmeans.cluster_centers_.flatten())
-    lola_val_thresh = data['LOLA'].quantile(1-PSR_perc)
+    """ Add 1 to the label if LOLA is ABOVE threshold. Add another 1 to the label if the area of the region is larger than 3 km^2"""
+    # lola_val_thresh = data['LOLA'].quantile(1-PSR_perc)
+    lola_val_thresh = data['LOLA'].mean() + 2 * data['LOLA'].std()  # Mean + 2*std
     print(f"LOLA threshold: {lola_val_thresh}")
     sys.stdout.flush()
     lola_area_thresh = 3 * (1000**2)
     data = label_based_on_area(data, 'LOLA', lola_val_thresh, lola_area_thresh)
-    if start_time is not None:
-        print(f"LOLA labelled after {(time.time() - start_time) / 60 :.2f} mins")
-        sys.stdout.flush()
+    print(f"LOLA labelled after {(time.time() - start_time) / 60 :.2f} mins") if start_time is not None else None
 
-    """ Add 1 to the label if M3 is above threshold.
-    Add another 1 to the label if the area of the region is larger than 2.4 km^2"""
-    # M3_val_thresh = data['M3'].std()
-    # data_reshaped = data['M3'].values.reshape(-1, 1)
-    # kmeans = KMeans(n_clusters=2, random_state=0, batch_size=batch_size).fit(data_reshaped)
-    # M3_val_thresh = np.mean(kmeans.cluster_centers_.flatten())
-    M3_val_thresh = data['M3'].quantile(1-PSR_perc)
+    """ Add 1 to the label if M3 is BELOW threshold. Add another 1 to the label if the area of the region is larger than 2.4 km^2"""
+    # M3_val_thresh = data['M3'].quantile(1-PSR_perc)
+    M3_val_thresh = data['M3'].mean() - 2 * data['M3'].std()  # Mean - 2*std
     print(f"M3 threshold: {M3_val_thresh}")
     M3_area_thresh = 2.4 * (1000**2)
     data = label_based_on_area(data, 'M3', M3_val_thresh, M3_area_thresh)
-    if start_time is not None:
-        print(f"M3 labelled after {(time.time() - start_time) / 60 :.2f} mins")
-        sys.stdout.flush()
+    print(f"M3 labelled after {(time.time() - start_time) / 60 :.2f} mins") if start_time is not None else None
 
-    """ Add 1 to the label if MiniRF is above threshold"""
-    # data_reshaped = data['MiniRF'].values.reshape(-1, 1)
-    # kmeans = KMeans(n_clusters=2, random_state=0, batch_size=batch_size).fit(data_reshaped)
-    # MiniRF_val_thresh = np.mean(kmeans.cluster_centers_.flatten())
-    MiniRF_val_thresh = data['MiniRF'].quantile(1-PSR_perc)
+    """ Add 1 to the label if MiniRF is ABOVE threshold"""
+    # MiniRF_val_thresh = data['MiniRF'].quantile(1-PSR_perc)
+    MiniRF_val_thresh = data['MiniRF'].mean() + 2 * data['MiniRF'].std()  # Mean + 2*std
     print(f"MiniRF threshold: {MiniRF_val_thresh}")
     data.loc[data['MiniRF'] > MiniRF_val_thresh, 'Label'] += 1
     data.loc[data['MiniRF'] > MiniRF_val_thresh, 'MiniRF label'] += 1
-    if start_time is not None:
-        print(f"MiniRF labelled after {(time.time() - start_time) / 60 :.2f} mins")
-        sys.stdout.flush()
+    print(f"MiniRF labelled after {(time.time() - start_time) / 60 :.2f} mins") if start_time is not None else None
 
     return data
 
@@ -128,22 +116,22 @@ def label_based_on_area(data, column, threshold, area_threshold, img_save_path=N
     latitudes = data['Latitude'].unique()
     longitudes = data['Longitude'].unique()
 
-    # 2D array
     binary_array = np.zeros((len(latitudes), len(longitudes)), dtype=int)
 
     # Create a mapping of coordinates to indices
     lat_to_index = {lat: i for i, lat in enumerate(latitudes)}
     lon_to_index = {lon: j for j, lon in enumerate(longitudes)}
 
-    mask = data[column] > threshold # A mask for the points that satisfy the threshold
+    mask = data[column] > threshold if column == 'LOLA' else data[column] < threshold   # LOLA needs to be above threshold, M3 below
     # Get the indices of the points that satisfy the threshold and set the corresponding indices in the binary array to 1
     indices = data.loc[mask, ['Latitude', 'Longitude']].apply(lambda row: (lat_to_index[row['Latitude']], lon_to_index[row['Longitude']]), axis=1)
     for idx in indices:
         binary_array[idx] = 1
 
 
-    dilated_array = binary_dilation(binary_array, square(5))
-    dilated_labeled_array, num_features = label(dilated_array, structure=square(3))
+    s = disk(1) # Define the structure for binary dilation (disk of radius 1)
+    dilated_array = binary_dilation(binary_array, structure=s)
+    dilated_labeled_array, num_features = label(dilated_array, structure=s)
 
     print(f"Number of features for {column} above threshold: {num_features} out of {len(indices)} points above threshold")
 
@@ -179,7 +167,7 @@ def label_based_on_area(data, column, threshold, area_threshold, img_save_path=N
 
 
     # Plotting the binary array in polar projection
-    def plot_polar_binary_array(binary_array, latitudes, longitudes, pole, save_path=f'{column}_polar.png'):
+    def plot_polar_binary_array(binary_array, latitudes, longitudes, pole, save_path):
         if pole == 'north':
             latitudes_polar = 90 - latitudes
         else:
@@ -248,9 +236,6 @@ def process_data(lon_range, data_list, column_names, output_path):
         # Concatenate all labeled data chunks
         labeled_data = pd.concat(labeled_data_chunks, ignore_index=True)
 
-        print(f"Labeled data for lon_range {lon_range}:")
-        print(labeled_data.head())
-        print(f"Highest labels for lon_range {lon_range}:")
         print("Total label counts")
         print(labeled_data['Label'].value_counts())
         print("\nDiviner label counts")

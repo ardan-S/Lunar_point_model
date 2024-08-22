@@ -4,10 +4,10 @@
 #PBS -N FCNN-TrainPointRankingModel
 
 # Resource requirements
-#PBS -l select=1:ncpus=16:mem=128GB:ngpus=2
+#PBS -l select=1:ncpus=2:mem=128GB:ngpus=2
 
 # Time required
-#PBS -l walltime=01:00:00
+#PBS -l walltime=01:30:00
 
 # File to contain standard out and error
 #PBS -j oe
@@ -24,7 +24,7 @@ cd $PBS_O_WORKDIR
 module load Python/3.11.5-GCCcore-13.2.0
 
 # Update virtual environment
-../../update_venv.sh > ./logs/update_venv.log
+../../update_venv.sh > ../logs/update_venv.log
 
 # Activate virtual environment
 source ~/venv/IRP/bin/activate
@@ -34,13 +34,25 @@ export CUDA_LAUNCH_BLOCKING=1
 echo "Starting on $(date)"
 
 # Run the Python script
-python ../src/trainFCNN.py --data_path ../../data/Combined_CSVs\
-                --hidden_dim 64 \
-                --num_epochs 10 \
+python ../src/trainFCNN.py --data_path ../../data/Combined_CSVs_temp\
+                --hidden_dim 512 \
+                --num_epochs 150 \
                 --learning_rate 0.001 \
-                --dropout_rate 0.2 \
-                --batch_size 256 \
-                --n_workers 4
+                --dropout_rate 0.1 \
+                --batch_size 524288 \
+                --beta 0.1 \
+                --weight_decay 0.0001 \
+                --n_workers 2
+
+# python ../src/trainFCNN.py --data_path ../../data/Combined_CSVs_temp\
+#                 --hidden_dim 512 \
+#                 --num_epochs 150 \
+#                 --learning_rate 0.00005 \
+#                 --dropout_rate 0.15 \
+#                 --batch_size 524288 \
+#                 --beta 0.1 \
+#                 --weight_decay 0.0001 \
+#                 --n_workers 2
 
 echo "Completed on $(date)"
 

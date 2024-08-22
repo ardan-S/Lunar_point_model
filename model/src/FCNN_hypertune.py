@@ -20,9 +20,11 @@ def suppress_stdout():
 
 def hyperparameter_tuning(args):
     # Define the hyperparameter grid
-    batch_sizes = [64, 128, 256]
-    learning_rates = [0.001, 0.0001, 0.00001]
-    dropout_rates = [0.2, 0.3, 0.4]
+    batch_sizes = [131072]
+    learning_rates = [5e-3, 1e-3, 5e-4, 1e-4]
+    dropout_rates = [0.1, 0.2, 0.3]
+    betas = [0.05, 0.1, 0.15, 0.2, 0.25]
+    weight_decays = [1e-3, 1e-4, 1e-5]
 
     best_mse = float('inf')
     best_hyperparams = None
@@ -30,12 +32,15 @@ def hyperparameter_tuning(args):
     device, input_dim, train_features, train_targets, val_features, val_targets, test_features, test_targets = setup_FCNN_data(args)
     
     # Iterate over all combinations of hyperparameters
-    for batch_size, lr, dropout in itertools.product(batch_sizes, learning_rates, dropout_rates):
-        print(f"Training with batch size: {batch_size}, learning rate: {lr}, dropout rate: {dropout}")
+    for batch_size, lr, dropout, beta, decay in itertools.product(batch_sizes, learning_rates, dropout_rates, betas, weight_decays):
+        print(f"Training with batch size: {batch_size}, learning rate: {lr}, dropout rate: {dropout}, beta: {beta}, weight decay: {decay}")
+        sys.stdout.flush()
 
         args.batch_size = batch_size
         args.learning_rate = lr
         args.dropout_rate = dropout
+        args.beta = beta
+        args.weight_decay = decay
 
         train_loader, val_loader, test_loader = setup_FCNN_loader(train_features, train_targets, val_features, val_targets, test_features, test_targets, device, args)
         model, criterion, optimiser, scaler = setup_FCNN_model(input_dim, args, device)
@@ -49,6 +54,8 @@ def hyperparameter_tuning(args):
                 'batch_size': batch_size,
                 'learning_rate': lr,
                 'dropout_rate': dropout,
+                'beta': beta,
+                'weight_decay': decay
             }
             best_r2 = curr_r2
 
@@ -56,6 +63,8 @@ def hyperparameter_tuning(args):
     print(f"Batch size: {best_hyperparams['batch_size']} out of {batch_sizes}")
     print(f"Learning rate: {best_hyperparams['learning_rate']} out of {learning_rates}")
     print(f"Dropout rate: {best_hyperparams['dropout_rate']} out of {dropout_rates}")
+    print(f"Beta: {best_hyperparams['beta']} out of {betas}")
+    print(f"Weight decay: {best_hyperparams['weight_decay']} out of {weight_decays}")
     print(f"Best MSE: {best_mse:.4f}")
     print(f"R² for best hyperparams: {best_r2:.4f}")
 

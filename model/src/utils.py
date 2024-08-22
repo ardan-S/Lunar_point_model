@@ -39,7 +39,7 @@ def load_data(data_path):
     return data
 
 
-def create_FCNN_loader(inputs, targets, device, batch_size=32, shuffle=True, num_workers=1):
+def create_FCNN_loader(inputs, targets, device, batch_size=128, shuffle=True, num_workers=1, standardise_scalar=None, normalise_scalar=None, scale_targets=False):
     """
     Create a DataLoader for the given dataset.
 
@@ -53,22 +53,27 @@ def create_FCNN_loader(inputs, targets, device, batch_size=32, shuffle=True, num
     - DataLoader for the dataset.
     """
 
-    # Normalize the input features (mean=0, std=1)
-    standardise_scalar = StandardScaler()
-    normalise_scalar = MinMaxScaler()
-    inputs = normalise_scalar.fit_transform(standardise_scalar.fit_transform(inputs))
-
-    # Ensure targets are 2D
-    if len(targets.shape) == 1:  # If targets is a Series, reshape it to 2D
-        targets = targets.values.reshape(-1, 1)
+    if standardise_scalar is not None:
+        if not isinstance(inputs, pd.DataFrame):
+            inputs = pd.DataFrame(inputs.numpy()) if torch.is_tensor(inputs) else pd.DataFrame(inputs)
+        inputs = standardise_scalar.transform(inputs)
+        inputs = pd.DataFrame(inputs, columns=standardise_scalar.feature_names_in_)
     else:
-        targets = targets.reshape(-1, 1)
+        raise ValueError("Standardisation scalar must be provided for FCNN")
 
-    targets = normalise_scalar.fit_transform(standardise_scalar.fit_transform(targets)).reshape(-1)
+    if normalise_scalar is not None:
+        if not isinstance(inputs, pd.DataFrame):
+            inputs = pd.DataFrame(inputs.numpy()) if torch.is_tensor(inputs) else pd.DataFrame(inputs)
+        inputs = normalise_scalar.transform(inputs)
+        inputs = pd.DataFrame(inputs, columns=normalise_scalar.feature_names_in_)
+    else:
+        print("FCNN not using normalisation scalar")
+
+    # Targets not scaled or normalised
 
     # Convert inputs and targets to tensors
-    inputs = torch.tensor(inputs, dtype=torch.float32) if not torch.is_tensor(inputs) else inputs
-    targets = torch.tensor(targets, dtype=torch.float32) if not torch.is_tensor(targets) else targets
+    inputs = torch.tensor(inputs.values, dtype=torch.float32) if not torch.is_tensor(inputs) else inputs
+    targets = torch.tensor(targets.values, dtype=torch.float32) if not torch.is_tensor(targets) else targets
 
     # Create dataset and data loader
     dataset = TensorDataset(inputs, targets)
@@ -199,13 +204,26 @@ def stratified_split_data(features, targets, rand_state=42):
     return train_features, val_features, test_features, train_targets, val_targets, test_targets
 
 
-def plot_metrics(num_epochs, train_losses, val_losses, val_mses, val_r2s, test_mse, test_mae, test_r2, save_path='../figs/training_metrics.png'):
+def plot_metrics(num_epochs, 
+                 train_losses, val_losses, test_loss,
+                 val_mses, val_r2s, test_mse, test_r2, 
+                 save_path='../figs/training_metrics.png'):
+    
+    num_epochs = num_epochs.cpu().numpy() if isinstance(num_epochs, torch.Tensor) else num_epochs
+    train_losses = train_losses.cpu().numpy() if isinstance(train_losses, torch.Tensor) else train_losses
+    test_loss = test_loss.cpu().numpy() if isinstance(test_loss, torch.Tensor) else test_loss
+    val_losses = val_losses.cpu().numpy() if isinstance(val_losses, torch.Tensor) else val_losses
+    val_mses = val_mses.cpu().numpy() if isinstance(val_mses, torch.Tensor) else val_mses
+    val_r2s = val_r2s.cpu().numpy() if isinstance(val_r2s, torch.Tensor) else val_r2s
+    test_mse = test_mse.cpu().numpy() if isinstance(test_mse, torch.Tensor) else test_mse
+    test_r2 = test_r2.cpu().numpy() if isinstance(test_r2, torch.Tensor) else test_r2
+
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
 
     ax1.plot(range(1, num_epochs + 1), train_losses, label='Training Loss')
     ax1.plot(range(1, num_epochs + 1), val_losses, label='Validation Loss')
-    ax1.scatter(num_epochs, test_mae, color='blue', label='Test Loss', zorder=5)
-    ax1.annotate(f'{test_mae:.4f}', (num_epochs, test_mae), textcoords="offset points", xytext=(0,10), ha='center', color='blue')
+    ax1.scatter(num_epochs, test_loss, color='blue', label='Test Loss', zorder=5)
+    ax1.annotate(f'{test_loss:.4f}', (num_epochs, test_loss), textcoords="offset points", xytext=(0,10), ha='center', color='blue')
     ax1.set_xlabel('Epoch')
     ax1.set_ylabel('Loss')
     ax1.set_title('Training and Validation Loss')
@@ -216,7 +234,7 @@ def plot_metrics(num_epochs, train_losses, val_losses, val_mses, val_r2s, test_m
     ax2.scatter(num_epochs, test_mse, color='blue', label='Test MSE', zorder=5)
     ax2.scatter(num_epochs, test_r2, color='blue', label='Test R²', zorder=5)
     ax2.annotate(f'{test_mse:.4f}', (num_epochs, test_mse), textcoords="offset points", xytext=(0,10), ha='center', color='blue')
-    ax2.annotate(f'{test_r2:.4f}', (num_epochs, test_r2), textcoords="offset points", xytext=(0,10), ha='center', color='blue')
+    ax2.annotate(f'{test_r2:.4f}', (num_epochs, test_r2), textcoords="offset points", xytext=(0,-10), ha='center', color='blue')
     ax2.set_xlabel('Epoch')
     ax2.set_ylabel('Metric')
     ax2.set_title('Validation MSE and R²')

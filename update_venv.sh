@@ -2,7 +2,10 @@
 
 {
 VENV_DIR=~/venv/IRP
-REQUIREMENTS_FILE=../requirements.txt
+
+# REQUIREMENTS_FILE=../requirements.txt
+BASE_DIR=$(dirname $(realpath $0))
+REQUIREMENTS_FILE=$BASE_DIR/requirements.txt
 HASH_FILE=$VENV_DIR/requirements.hash
 
 # Create hash of current requirements file

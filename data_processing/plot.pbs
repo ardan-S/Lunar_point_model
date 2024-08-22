@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Job name
-#PBS -N plot_M3_elev
+#PBS -N plot_Label
 
 # Resource requirements
 #PBS -l select=1:ncpus=64:mem=128Gb
@@ -11,7 +11,7 @@
 
 # File to contain standard out and error
 #PBS -j oe
-#PBS -o ./logs/plt/qsub.log.plt.M3_elev
+#PBS -o ./logs/plt/qsub.log.plt.Label
 
 # Email when job starts and ends
 #PBS -M as5023@ic.ac.uk

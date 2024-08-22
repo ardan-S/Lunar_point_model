@@ -7,7 +7,7 @@
 #PBS -l select=1:ncpus=2:mem=128GB:ngpus=2
 
 # Time required
-#PBS -l walltime=01:00:00
+#PBS -l walltime=24:00:00
 
 # File to contain standard out and error
 #PBS -j oe
@@ -30,10 +30,11 @@ module load Python/3.11.5-GCCcore-13.2.0
 source ~/venv/IRP/bin/activate
 
 # Run the Python script
-python ../src/GCN_hypertune.py --data_path ../../data/Combined_CSVs\
-                --hidden_dim 256\
-                --num_epochs 50\
-                --n_workers 2
+python ../src/GCN_hypertune.py --data_path ../../data/Combined_CSVs_temp\
+                --hidden_dim 512 \
+                --num_epochs 150 \
+                --n_workers 2 \
+                --k 10
    
 
 echo "Completed on $(date)"

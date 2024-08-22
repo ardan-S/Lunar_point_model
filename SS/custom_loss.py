@@ -59,22 +59,6 @@ class SmoothL1Loss(nn.Module):
         return self.smooth_l1_loss(outputs, targets)
 
 
-"""Contrastive loss can be used to ensure that similar data points (in terms of their labels)
-are close in the output space, while dissimilar ones are far apart. This can help in fine-grained distinctions."""
-
-
-class ContrastiveLoss(nn.Module):
-    def __init__(self, margin=1.0):
-        super(ContrastiveLoss, self).__init__()
-        self.margin = margin
-
-    def forward(self, outputs, targets):
-        euclidean_distance = F.pairwise_distance(outputs, targets)
-        loss_contrastive = torch.mean((1 - targets) * torch.pow(euclidean_distance, 2) +
-                                      (targets) * torch.pow(torch.clamp(self.margin - euclidean_distance, min=0.0), 2))
-        return loss_contrastive
-
-
 """Using MSE with label smoothing can help the model generalize better by softening the target labels,
 which can make the model less confident and better at distinguishing between close labels."""
 
@@ -92,7 +76,6 @@ class MSEWithLabelSmoothing(nn.Module):
 
 """This custom loss function can be implemented to better capture the ordinal nature
 of the labels by penalizing misclassifications based on their distance from the true label."""
-
 
 class OrdinalCrossEntropyLoss(nn.Module):
     def __init__(self, num_classes):

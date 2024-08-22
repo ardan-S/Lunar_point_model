@@ -87,14 +87,19 @@ def main():
     # 'Diviner-raw', 'Diviner-inter'
     # 'M3-raw', 'M3-inter'
 
-    home_dir, save_path, name, title_prefix = choose_data('M3-elev')
+    # home_dir, save_path, name, title_prefix = choose_data('M3-elev')
+    name = 'Label'
+    title_prefix = 'Combined data'
+    save_path = '../data/Combined_CSVs/Combined_data.png'
 
+    home_dir = '../data/Combined_CSVs'
     csvs = os.listdir(home_dir)
-    dfs = [pd.read_csv(os.path.join(home_dir, csv)) for csv in csvs]
-    [print(df.describe(), '\n') for df in dfs]
+    print(csvs)
+    dfs = [pd.read_csv(os.path.join(home_dir, csv)) for csv in csvs if csv.endswith('.csv')]
+    # [print(df.describe(), '\n') for df in dfs]
     df = pd.concat(dfs, ignore_index=True)
 
-    plot_polar_data(df, name, frac=0.75, title_prefix=title_prefix, save_path=save_path)
+    plot_polar_data(df, name, frac=0.5, title_prefix=title_prefix, save_path=save_path)
 
 
 if __name__ == '__main__':
