@@ -14,11 +14,17 @@ from process_image_dask import process_image, parse_metadata_content
 
 
 async def fetch(session, url):
+    """
+    Asynchronous function to fetch the content of a URL using aiohttp.
+    """
     async with session.get(url) as response:
         return await response.text()
 
 
 async def get_file_urls_async(page_url, file_extension, keyword, limit=None):
+    """
+    Asynchronously retrieve file URLs from a webpage that match the specified extension and keyword.
+    """
     async with aiohttp.ClientSession() as session:
         html = await fetch(session, page_url)
         soup = BeautifulSoup(html, 'html.parser')
@@ -33,6 +39,9 @@ async def get_file_urls_async(page_url, file_extension, keyword, limit=None):
 
 
 async def get_M3_urls_async(page_url, file_extension, keyword):
+    """
+    Asynchronously retrieve M3 file URLs from a metadata page
+    """
     async with aiohttp.ClientSession() as session:
         response = await fetch(session, page_url)
         base_url = page_url.rsplit('/', 1)[0] + '/'
@@ -47,6 +56,9 @@ async def get_M3_urls_async(page_url, file_extension, keyword):
 
 
 async def fetch_metadata(source):
+    """
+    Asynchronously fetch metadata content from a local file or URL.
+    """
     if os.path.isfile(source):  # Check if the source is a local file
         with open(source, 'r') as file:
             return file.read()
@@ -58,15 +70,24 @@ async def fetch_metadata(source):
 
 
 async def download_parse_metadata_async(url):
+    """
+    Asynchronously download and parse metadata from a URL.
+    """
     content = await fetch_metadata(url)
     return parse_metadata_content(content)
 
 
 async def process_image_async(metadata, image_url, label_type, output_csv_path):
+    """
+    Asynchronously process an image.
+    """
     return process_image(metadata, image_url, label_type, output_csv_path)
 
 
 async def process_single_url(url_info):
+    """
+    Asynchronously process a single URL by downloading the metadata, processing the image and returning the result.
+    """
     label_url, image_url, output_csv_path, label_type = url_info
     metadata = await download_parse_metadata_async(label_url)
     df = await process_image_async(metadata, image_url, label_type, output_csv_path)
@@ -74,6 +95,9 @@ async def process_single_url(url_info):
 
 
 def get_file_urls(page_url, file_extension, keyword, limit=None):
+    """
+    Retrieve file URLs from a webpage that match the specified extension and keyword.
+    """
     response = requests.get(page_url)
     response.raise_for_status()
 
@@ -89,6 +113,9 @@ def get_file_urls(page_url, file_extension, keyword, limit=None):
 
 
 def get_M3_urls(page_url, file_extension, keyword):
+    """
+    Retrieve M3 file URLs from a metadata page
+    """
     response = requests.get(page_url)
     response.raise_for_status()
 
@@ -104,6 +131,9 @@ def get_M3_urls(page_url, file_extension, keyword):
 
 
 def construct_image_url(url, label_type):
+    """
+    Construct the corresponding image URL from a label URL based on the label type.
+    """
     replacements = {
         'LOLA': ('_jp2.lbl', '.jp2'),
         'M3': ('_L2.LBL', '_RFL.IMG'),
@@ -114,6 +144,9 @@ def construct_image_url(url, label_type):
 
 
 def process_urls_in_parallel(client, lbl_urls, data_type, output_dir):
+    """
+    Process a list of URLs in parallel using Dask, saving the results to CSV files.
+    """
     url_info_list = [(lbl_url, construct_image_url(lbl_url, data_type), output_dir, data_type) for lbl_url in lbl_urls]
     
     # Create directory for CSVs if it doesn't exist

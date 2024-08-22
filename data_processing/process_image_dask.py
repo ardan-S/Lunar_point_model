@@ -9,13 +9,14 @@ from urllib.parse import urljoin
 import io
 from requests.exceptions import ChunkedEncodingError, ConnectionError
 from urllib3.exceptions import IncompleteRead
-import sys
 import os
 from pathlib import Path
-from collections import Counter
 
 
 def parse_metadata_content(file_content):
+    """
+    Parse metadata content from a file, handling both byte and string input formats.
+    """
     if isinstance(file_content, bytes):
         try:
             content_str = file_content.decode('utf-8')
@@ -59,6 +60,9 @@ def parse_metadata_content(file_content):
 
 
 def download_parse_metadata(url):
+    """
+    Download and parse metadata from a given URL.
+    """
     response = requests.get(url)
     response.raise_for_status()
     file_content = response.content
@@ -66,6 +70,9 @@ def download_parse_metadata(url):
 
 
 def clean_metadata_value(value, string=False):
+    """
+    Clean and convert metadata values to the appropriate format.
+    """
     if string:
         return str(value)
     try:
@@ -82,11 +89,16 @@ def get_metadata_value(metadata, object_path, key, string=False):
 
 
 def is_url(path):
+    """
+    Check if a given path is a URL. Output boolean.
+    """
     return path.startswith('http://') or path.startswith('https://')
 
 
 def extract_LRO_image(image_url, address, metadata=None, fraction_read=1.0):
-
+    """
+    Extract image data from a Lunar Reconnaissance Orbiter (LRO) image file.
+    """
     lines = get_metadata_value(metadata, address, 'LINES')
     line_samples = int(get_metadata_value(metadata, address, 'LINE_SAMPLES'))
 
@@ -126,6 +138,10 @@ def extract_LRO_image(image_url, address, metadata=None, fraction_read=1.0):
 
 
 def process_image_file(file_path, file_extension, lines, line_samples, metadata, address, fraction_read):
+    """
+    Process an image file based on its format and extract the relevant data.
+    Outputs the processed image data.
+    """    
     if file_extension == 'jp2':
         image_data = glymur.Jp2k(file_path)[:]
 
@@ -161,7 +177,10 @@ def process_image_file(file_path, file_extension, lines, line_samples, metadata,
 
 
 def extract_M3_image(image_url, metadata):
-
+    """
+    Extract image data from a Moon Mineralogy Mapper (M3) image file.
+    Outputs a tuple containing the extracted image bands as well as reference bands to be used in BDR.
+    """
     def fetch_url(url, retries=3):
         if os.path.isfile(url):  # Check if the source is a local file
             with open(url, 'r') as file:
@@ -261,6 +280,9 @@ def extract_M3_image(image_url, metadata):
 
 
 def process_LRO_image(image_data, metadata, address, data_type):
+    """
+    Process an LRO image using metadata for scaling and offset. Outputs the processed image data.
+    """
     address = 'COMPRESSED_FILE' if data_type == 'LOLA' else address
     scaling_factor = get_metadata_value(metadata, address, 'SCALING_FACTOR')
     offset = get_metadata_value(metadata, address, 'OFFSET')
@@ -283,6 +305,10 @@ def process_LRO_image(image_data, metadata, address, data_type):
 
 
 def process_M3_image(trough, shoulder):
+    """
+    Process M3 image data using the target (trough) and reference (shoulder) bands.
+    Used to calculate and output the band depth ratio (BDR).
+    """
     BDRs = shoulder / (2*trough)    # Band depth ratio
     output_vals = np.min(BDRs, axis=2)    # Take the band with the minimum BDR for each point
     max = 1.75
@@ -295,8 +321,10 @@ def process_M3_image(trough, shoulder):
     return output_vals
 
 
-# done
 def generate_LRO_coords(image_shape, metadata, data_type):
+    """
+    Generate geographic coordinates for an LRO image based on its metadata.
+    """
     lines, samples = image_shape
     projection_keys = ['LINE_PROJECTION_OFFSET', 'SAMPLE_PROJECTION_OFFSET', 'CENTER_LATITUDE',
                        'CENTER_LONGITUDE', 'MAP_RESOLUTION', 'MINIMUM_LATITUDE', 'MAXIMUM_LATITUDE']
@@ -345,8 +373,11 @@ def generate_LRO_coords(image_shape, metadata, data_type):
     return lons, lats
 
 
-# done
 def generate_M3_coords(image_shape, metadata):
+    """
+    Generate geographic coordinates for an M3 image based on its metadata.
+    In addition to longitude and latitude, elevation data is also generated.
+    """
     text_file = 'https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003_md5.txt'
     response = requests.get(text_file)
     lines = response.text.splitlines()
@@ -428,8 +459,10 @@ def generate_M3_coords(image_shape, metadata):
     return lons, lats, elev
 
 
-# done
 def optimize_df(df):
+    """
+    Optimise dataframe by downcasting numeric columns to save memory.
+    """
     for col in df.select_dtypes(include=['float64']).columns:
         df.loc[:, col] = pd.to_numeric(df[col], downcast='float')
     for col in df.select_dtypes(include=['int64']).columns:
@@ -437,8 +470,10 @@ def optimize_df(df):
     return df
 
 
-# done
 def process_image(metadata, image_path, data_type, output_csv_path=None):
+    """
+    Process an image based on its type and metadata and generate a CSV file with the processed data.
+    """
     accepted_data_types = ['Diviner', 'LOLA', 'M3', 'MiniRF']
     if data_type not in accepted_data_types:
         raise ValueError(f"Invalid data type '{data_type}'. Accepted values are: {accepted_data_types}")
@@ -473,8 +508,10 @@ def process_image(metadata, image_path, data_type, output_csv_path=None):
     return filter_and_optimize_df(df, data_type, metadata)
 
 
-# done
 def filter_and_optimize_df(df, data_type, metadata):
+    """
+    Filter and optimize a dataframe based on the data type and metadata.
+    """
     # Ensure all Lat values are in the ranges of either [-75, -90] or [75, 90]
     df = df[(df['Latitude'] <= -75) & (df['Latitude'] >= -90) | (df['Latitude'] <= 90) & (df['Latitude'] >= 75)]
 
@@ -493,29 +530,37 @@ def filter_and_optimize_df(df, data_type, metadata):
     return optimize_df(df)
 
 
-# done
 def Diviner_sense_check(df, metadata):
+    """
+    Perform a sense check on Diviner data to clip values to a valid range.
+    """
     max_temp = clean_metadata_value(metadata.get('DERIVED_MAXIMUM', 400))
     min_temp = clean_metadata_value(metadata.get('DERIVED_MINIMUM', 0))
     df['Diviner'] = np.clip(df['Diviner'], min_temp, max_temp)
     return df
 
 
-# done
 def LOLA_sense_check(df):
+    """
+    Perform a sense check on LOLA to remove out-of-bounds values.
+    """
     df.loc[(df['LOLA'] < 0) | (df['LOLA'] > 2), 'LOLA'] = np.nan
     return df
 
 
-# done
 def MiniRF_sense_check(df):
+    """
+    Perform a sense check on Mini-RF data to remove out-of-bounds values.
+    """
     df.loc[(df['MiniRF'] < 0) | (df['MiniRF'] > 5), 'MiniRF'] = np.nan
     df.loc[df['MiniRF'] > 1.5, 'MiniRF'] = 1.5
     return df
 
 
-# done
 def M3_sense_check(df):
+    """
+    Perform a sense check on M3 data to remove invalid values.
+    """
     df = df.copy()
     df.loc[df['M3'] < 0, 'M3'] = np.nan
     return df

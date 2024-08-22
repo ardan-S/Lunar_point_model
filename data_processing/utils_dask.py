@@ -2,17 +2,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import dask.dataframe as dd
 import pandas as pd
-import os
 
 
-# Function to split list into chunks of specified size
 def chunks(lst, n):
+    """
+    Function to split list into chunks of specified size.
+    """
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
 
 def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', save_path=None):
-
+    """
+    Function to plot polar data (or a fraction of it) on a map of the Moon.
+    """
     # Check for required columns
     required_columns = ['Latitude', 'Longitude', variable]
     missing_cols = [col for col in required_columns if col not in df.columns]
@@ -90,6 +93,9 @@ def plot_polar_data(df, variable, frac=None, random_state=42, title_prefix='', s
 
 
 def generate_mesh(RESOLUTION=0.24):
+    """
+    Generate a mesh of points for the Moon's poles with a specified resolution.
+    """
     MOON_RADIUS = 1737.4  # Radius of the Moon in kilometers
     # Resolution in kilometers (240 meters)
 
@@ -125,7 +131,3 @@ def generate_mesh(RESOLUTION=0.24):
     print(f'Total points: {sum(len(lon_lat_grid_north) + len(lon_lat_grid_south) for lon_lat_grid_north, lon_lat_grid_south in meshes):,}')
 
     return meshes
-
-
-def concat_datasets(filepaths):
-    lon_ranges = ['']
