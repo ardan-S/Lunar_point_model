@@ -1,4 +1,14 @@
-# import numpy as np
+"""
+Mini-RF data processing script
+
+This script processes Mini-RF data using Dask for parallel processing.
+It fetches data files either as URLs or local directory, processes them in parallel, and stores the results in CSV format.
+
+Usage:
+    python Mini-RF.py --n_workers <number_of_workers> --threads_per_worker <threads_per_worker> --memory_limit <memory_limit>
+"""
+
+
 import sys
 import os
 from dask.distributed import Client
@@ -19,6 +29,10 @@ client = None
 
 # Gracefully handle exits when walltime limit is reached
 def handle_signal(signum, frame):
+    """
+    Gracefully handle SIGTERM and SIGINT signals by shutting down the Dask client and exiting the script.
+    Used to ensure that the Dask client is properly closed when walltime limit is reached.
+    """
     global client
     if client:
         client.shutdown()
@@ -30,21 +44,37 @@ signal.signal(signal.SIGINT, handle_signal)
 
 
 def main(n_workers, threads_per_worker, memory_limit):
-    print('Starting Mini-RF client...')
+    """
+    Initializes the Dask client and processes Mini-RF data.
+
+    Parameters:
+    n_workers (int): Number of workers to use for parallel processing.
+    threads_per_worker (int): Number of threads per worker.
+    memory_limit (str): Memory limit per worker (e.g., '4GB').
+
+    Returns:
+    None
+    """    
     global client
+    # Create a Dask client
     client = Client(n_workers=n_workers, threads_per_worker=threads_per_worker, memory_limit=memory_limit)
 
     # MiniRF_home = 'https://pds-geosciences.wustl.edu/lro/lro-l-mrflro-5-global-mosaic-v1/lromrf_1001/data/128ppd/'
     MiniRF_home = '/rds/general/user/as5023/ephemeral/as5023/Mini-RF/raw_files'        # For retrieving from local directory
 
     async def process():
+        # Get the URLs of the Mini-RF data files
         # MiniRF_urls = await get_file_urls_async(MiniRF_home, '.lbl', 'cpr')  # 'cpr' - circular polarisation ratio
         MRF_lbl_urls = [(os.path.join(MiniRF_home, f)) for f in os.listdir(MiniRF_home) if f.endswith('.lbl')]
         csv_path = '/rds/general/user/as5023/home/irp-as5023/data/Mini-RF/MiniRF_CSVs'
+
+        # Process the Mini-RF data files in parallel
         process_urls_in_parallel(client, MRF_lbl_urls, 'MiniRF', csv_path)
 
+    # Run the processing task
     asyncio.run(process())
-    print('Closing client...')
+
+    # Close the Dask client
     client.close()
 
 

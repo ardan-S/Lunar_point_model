@@ -12,13 +12,11 @@
 # File to contain standard out and error
 #PBS -j oe  
 #PBS -o ./logs/qsub.log.eval.M3
-##PBS -M ardan.suphi23@imperial.ac.uk
-##PBS -m abe
 
 # Change to the directory where the job was submitted
 cd $PBS_O_WORKDIR
 
-# Delete old CVS files
+# Delete old CVS files  - Uncomment as appropriate 
 # rm -rf ./Diviner-temp/Diviner_CSVs
 # rm -rf ./LOLA-Albedo/LOLA_CSVs
 rm -rf ./M3/M3_CSVs
@@ -33,7 +31,7 @@ module load Python/3.11.5-GCCcore-13.2.0
 # Activate virtual environment
 source ~/venv/IRP/bin/activate
 
-# Run the Python script
+# Run the Python script - Uncomment as appropriate
 # python Diviner-temp/Diviner.py --n_workers 4 --threads_per_worker 2 --memory_limit 128GB
 # python LOLA-Albedo/LOLA.py --n_workers 4 --threads_per_worker 2 --memory_limit 8GB
 python M3/M3.py --n_workers 32 --threads_per_worker 2 --memory_limit 8GB
