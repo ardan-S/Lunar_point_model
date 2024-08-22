@@ -18,20 +18,20 @@ As inputs, the model will receive coordinates plus remote sensing values for Div
 
 Datasets were decoded and interpolated and synthetically labelled. The distribution of the labels can be seen in the image below.
 
-<div style="text-align: center;">
+<center>
     <img src="data/M3/M3.png" alt="Raw Image" width="500"/>
     <p><strong>(a)</strong> Raw Image</p>
-</div>
+</center>
 
-<div style="text-align: center;">
+<center>
     <img src="data/M3/M3_interp.png" alt="Interpolated Image" width="500"/>
     <p><strong>(b)</strong> Interpolated Image</p>
-</div>
+</center>
 
-<div style="text-align: center;">
+<center>
     <img src="data/Combined_data.png" alt="Label Image" width="500"/>
     <p><strong>(c)</strong> Label Image</p>
-</div>
+</center>
 
 ## Project components
 
