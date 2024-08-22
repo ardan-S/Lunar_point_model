@@ -12,8 +12,6 @@
 # File to contain standard out and error
 #PBS -j oe
 #PBS -o ./logs/qsub.log.interp.M3
-#PBS -M ardan.suphi23@imperial.ac.uk
-#PBS -m abe
 
 # Change to the directory where the job was submitted
 cd $PBS_O_WORKDIR
@@ -21,8 +19,11 @@ cd $PBS_O_WORKDIR
 # Load required modules
 module load Python/3.11.5-GCCcore-13.2.0
 
-# Delete old CVS files
+# Delete old CVS files - Uncomment as appropriate
+# rm -rf ../data/Diviner-temp/Diviner_interp_CSVs
+# rm -rf ../data/LOLA-Albedo/LOLA_interp_CSVs
 rm -rf ../data/M3/M3_interp_CSVs
+# rm -rf ../data/Mini-RF/MiniRF_interp_CSVs
 
 # Update virtual environment
 ../update_venv.sh > ./logs/update_venv.log
@@ -30,7 +31,7 @@ rm -rf ../data/M3/M3_interp_CSVs
 # Activate virtual environment
 source ~/venv/IRP/bin/activate
 
-# Run the Python script
+# Run the Python script - Uncomment as appropriate
 # python interpolate.py   --data_type Diviner \
 #                         --data_path ../data/Diviner-temp/Diviner_CSVs \
 #                         --output_csv_path ../data/Diviner-temp/Diviner_interp_CSVs \
