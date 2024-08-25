@@ -159,7 +159,7 @@ The `download.py` file is provided to download image and metadata files in advan
 Having generated CSVs for each dataset, run the interpolation and then label jobscripts to generate the respective CSVs, including the final, concatenated and labelled dataset. 
 
 ### To train the models:
-Jobscripts to train the FCNN and GCN are provided in `model/` directory. Hyperparameters can be adjusted in the jobscript and the model and parameters will be saved unless this argument is adjusted in the source file. 
+Jobscripts to train the FCNN and GCN are provided in `model/` directory. Hyperparameters can be adjusted in the jobscript and the model and parameters will be saved unless this argument is adjusted in the source file. Note the training data must be obtained in the steps above to train the models. 
 
-### To use the models:
+### To use the saved models:
 The `run_model.pbs` jobscript can be used to load saved models and evaluate points. It is currently set to choose a random point from the interpolated data but can easily be modified to return a value on an external input. Note that the FCNN can input a single point with the associated remote sensing values for a label but the GCN requires a graph object as an input and will output labels for each node. 
