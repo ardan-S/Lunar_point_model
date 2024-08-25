@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Job name
+#PBS -N Run_models
+
+# Resource requirements
+#PBS -l select=1:ncpus=2:mem=128GB
+
+# Time required
+#PBS -l walltime=00:10:00
+
+# File to contain standard out and error
+#PBS -j oe
+#PBS -o ../logs/qsub.log.run_models
+
+# Change to the directory where the job was submitted
+cd $PBS_O_WORKDIR
+
+# Load required modules
+module load Python/3.11.5-GCCcore-13.2.0
+
+# Update virtual environment
+../../update_venv.sh > ../logs/update_venv.log
+
+# Activate virtual environment
+source ~/venv/IRP/bin/activate
+
+export CUDA_LAUNCH_BLOCKING=1
+
+echo "Starting on $(date)"
+
+# Run the Python script
+python ../src/run_model.py \
+                --FCNN_dropout_rate 0 \
+                --GCN_dropout_rate 0 \
+
+
+echo "Completed on $(date)"
+
+# Deactivate virtual environment
+deactivate

@@ -21,23 +21,23 @@ def suppress_stdout():
 
 def hyperparameter_tuning(args):
     # Define the hyperparameter grid
-    # batch_sizes = [2**14, 2**15, 2**16]
-    learning_rates = [4e-4, 3e-4, 2e-4, 1e-4]
-    dropout_rates = [0.05, 0.1, 0.15]
-    k_vals = [15, 20, 25]
-    betas = [0.05, 0.1, 0.15, 0.2, 0.25]
-    weight_decays = [1e-3, 5e-4, 1e-4, 5e-5, 1e-5]
+    batch_sizes = [2**16]
+    learning_rates = [4e-4, 3e-4, 2e-4]
+    dropout_rates = [0.1, 0.15, 0.2, 0.25]
+    k_vals = [15]
+    betas = [0.1, 0.15, 0.2]
+    weight_decays = [1e-3, 5e-4, 1e-4, 5e-5]
 
-    best_mse = float('inf')
+    best_loss = float('inf')
     best_hyperparams = None
 
     device, input_dim, train_graph_data, val_graph_data, test_graph_data = setup_GCN_data(args)
     
     # Iterate over all combinations of hyperparameters
-    for lr, dropout, k, beta, decay in itertools.product(learning_rates, dropout_rates, k_vals, betas, weight_decays):
+    for batch_size, lr, dropout, k, beta, decay in itertools.product(batch_sizes, learning_rates, dropout_rates, k_vals, betas, weight_decays):
         start_time = time.time()
         print(f"Training with learning rate: {lr}, beta: {beta}, weight decay: {decay}")
-        args.batch_size = 2**16
+        args.batch_size = batch_size
         args.learning_rate = lr
         args.dropout_rate = dropout
         args.k = k
@@ -47,9 +47,10 @@ def hyperparameter_tuning(args):
         train_loader, val_loader, test_loader = setup_GCN_loader(train_graph_data, val_graph_data, test_graph_data, device, args)
         model, criterion, optimiser, scaler = setup_GCN_model(input_dim, args, device)
         with suppress_stdout():
-            model, curr_mse, _, curr_r2 = train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args)
+            model, curr_loss, curr_mse, curr_r2 = train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args)
 
-        if curr_mse < best_mse:
+        if curr_loss < best_loss:
+            best_loss = curr_loss
             best_mse = curr_mse
             best_hyperparams = {
                 'batch_size': args.batch_size,
@@ -61,6 +62,9 @@ def hyperparameter_tuning(args):
             }
             best_r2 = curr_r2
 
+            print(f"New best hyperparameters: {best_hyperparams}")
+            print(f"New best loss: {best_loss:.4f}")
+
         print(f"Completed in {(time.time() - start_time) / 60 :.2f} mins\n")
 
     print(f"\nBest hyperparameters:")
@@ -70,10 +74,12 @@ def hyperparameter_tuning(args):
     print(f"Best k: {best_hyperparams['k']} out of {k_vals}")
     print(f"Best beta: {best_hyperparams['beta']} out of {betas}")
     print(f"Best weight decay: {best_hyperparams['weight_decay']} out of {weight_decays}")
+
+    print(f"\nBest loss: {best_loss:.4f}")
     print(f"Best MSE: {best_mse:.4f}")
     print(f"R² for best hyperparams: {best_r2:.4f}")
 
-    return best_hyperparams, best_mse, best_r2
+    return best_hyperparams, best_loss, best_mse, best_r2
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Hyperparameter tuning for a PointRankingModel.')
@@ -86,4 +92,4 @@ def parse_arguments():
 
 if __name__ == '__main__':
     args = parse_arguments()
-    best_hyperparams, best_mse, best_r2  = hyperparameter_tuning(args)
+    best_hyperparams, best_loss, best_mse, best_r2  = hyperparameter_tuning(args)

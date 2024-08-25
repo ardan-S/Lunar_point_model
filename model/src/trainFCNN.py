@@ -21,12 +21,12 @@ def setup_FCNN_data(args):
     print(f"Size of original dataset: {original_size}")
 
     # labeled_data = labeled_data[labeled_data["Latitude"] < 0]   # Only train on southern hemisphere and really close to the pole
-    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.1, random_state=rand_state)
+    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.01, random_state=rand_state)
     _, test_index = next(sss.split(labeled_data, labeled_data["Label"]))
     labeled_data = labeled_data.iloc[test_index]
     print(f"Size of selected dataset: {labeled_data.shape[0]}")
 
-    features = labeled_data[["LOLA", "Diviner", "M3", "MiniRF", "Elevation"]]
+    features = labeled_data[["LOLA", "Diviner", "M3", "MiniRF", "Elevation", "Latitude", "Longitude"]]
     print(f"Features: {features.columns.tolist()}")
 
     targets = labeled_data["Label"]
@@ -120,8 +120,8 @@ def train_FCNN(device, model, criterion, optimiser, scaler, train_loader, val_lo
         val_mses.append(val_mse)
         val_r2s.append(val_r2)
 
-        print(f'Epoch [{epoch+1:02d}/{args.num_epochs}], Loss: {loss.item():.4f}, Val loss: {val_loss:.4f}, Val mse: {val_mse:.4f}, Val R²: {val_r2:.4f}, Time: {time.time() - epoch_start:.2f}s')
-        sys.stdout.flush()
+        if epoch % 10 == 0:
+            print(f'Epoch [{epoch+1:03d}/{args.num_epochs}], Loss: {loss.item():.4f}, Val loss: {val_loss:.4f}, Val mse: {val_mse:.4f}, Val R²: {val_r2:.4f}, Time: {time.time() - epoch_start:.2f}s')
 
         # if val_loss < best_val_loss:
         #     best_val_loss = val_loss
@@ -135,11 +135,30 @@ def train_FCNN(device, model, criterion, optimiser, scaler, train_loader, val_lo
         #         print(f'Early stopping at epoch {epoch+1}')
         #         break
 
+    test_loss, test_mse, test_r2 = evaluate(device, model, criterion, test_loader)
 
     if model_save_path:
-        model.load_state_dict(torch.load(model_save_path))
+        torch.save(model.state_dict(), model_save_path)
+        file_path = model_save_path.replace('.pth', '.txt')
+        content = f"""
+        Parameters of saved FCNN:
+        Hidden dimension: {args.hidden_dim}
+        Epochs: {args.num_epochs}
+        Learning rate: {args.learning_rate}
+        Dropout rate: {args.dropout_rate}
+        Batch size: {args.batch_size}
+        Beta: {args.beta}
+        Weight decay: {args.weight_decay}
 
-    test_loss, test_mse, test_r2 = evaluate(device, model, criterion, test_loader)
+        Test set:
+        Mean Squared Error (MSE): {test_mse:.4f}
+        Loss: {test_loss:.4f}
+        R-squared (R²): {test_r2:.4f}
+
+        Saved on {time.strftime('%Y-%m-%d %H:%M:%S')}
+        """
+        with open(file_path, 'w') as f:
+            f.write(content)
 
     if img_save_path:
         plot_metrics(iter, train_losses, val_losses, test_loss, val_mses, val_r2s, test_mse, test_r2, save_path=img_save_path)
@@ -155,12 +174,20 @@ def main():
     print(f"Loader setup completed after {(time.time() - start_time) / 60 :.2f} mins")
     model, criterion, optimiser, scaler = setup_FCNN_model(input_dim, args, device)
     print(f"Model setup completed after {(time.time() - start_time) / 60 :.2f} mins")
-    model, test_loss, test_mse, test_r2 = train_FCNN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, img_save_path='../figs/training_metrics_FCNN.png')
+    model, test_loss, test_mse, test_r2 = train_FCNN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, img_save_path='../figs/training_metrics_FCNN.png', model_save_path='../saved_models/FCNN.pth')
     print(f"Training completed after {(time.time() - start_time) / 60 :.2f} mins")
     print("\nTest set:")
     print(f'Mean Squared Error (MSE): {test_mse:.4f}')
     print(f'Loss: {test_loss:.4f}')
     print(f'R-squared (R²): {test_r2:.4f}\n')
+
+    # Get random line from test loader
+    random_line = next(iter(test_loader))
+    inputs, targets = random_line
+    inputs, targets = inputs.to(device), targets.to(device)
+    outputs = model(inputs).squeeze()
+    print(f"Random line from test loader: {random_line}")
+    print(f"Model output: {outputs.cpu().detach().numpy()}")
 
 
 def parse_arguments():

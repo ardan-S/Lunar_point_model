@@ -4,10 +4,10 @@
 #PBS -N FCNN-TrainPointRankingModel
 
 # Resource requirements
-#PBS -l select=1:ncpus=2:mem=128GB:ngpus=2
+#PBS -l select=1:ncpus=2:mem=128GB:ngpus=1
 
 # Time required
-#PBS -l walltime=01:30:00
+#PBS -l walltime=02:30:00
 
 # File to contain standard out and error
 #PBS -j oe
@@ -34,25 +34,25 @@ export CUDA_LAUNCH_BLOCKING=1
 echo "Starting on $(date)"
 
 # Run the Python script
-python ../src/trainFCNN.py --data_path ../../data/Combined_CSVs_temp\
-                --hidden_dim 512 \
-                --num_epochs 150 \
-                --learning_rate 0.001 \
-                --dropout_rate 0.1 \
-                --batch_size 524288 \
-                --beta 0.1 \
-                --weight_decay 0.0001 \
-                --n_workers 2
-
 # python ../src/trainFCNN.py --data_path ../../data/Combined_CSVs_temp\
 #                 --hidden_dim 512 \
 #                 --num_epochs 150 \
-#                 --learning_rate 0.00005 \
-#                 --dropout_rate 0.15 \
+#                 --learning_rate 0.001 \
+#                 --dropout_rate 0.1 \
 #                 --batch_size 524288 \
 #                 --beta 0.1 \
 #                 --weight_decay 0.0001 \
 #                 --n_workers 2
+
+python ../src/trainFCNN.py --data_path ../../data/Combined_CSVs\
+                --hidden_dim 512 \
+                --num_epochs 400 \
+                --learning_rate 0.00005 \
+                --dropout_rate 0.15 \
+                --batch_size 524288 \
+                --beta 0.1 \
+                --weight_decay 0.0001 \
+                --n_workers 2
 
 echo "Completed on $(date)"
 

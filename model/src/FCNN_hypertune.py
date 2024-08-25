@@ -21,12 +21,12 @@ def suppress_stdout():
 def hyperparameter_tuning(args):
     # Define the hyperparameter grid
     batch_sizes = [131072]
-    learning_rates = [5e-3, 1e-3, 5e-4, 1e-4]
-    dropout_rates = [0.1, 0.2, 0.3]
-    betas = [0.05, 0.1, 0.15, 0.2, 0.25]
-    weight_decays = [1e-3, 1e-4, 1e-5]
+    learning_rates = [1e-4, 5e-5, 1e-5]
+    dropout_rates = [0.1, 0.15, 0.2]
+    betas = [0.05, 0.1, 0.15]
+    weight_decays = [5e-4, 1e-4]
 
-    best_mse = float('inf')
+    best_loss = float('inf')
     best_hyperparams = None
 
     device, input_dim, train_features, train_targets, val_features, val_targets, test_features, test_targets = setup_FCNN_data(args)
@@ -46,9 +46,10 @@ def hyperparameter_tuning(args):
         model, criterion, optimiser, scaler = setup_FCNN_model(input_dim, args, device)
 
         with suppress_stdout():
-            _, curr_mse, _, curr_r2 = train_FCNN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args)
+            _, curr_loss, curr_mse, curr_r2 = train_FCNN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args)
 
-        if curr_mse < best_mse:
+        if curr_loss < best_loss:
+            best_loss = curr_loss
             best_mse = curr_mse
             best_hyperparams = {
                 'batch_size': batch_size,
@@ -59,16 +60,21 @@ def hyperparameter_tuning(args):
             }
             best_r2 = curr_r2
 
+            print(f"New best hyperparameters: {best_hyperparams}")
+            print(f"New best loss: {best_loss:.4f}")
+
     print(f"\nBest hyperparameters:")
     print(f"Batch size: {best_hyperparams['batch_size']} out of {batch_sizes}")
     print(f"Learning rate: {best_hyperparams['learning_rate']} out of {learning_rates}")
     print(f"Dropout rate: {best_hyperparams['dropout_rate']} out of {dropout_rates}")
     print(f"Beta: {best_hyperparams['beta']} out of {betas}")
     print(f"Weight decay: {best_hyperparams['weight_decay']} out of {weight_decays}")
+
+    print(f"\nBest loss: {best_loss:.4f}")
     print(f"Best MSE: {best_mse:.4f}")
     print(f"R² for best hyperparams: {best_r2:.4f}")
 
-    return best_hyperparams, best_mse, best_r2
+    return best_hyperparams, best_loss, best_mse, best_r2
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Hyperparameter tuning for a PointRankingModel.')
@@ -80,4 +86,4 @@ def parse_arguments():
 
 if __name__ == '__main__':
     args = parse_arguments()
-    best_hyperparams, best_mse, best_r2 = hyperparameter_tuning(args)
+    best_hyperparams, best_loss, best_mse, best_r2 = hyperparameter_tuning(args)

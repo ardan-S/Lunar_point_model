@@ -4,10 +4,10 @@
 #PBS -N GCN-TrainPointRankingModel
 
 # Resource requirements
-#PBS -l select=1:ncpus=2:mem=128GB:ngpus=2
+#PBS -l select=1:ncpus=2:mem=128GB:ngpus=1
 
 # Time required
-#PBS -l walltime=01:00:00
+#PBS -l walltime=02:30:00
 
 # File to contain standard out and error
 #PBS -j oe
@@ -32,15 +32,15 @@ source ~/venv/IRP/bin/activate
 export CUDA_LAUNCH_BLOCKING=1
 
 # Run the Python script
-python ../src/trainGNN.py --data_path ../../data/Combined_CSVs_temp\
+python ../src/trainGNN.py --data_path ../../data/Combined_CSVs\
                 --hidden_dim 512 \
-                --num_epochs 250 \
-                --learning_rate 0.0003 \
-                --dropout_rate 0.2 \
-                --batch_size 131072 \
+                --num_epochs 300 \
+                --learning_rate 0.00001 \
+                --dropout_rate 0.4 \
+                --batch_size 65536 \
                 --k 15 \
                 --beta 0.15 \
-                --weight_decay 0.0001 \
+                --weight_decay 0.00001 \
                 --n_workers 2
    
 

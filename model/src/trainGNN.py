@@ -197,6 +197,27 @@ def train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loa
 
     if model_save_path:
         torch.save(model.state_dict(), model_save_path)
+        file_path = model_save_path.replace('.pth', '.txt')
+        content = f"""
+        Parameters of saved GCN:
+        Hidden dimension: {args.hidden_dim}
+        Epochs: {args.num_epochs}
+        Learning rate: {args.learning_rate}
+        Dropout rate: {args.dropout_rate}
+        Batch size: {args.batch_size}
+        K: {args.k}
+        Beta: {args.beta}
+        Weight decay: {args.weight_decay}
+
+        Test set:
+        Mean Squared Error (MSE): {test_mse:.4f}
+        Loss: {test_loss:.4f}
+        R-squared (R²): {test_r2:.4f}
+
+        Saved on {time.strftime('%Y-%m-%d %H:%M:%S')}
+        """
+        with open(file_path, 'w') as f:
+            f.write(content)
 
     if img_save_path:
         plot_metrics(args.num_epochs, train_losses, val_losses, test_loss, val_mses, val_r2s, test_mse, test_r2, save_path=img_save_path)
@@ -212,7 +233,7 @@ def main():
     print(f"Data loaders setup completed in {(time.time() - start_time) / 60 :.2f} mins")
     model, criterion, optimiser, scaler = setup_GCN_model(input_dim, args, device)
     print(f"Model setup completed in {(time.time() - start_time) / 60 :.2f} mins")
-    model, test_loss, test_mse, test_r2 = train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, img_save_path='../figs/training_metrics_GCN.png')
+    model, test_loss, test_mse, test_r2 = train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, img_save_path='../figs/training_metrics_GCN.png', model_save_path='../saved_models/GCN.pth')
     print(f"Training completed in {(time.time() - start_time) / 60 :.2f} mins")
     print("\nTest set:")
     print(f'Mean Squared Error (MSE): {test_mse:.4f}')

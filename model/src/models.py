@@ -72,6 +72,7 @@ class FCNN(nn.Module):
 
         x = self.self_attention(x.unsqueeze(1))
         x = self.output(x.squeeze(1))
+        x = torch.sigmoid(x) * 7    # Scale the output to the range [0, 7]
         return x
 
 
@@ -104,5 +105,8 @@ class GCN(nn.Module):
 
         x = F.relu(self.bn4(self.conv4(x, edge_index)))
 
+        x = self.attention(x.unsqueeze(0), x.unsqueeze(0), x.unsqueeze(0))[0]
+
         x = self.output(x)
-        return x
+        x = torch.sigmoid(x)*7  # Scale the output to the range [0, 7]
+        return x    
