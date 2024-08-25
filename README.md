@@ -95,7 +95,7 @@ These were then trained, tuned and saved to produce the final model which could 
 
 ### Prerequisites
 - **Git**: Ensure you have Git installed on your machine.
-- **Python**: Install Python 3.8+
+- **Python**: Python 3.11.5 reccomended, Python 3.8 minimum
 - **Conda** (optional but recommended): If using `environment.yml`, having Anaconda or Miniconda installed is recommended.
 
 ### Clone the Repository
