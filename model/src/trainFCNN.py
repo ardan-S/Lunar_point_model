@@ -8,7 +8,7 @@ from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 from models import FCNN
-from utils import load_data, create_FCNN_loader, stratified_split_data, plot_metrics, change_grid_resolution
+from utils import load_data, create_FCNN_loader, stratified_split_data, plot_metrics, balanced_sample
 from evaluate import evaluate, validate
 
 def setup_FCNN_data(args):
@@ -17,10 +17,10 @@ def setup_FCNN_data(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     labeled_data = load_data(args.data_path)
+    # labeled_data = balanced_sample(labeled_data, 'Label', 0.01, random_state=rand_state)
     original_size = labeled_data.shape[0]
     print(f"Size of original dataset: {original_size}")
 
-    # labeled_data = labeled_data[labeled_data["Latitude"] < 0]   # Only train on southern hemisphere and really close to the pole
     sss = StratifiedShuffleSplit(n_splits=1, test_size=0.01, random_state=rand_state)
     _, test_index = next(sss.split(labeled_data, labeled_data["Label"]))
     labeled_data = labeled_data.iloc[test_index]

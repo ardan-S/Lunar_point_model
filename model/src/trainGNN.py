@@ -11,7 +11,7 @@ import argparse
 import numpy as np
 
 from models import GCN
-from utils import load_data, create_GCN_loader, stratified_split_data, plot_metrics, change_grid_resolution
+from utils import load_data, create_GCN_loader, stratified_split_data, plot_metrics, balanced_sample
 from evaluate import evaluate, validate
 
 
@@ -92,9 +92,9 @@ def setup_GCN_data(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     labeled_data = load_data(args.data_path)
+    # labeled_data = balanced_sample(labeled_data, 'Label', 0.0025, random_state=rand_state)
 
-    labeled_data = labeled_data[labeled_data["Latitude"] < 0]   # Only train on southern hemisphere and really close to the pole
-    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.005, random_state=rand_state)
+    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.0025, random_state=rand_state)
     _, test_index = next(sss.split(labeled_data, labeled_data["Label"]))
     labeled_data = labeled_data.iloc[test_index]
     print(f"Size of selected dataset: {labeled_data.shape[0]}")
@@ -233,7 +233,7 @@ def main():
     print(f"Data loaders setup completed in {(time.time() - start_time) / 60 :.2f} mins")
     model, criterion, optimiser, scaler = setup_GCN_model(input_dim, args, device)
     print(f"Model setup completed in {(time.time() - start_time) / 60 :.2f} mins")
-    model, test_loss, test_mse, test_r2 = train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, img_save_path='../figs/training_metrics_GCN.png', model_save_path='../saved_models/GCN.pth')
+    model, test_loss, test_mse, test_r2 = train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, img_save_path='../figs/training_metrics_GCN.png')
     print(f"Training completed in {(time.time() - start_time) / 60 :.2f} mins")
     print("\nTest set:")
     print(f'Mean Squared Error (MSE): {test_mse:.4f}')
