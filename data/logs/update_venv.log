@@ -1,0 +1,24 @@
+No updates needed for virtual environment
+Packages: ipython
+jupyter
+numpy
+scipy
+matplotlib
+jupyter-book
+pandas
+pybryt
+pytest
+glymur
+
+dask
+dask[distributed]
+dask[dataframe]
+aiohttp
+asyncio
+scikit-learn
+torch
+memory_profiler
+
+cudf
+cupy
+cuml

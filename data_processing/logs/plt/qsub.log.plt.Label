@@ -1,0 +1,15 @@
+['combined_330-360.csv', 'combined_300-330.csv', 'combined_090-120.csv', 'combined_060-090.csv', 'Combined_data.png', 'combined_270-300.csv', 'combined_180-210.csv', 'combined_240-270.csv', 'combined_150-180.csv', 'combined_030-060.csv', 'combined_210-240.csv', 'combined_120-150.csv', 'combined_000-030.csv']
+Dataframe read in and converted to Dask
+Preparing data for plotting...
+Plotting 86321088 data points...
+Plot saved to ../data/Combined_CSVs/Combined_data.png
+Completed on Tue 20 Aug 19:34:00 BST 2024
+
+====================================
+CPU Time used: 00:46:17
+CPU Percent: 98%
+Memory usage: 76783264kb
+Approx Power usage: 0.009200000000000002
+Walltime usage: 00:47:03
+
+====================================

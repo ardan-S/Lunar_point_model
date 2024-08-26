@@ -1,0 +1,13 @@
+Dataframe read in and converted to Dask
+Preparing data for plotting...
+Plotting 26171186 data points...
+Plot saved to ../data/Diviner-temp/Diviner_temp.png
+
+====================================
+CPU Time used: 00:12:17
+CPU Percent: 85%
+Memory usage: 43385452kb
+Approx Power usage: 0.0024000000000000002
+Walltime usage: 00:13:45
+
+====================================

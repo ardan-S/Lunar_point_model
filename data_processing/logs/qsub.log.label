@@ -1,0 +1,1609 @@
+Labelling data with 128 workers
+Finished reading data from 4 directories after 3.80 mins
+Combining data for lon_range 0 after 3.85 mins
+Combining data for lon_range 1 after 3.87 mins
+Combining data for lon_range 2 after 3.88 mins
+Combining data for lon_range 3 after 3.90 mins
+Combining data for lon_range 4 after 3.92 mins
+Combining data for lon_range 5 after 3.94 mins
+Combining data for lon_range 6 after 3.97 mins
+Combining data for lon_range 7 after 3.99 mins
+Combining data for lon_range 8 after 4.01 mins
+Combining data for lon_range 9 after 4.03 mins
+Combining data for lon_range 10 after 4.05 mins
+Labeling data for lon_range 0 after 4.05 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Diviner labelled after 4.07 mins
+LOLA threshold: 0.38219159767808897
+Diviner labelled after 4.07 mins
+LOLA threshold: 0.3453702521767688
+Combining data for lon_range 11 after 4.07 mins
+Diviner labelled after 4.07 mins
+LOLA threshold: 0.3347894070051916
+Diviner labelled after 4.07 mins
+LOLA threshold: 0.35064707145257434
+Diviner labelled after 4.07 mins
+LOLA threshold: 0.3556719257623474
+Diviner labelled after 4.07 mins
+LOLA threshold: 0.4154775847376899
+Diviner labelled after 4.07 mins
+LOLA threshold: 0.36870679577959453
+Diviner labelled after 4.08 mins
+LOLA threshold: 0.34964166104417477
+Diviner labelled after 4.08 mins
+LOLA threshold: 0.3383440878836379
+Labeling data for lon_range 2 after 4.08 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Diviner labelled after 4.08 mins
+LOLA threshold: 0.32563025097388243
+Labeling data for lon_range 1 after 4.08 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Diviner labelled after 4.09 mins
+LOLA threshold: 0.37238567103518405
+Diviner labelled after 4.09 mins
+LOLA threshold: 0.3737480372216111
+Diviner labelled after 4.09 mins
+LOLA threshold: 0.35996795812503696
+Diviner labelled after 4.10 mins
+LOLA threshold: 0.3394403494660957
+Diviner labelled after 4.10 mins
+LOLA threshold: 0.3556988989943066
+Diviner labelled after 4.10 mins
+LOLA threshold: 0.3348372971017888
+Diviner labelled after 4.10 mins
+LOLA threshold: 0.35187743577310976
+Diviner labelled after 4.10 mins
+Diviner labelled after 4.10 mins
+LOLA threshold: 0.3425766398211859
+LOLA threshold: 0.4168258994340964
+Diviner labelled after 4.10 mins
+Diviner labelled after 4.10 mins
+LOLA threshold: 0.34657610961286117
+LOLA threshold: 0.363831874549429
+Diviner labelled after 4.10 mins
+Diviner labelled after 4.10 mins
+LOLA threshold: 0.3402296863670116
+LOLA threshold: 0.36588126755827377
+Diviner labelled after 4.10 mins
+Diviner labelled after 4.10 mins
+LOLA threshold: 0.41834486779612134
+LOLA threshold: 0.3409097443747905
+Diviner labelled after 4.11 mins
+Diviner labelled after 4.11 mins
+LOLA threshold: 0.33819264033549595
+LOLA threshold: 0.35108928203437106
+Diviner labelled after 4.11 mins
+LOLA threshold: 0.34623472623618623
+Diviner labelled after 4.11 mins
+LOLA threshold: 0.3416802772911942
+Diviner labelled after 4.11 mins
+LOLA threshold: 0.3400191650659132
+Labeling data for lon_range 4 after 4.13 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Labeling data for lon_range 3 after 4.13 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Diviner labelled after 4.14 mins
+LOLA threshold: 0.37151258489971434
+Diviner labelled after 4.15 mins
+LOLA threshold: 0.3664352320432218
+Diviner labelled after 4.15 mins
+LOLA threshold: 0.36833448894223464
+Diviner labelled after 4.15 mins
+LOLA threshold: 0.34798785834591417
+Diviner labelled after 4.15 mins
+LOLA threshold: 0.37525262161800604
+Diviner labelled after 4.15 mins
+LOLA threshold: 0.3892303187965198
+Diviner labelled after 4.16 mins
+LOLA threshold: 0.38417123315884044
+Diviner labelled after 4.16 mins
+LOLA threshold: 0.33880999608123286
+Diviner labelled after 4.16 mins
+LOLA threshold: 0.39129254927751606
+Diviner labelled after 4.16 mins
+LOLA threshold: 0.32080337412205495
+Diviner labelled after 4.16 mins
+LOLA threshold: 0.3522683911820532
+Diviner labelled after 4.16 mins
+LOLA threshold: 0.3203697270836407
+Diviner labelled after 4.16 mins
+LOLA threshold: 0.3497657128259323
+Diviner labelled after 4.16 mins
+LOLA threshold: 0.3171889862728809
+Diviner labelled after 4.17 mins
+LOLA threshold: 0.352268486248768
+Labeling data for lon_range 5 after 4.17 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Diviner labelled after 4.17 mins
+LOLA threshold: 0.4009072313919071
+Diviner labelled after 4.17 mins
+LOLA threshold: 0.33733228626536876
+Diviner labelled after 4.17 mins
+LOLA threshold: 0.3369206030353123
+Diviner labelled after 4.18 mins
+LOLA threshold: 0.3333675093688816
+Diviner labelled after 4.18 mins
+LOLA threshold: 0.3001777205916137
+Diviner labelled after 4.19 mins
+LOLA threshold: 0.3690314598022474
+Diviner labelled after 4.19 mins
+LOLA threshold: 0.34324034466365394
+Diviner labelled after 4.19 mins
+LOLA threshold: 0.3683074166989366
+Diviner labelled after 4.20 mins
+LOLA threshold: 0.3607873412116888
+Diviner labelled after 4.20 mins
+LOLA threshold: 0.3846207257418937
+Labeling data for lon_range 6 after 4.20 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Diviner labelled after 4.21 mins
+Diviner labelled after 4.21 mins
+LOLA threshold: 0.34246336381748876
+LOLA threshold: 0.3899683099672038
+Diviner labelled after 4.22 mins
+LOLA threshold: 0.34743388705428174
+Diviner labelled after 4.22 mins
+LOLA threshold: 0.33201035454584626
+Diviner labelled after 4.23 mins
+LOLA threshold: 0.3368010912591257
+Diviner labelled after 4.24 mins
+LOLA threshold: 0.3468307359511089
+Diviner labelled after 4.24 mins
+LOLA threshold: 0.34226700127133963
+Diviner labelled after 4.25 mins
+Labeling data for lon_range 7 after 4.25 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+LOLA threshold: 0.3240352657924556
+Diviner labelled after 4.26 mins
+LOLA threshold: 0.33635966019067154
+Diviner labelled after 4.26 mins
+LOLA threshold: 0.36025703533655906
+Diviner labelled after 4.26 mins
+LOLA threshold: 0.3863971807146088
+Diviner labelled after 4.27 mins
+LOLA threshold: 0.35130736488599124
+Diviner labelled after 4.27 mins
+LOLA threshold: 0.33611982477239905
+Diviner labelled after 4.28 mins
+LOLA threshold: 0.35167788258877863
+Diviner labelled after 4.28 mins
+Diviner labelled after 4.28 mins
+LOLA threshold: 0.3602776177613416
+LOLA threshold: 0.3551079266840429
+Diviner labelled after 4.29 mins
+LOLA threshold: 0.3347523664829653
+Diviner labelled after 4.29 mins
+LOLA threshold: 0.3585890852871097
+Diviner labelled after 4.29 mins
+LOLA threshold: 0.37633350953178063
+Diviner labelled after 4.30 mins
+LOLA threshold: 0.3548088095390855
+Diviner labelled after 4.30 mins
+Diviner labelled after 4.30 mins
+LOLA threshold: 0.38541298993678563
+LOLA threshold: 0.34649578774880324
+Diviner labelled after 4.30 mins
+LOLA threshold: 0.3377962817706705
+Diviner labelled after 4.31 mins
+LOLA threshold: 0.35146305246519394
+Diviner labelled after 4.32 mins
+LOLA threshold: 0.37163485836950333
+Labeling data for lon_range 9 after 4.45 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Labeling data for lon_range 10 after 4.45 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Labeling data for lon_range 8 after 4.48 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Diviner labelled after 4.50 mins
+LOLA threshold: 0.35433593866577234
+Diviner labelled after 4.50 mins
+LOLA threshold: 0.3546035041785097
+Diviner labelled after 4.50 mins
+LOLA threshold: 0.3605320281594819
+Diviner labelled after 4.51 mins
+LOLA threshold: 0.3496065621317715
+Diviner labelled after 4.51 mins
+Diviner labelled after 4.51 mins
+LOLA threshold: 0.3785484430011725
+LOLA threshold: 0.35448288075644746
+Diviner labelled after 4.52 mins
+LOLA threshold: 0.36419059162220635
+Diviner labelled after 4.52 mins
+LOLA threshold: 0.35023258644827027
+Diviner labelled after 4.53 mins
+LOLA threshold: 0.3757780092034438
+Diviner labelled after 4.53 mins
+LOLA threshold: 0.3446878544651173
+Diviner labelled after 4.53 mins
+LOLA threshold: 0.3607069677596554
+Diviner labelled after 4.53 mins
+Diviner labelled after 4.53 mins
+Diviner labelled after 4.53 mins
+LOLA threshold: 0.3439724317560652
+LOLA threshold: 0.36384525646183485
+LOLA threshold: 0.36059041620794324
+Diviner labelled after 4.54 mins
+LOLA threshold: 0.3509083390129996
+Diviner labelled after 4.54 mins
+LOLA threshold: 0.3875313924010819
+Diviner labelled after 4.54 mins
+LOLA threshold: 0.362165380708836
+Diviner labelled after 4.54 mins
+LOLA threshold: 0.38955655062055095
+Diviner labelled after 4.55 mins
+Diviner labelled after 4.55 mins
+Diviner labelled after 4.55 mins
+LOLA threshold: 0.398196186074157
+LOLA threshold: 0.3620195014168148
+LOLA threshold: 0.35869559096105214
+Diviner labelled after 4.55 mins
+LOLA threshold: 0.38162537215859077
+Diviner labelled after 4.55 mins
+Diviner labelled after 4.55 mins
+LOLA threshold: 0.34879112011162766
+LOLA threshold: 0.35492785479590416
+Diviner labelled after 4.56 mins
+Diviner labelled after 4.56 mins
+LOLA threshold: 0.36376241846126767
+LOLA threshold: 0.36769778346434806
+Diviner labelled after 4.56 mins
+LOLA threshold: 0.36777909124910646
+Diviner labelled after 4.56 mins
+LOLA threshold: 0.36948328689383314
+Diviner labelled after 4.57 mins
+LOLA threshold: 0.368077629244902
+Diviner labelled after 4.57 mins
+LOLA threshold: 0.36206352080033466
+Labeling data for lon_range 11 after 4.59 mins
+/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:57: FutureWarning: 'DataFrame.swapaxes' is deprecated and will be removed in a future version. Please use 'DataFrame.transpose' instead.
+  return bound(*args, **kwds)
+Diviner labelled after 4.66 mins
+LOLA threshold: 0.383088900865885
+Diviner labelled after 4.66 mins
+LOLA threshold: 0.35451223733068415
+Diviner labelled after 4.67 mins
+LOLA threshold: 0.3594343030057157
+Diviner labelled after 4.67 mins
+LOLA threshold: 0.35771438640165204
+Diviner labelled after 4.68 mins
+LOLA threshold: 0.3541747170846007
+Diviner labelled after 4.68 mins
+LOLA threshold: 0.41709526868621055
+Diviner labelled after 4.69 mins
+LOLA threshold: 0.3727734135250622
+Diviner labelled after 4.69 mins
+LOLA threshold: 0.3709371967059219
+Diviner labelled after 4.69 mins
+LOLA threshold: 0.35736667607831735
+Diviner labelled after 4.70 mins
+LOLA threshold: 0.335649138119522
+Number of features for LOLA above threshold: 109 out of 45449 points above threshold
+LOLA labelled after 39.37 mins
+M3 threshold: 0.31270572175043443
+Number of features for M3 above threshold: 13356 out of 37893 points above threshold
+M3 labelled after 127.43 mins
+MiniRF threshold: 0.7660224774321766
+MiniRF labelled after 127.43 mins
+Number of features for LOLA above threshold: 101 out of 44038 points above threshold
+LOLA labelled after 35.00 mins
+M3 threshold: 0.44502547221252564
+Number of features for M3 above threshold: 9761 out of 66043 points above threshold
+M3 labelled after 133.20 mins
+MiniRF threshold: 0.8281761433316737
+MiniRF labelled after 133.20 mins
+Number of features for LOLA above threshold: 112 out of 34733 points above threshold
+LOLA labelled after 32.68 mins
+M3 threshold: 0.820426005173005
+Number of features for M3 above threshold: 3553 out of 73670 points above threshold
+M3 labelled after 134.56 mins
+MiniRF threshold: 0.9024087731082882
+MiniRF labelled after 134.57 mins
+Number of features for LOLA above threshold: 190 out of 43247 points above threshold
+LOLA labelled after 35.52 mins
+M3 threshold: 0.4371944484867597
+Number of features for M3 above threshold: 18425 out of 38835 points above threshold
+M3 labelled after 135.58 mins
+MiniRF threshold: 0.9498229965897966
+MiniRF labelled after 135.58 mins
+Number of features for LOLA above threshold: 82 out of 52088 points above threshold
+LOLA labelled after 40.83 mins
+M3 threshold: 0.6961894153010255
+Number of features for M3 above threshold: 8701 out of 72829 points above threshold
+M3 labelled after 144.84 mins
+MiniRF threshold: 0.7617437235280142
+MiniRF labelled after 144.84 mins
+Number of features for LOLA above threshold: 166 out of 43392 points above threshold
+LOLA labelled after 35.71 mins
+M3 threshold: 0.7378775885364441
+Number of features for M3 above threshold: 7304 out of 74514 points above threshold
+M3 labelled after 148.85 mins
+MiniRF threshold: 0.793004575535629
+MiniRF labelled after 148.85 mins
+Number of features for LOLA above threshold: 23 out of 93785 points above threshold
+LOLA labelled after 82.15 mins
+M3 threshold: 0.24087533434497121
+Number of features for M3 above threshold: 14385 out of 29220 points above threshold
+M3 labelled after 155.34 mins
+MiniRF threshold: 0.8361828104650859
+MiniRF labelled after 155.34 mins
+Number of features for LOLA above threshold: 185 out of 32337 points above threshold
+LOLA labelled after 38.29 mins
+M3 threshold: 0.6721471527967667
+Number of features for M3 above threshold: 9883 out of 72230 points above threshold
+M3 labelled after 181.27 mins
+MiniRF threshold: 0.8867294459361805
+MiniRF labelled after 181.27 mins
+Number of features for LOLA above threshold: 123 out of 51043 points above threshold
+LOLA labelled after 48.10 mins
+M3 threshold: 0.650743497031508
+Number of features for M3 above threshold: 12826 out of 69092 points above threshold
+M3 labelled after 171.82 mins
+MiniRF threshold: 0.917192845082956
+MiniRF labelled after 171.82 mins
+Number of features for LOLA above threshold: 171 out of 49599 points above threshold
+LOLA labelled after 44.77 mins
+M3 threshold: 0.7835900415436861
+Number of features for M3 above threshold: 5459 out of 76842 points above threshold
+M3 labelled after 168.75 mins
+MiniRF threshold: 0.9780663530197721
+MiniRF labelled after 168.75 mins
+Total label counts
+Label
+0    8805826
+2    3900984
+1     896927
+3     436236
+4     322852
+5      20541
+6       3295
+7        187
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    10772467
+2     3614381
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13831749
+2      540730
+1       14369
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12772169
+2      837965
+1      776714
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13741288
+1      645560
+Name: count, dtype: int64
+Number of features for LOLA above threshold: 45 out of 12106 points above threshold
+LOLA labelled after 17.13 mins
+M3 threshold: 0.5025027609060225
+Number of features for M3 above threshold: 13428 out of 57520 points above threshold
+M3 labelled after 130.63 mins
+MiniRF threshold: 0.9377358878269224
+MiniRF labelled after 130.63 mins
+Number of features for LOLA above threshold: 100 out of 31328 points above threshold
+LOLA labelled after 30.82 mins
+M3 threshold: 0.7522904543271969
+Number of features for M3 above threshold: 12240 out of 59932 points above threshold
+M3 labelled after 148.62 mins
+MiniRF threshold: 0.8395976296532557
+MiniRF labelled after 148.62 mins
+Number of features for LOLA above threshold: 99 out of 27372 points above threshold
+LOLA labelled after 25.71 mins
+M3 threshold: 0.47479854357799306
+Number of features for M3 above threshold: 20729 out of 42842 points above threshold
+M3 labelled after 142.90 mins
+MiniRF threshold: 0.8498712092717734
+MiniRF labelled after 142.91 mins
+Number of features for LOLA above threshold: 227 out of 43435 points above threshold
+LOLA labelled after 37.35 mins
+M3 threshold: 0.7874404556719469
+Number of features for M3 above threshold: 11847 out of 54926 points above threshold
+M3 labelled after 144.70 mins
+MiniRF threshold: 0.8808697051877511
+MiniRF labelled after 144.70 mins
+Number of features for LOLA above threshold: 190 out of 50499 points above threshold
+LOLA labelled after 51.10 mins
+M3 threshold: 0.5111794887757151
+Number of features for M3 above threshold: 15659 out of 56861 points above threshold
+M3 labelled after 167.08 mins
+MiniRF threshold: 0.9250115925783556
+MiniRF labelled after 167.08 mins
+Number of features for LOLA above threshold: 61 out of 44924 points above threshold
+LOLA labelled after 36.43 mins
+M3 threshold: 0.5682194912245071
+Number of features for M3 above threshold: 16580 out of 61180 points above threshold
+M3 labelled after 167.85 mins
+MiniRF threshold: 0.980307974957749
+MiniRF labelled after 167.85 mins
+Number of features for LOLA above threshold: 106 out of 40112 points above threshold
+LOLA labelled after 32.89 mins
+M3 threshold: 0.632699216105364
+Number of features for M3 above threshold: 17693 out of 57323 points above threshold
+M3 labelled after 151.95 mins
+MiniRF threshold: 1.0472699499381615
+MiniRF labelled after 151.95 mins
+Number of features for LOLA above threshold: 99 out of 39578 points above threshold
+LOLA labelled after 39.68 mins
+M3 threshold: 0.6264365043741966
+Number of features for M3 above threshold: 14520 out of 61956 points above threshold
+M3 labelled after 183.38 mins
+MiniRF threshold: 0.9737340280644163
+MiniRF labelled after 183.38 mins
+Number of features for LOLA above threshold: 92 out of 31422 points above threshold
+LOLA labelled after 30.40 mins
+M3 threshold: 0.6352776494073443
+Number of features for M3 above threshold: 15170 out of 64598 points above threshold
+M3 labelled after 179.99 mins
+MiniRF threshold: 0.8248580765845572
+MiniRF labelled after 179.99 mins
+Number of features for LOLA above threshold: 220 out of 46396 points above threshold
+LOLA labelled after 41.67 mins
+M3 threshold: 0.7336416075477
+Number of features for M3 above threshold: 13040 out of 60773 points above threshold
+M3 labelled after 167.23 mins
+MiniRF threshold: 1.0484513542969711
+MiniRF labelled after 167.23 mins
+Total label counts
+Label
+0    8677342
+2    3707741
+1    1160277
+3     512367
+4     290237
+5      28755
+6       9763
+7        366
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    10715137
+2     3671711
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13963908
+2      408586
+1       14354
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12509191
+1     1120741
+2      756916
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13717646
+1      669202
+Name: count, dtype: int64
+Saved combined_000-030.csv to ../data/Combined_CSVs after 184.33 mins
+
+Saved combined_240-270.csv to ../data/Combined_CSVs after 187.44 mins
+
+Number of features for LOLA above threshold: 195 out of 37976 points above threshold
+LOLA labelled after 34.94 mins
+M3 threshold: 0.8553946297074086
+Number of features for M3 above threshold: 3440 out of 57747 points above threshold
+M3 labelled after 113.91 mins
+MiniRF threshold: 0.8675648405051133
+MiniRF labelled after 113.91 mins
+Number of features for LOLA above threshold: 60 out of 9854 points above threshold
+LOLA labelled after 13.51 mins
+M3 threshold: 0.34606876761303057
+Number of features for M3 above threshold: 11342 out of 49449 points above threshold
+M3 labelled after 114.48 mins
+MiniRF threshold: 0.8624929606814118
+MiniRF labelled after 114.48 mins
+Number of features for LOLA above threshold: 158 out of 34208 points above threshold
+LOLA labelled after 28.94 mins
+M3 threshold: 0.696931290935241
+Number of features for M3 above threshold: 3289 out of 87477 points above threshold
+M3 labelled after 119.52 mins
+MiniRF threshold: 0.7830632717092536
+MiniRF labelled after 119.52 mins
+Number of features for LOLA above threshold: 168 out of 42559 points above threshold
+LOLA labelled after 43.46 mins
+M3 threshold: 0.6345324580230753
+Number of features for M3 above threshold: 4347 out of 89761 points above threshold
+M3 labelled after 153.79 mins
+MiniRF threshold: 0.7448284891105285
+MiniRF labelled after 153.79 mins
+Number of features for LOLA above threshold: 145 out of 41839 points above threshold
+LOLA labelled after 38.19 mins
+M3 threshold: 0.5800656161931145
+Number of features for M3 above threshold: 3990 out of 96731 points above threshold
+M3 labelled after 140.14 mins
+MiniRF threshold: 0.701102945480603
+MiniRF labelled after 140.14 mins
+Number of features for LOLA above threshold: 141 out of 40015 points above threshold
+LOLA labelled after 40.61 mins
+M3 threshold: 0.5339870662613466
+Number of features for M3 above threshold: 18764 out of 61635 points above threshold
+M3 labelled after 164.30 mins
+MiniRF threshold: 0.8660643071001566
+MiniRF labelled after 164.30 mins
+Number of features for LOLA above threshold: 173 out of 21182 points above threshold
+LOLA labelled after 26.03 mins
+M3 threshold: 0.5816447919631759
+Number of features for M3 above threshold: 18933 out of 55891 points above threshold
+M3 labelled after 174.82 mins
+MiniRF threshold: 0.9275000747557497
+MiniRF labelled after 174.82 mins
+Number of features for LOLA above threshold: 93 out of 68089 points above threshold
+LOLA labelled after 57.24 mins
+M3 threshold: 0.4608883931765029
+Number of features for M3 above threshold: 19992 out of 49438 points above threshold
+M3 labelled after 169.32 mins
+MiniRF threshold: 0.9921652734829016
+MiniRF labelled after 169.32 mins
+Number of features for LOLA above threshold: 112 out of 28349 points above threshold
+LOLA labelled after 33.28 mins
+M3 threshold: 0.5087866847167699
+Number of features for M3 above threshold: 18801 out of 60828 points above threshold
+M3 labelled after 190.07 mins
+MiniRF threshold: 0.8621231153824465
+MiniRF labelled after 190.07 mins
+Number of features for LOLA above threshold: 119 out of 55426 points above threshold
+LOLA labelled after 49.76 mins
+M3 threshold: 0.6031076796430133
+Number of features for M3 above threshold: 16871 out of 57016 points above threshold
+M3 labelled after 183.86 mins
+MiniRF threshold: 0.9703304044691708
+MiniRF labelled after 183.86 mins
+Total label counts
+Label
+0    8616021
+2    3987247
+1    1018068
+3     475467
+4     266038
+5      19389
+6       4292
+7        326
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    10564902
+2     3821946
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13945443
+2      425840
+1       15565
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12707020
+1      919258
+2      760570
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13730289
+1      656559
+Name: count, dtype: int64
+Saved combined_120-150.csv to ../data/Combined_CSVs after 192.71 mins
+
+Number of features for LOLA above threshold: 52 out of 46522 points above threshold
+LOLA labelled after 27.67 mins
+M3 threshold: 0.4941449426917543
+Number of features for M3 above threshold: 10904 out of 70178 points above threshold
+M3 labelled after 111.06 mins
+MiniRF threshold: 0.8467113150483584
+MiniRF labelled after 111.06 mins
+Number of features for LOLA above threshold: 113 out of 45466 points above threshold
+LOLA labelled after 40.04 mins
+M3 threshold: 0.8358370246789307
+Number of features for M3 above threshold: 3625 out of 63630 points above threshold
+M3 labelled after 117.72 mins
+MiniRF threshold: 0.8927683974970774
+MiniRF labelled after 117.72 mins
+Number of features for LOLA above threshold: 65 out of 20750 points above threshold
+LOLA labelled after 19.88 mins
+M3 threshold: 0.4998931708963834
+Number of features for M3 above threshold: 13927 out of 65174 points above threshold
+M3 labelled after 132.81 mins
+MiniRF threshold: 0.8851249111241668
+MiniRF labelled after 132.81 mins
+Number of features for LOLA above threshold: 67 out of 22997 points above threshold
+LOLA labelled after 32.31 mins
+M3 threshold: 0.40591142738904695
+Number of features for M3 above threshold: 13189 out of 49305 points above threshold
+M3 labelled after 172.95 mins
+MiniRF threshold: 0.6956158557868508
+MiniRF labelled after 172.95 mins
+Number of features for LOLA above threshold: 75 out of 63848 points above threshold
+LOLA labelled after 48.74 mins
+M3 threshold: 0.5568563119189365
+Number of features for M3 above threshold: 10246 out of 74550 points above threshold
+M3 labelled after 180.72 mins
+MiniRF threshold: 0.8719816354432175
+MiniRF labelled after 180.72 mins
+Number of features for LOLA above threshold: 96 out of 40548 points above threshold
+LOLA labelled after 64.00 mins
+M3 threshold: 0.7954791508030722
+Number of features for M3 above threshold: 4084 out of 54381 points above threshold
+M3 labelled after 197.02 mins
+MiniRF threshold: 0.8906817490644359
+MiniRF labelled after 197.02 mins
+Number of features for LOLA above threshold: 156 out of 38633 points above threshold
+LOLA labelled after 48.57 mins
+M3 threshold: 0.5432578840283131
+Number of features for M3 above threshold: 7599 out of 81699 points above threshold
+M3 labelled after 184.92 mins
+MiniRF threshold: 0.7801507231522304
+MiniRF labelled after 184.92 mins
+Number of features for LOLA above threshold: 52 out of 52222 points above threshold
+LOLA labelled after 89.60 mins
+M3 threshold: 0.6158913497018523
+Number of features for M3 above threshold: 5074 out of 84157 points above threshold
+M3 labelled after 205.05 mins
+MiniRF threshold: 0.9624582578638528
+MiniRF labelled after 205.05 mins
+Number of features for LOLA above threshold: 61 out of 48925 points above threshold
+LOLA labelled after 31.64 mins
+M3 threshold: 0.5717287632799954
+Number of features for M3 above threshold: 12962 out of 70469 points above threshold
+M3 labelled after 133.68 mins
+MiniRF threshold: 0.8277807833639884
+MiniRF labelled after 133.68 mins
+Number of features for LOLA above threshold: 155 out of 38194 points above threshold
+LOLA labelled after 30.79 mins
+M3 threshold: 0.5733522927504693
+Number of features for M3 above threshold: 12063 out of 70430 points above threshold
+M3 labelled after 142.26 mins
+MiniRF threshold: 0.7956858137549826
+MiniRF labelled after 142.26 mins
+Total label counts
+Label
+0    8963483
+2    3837624
+1     916100
+3     366971
+4     276572
+5      21258
+6       4624
+7        216
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    10922166
+2     3464682
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13921609
+2      455562
+1        9677
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12786088
+2      858163
+1      742597
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13761841
+1      625007
+Name: count, dtype: int64
+Saved combined_150-180.csv to ../data/Combined_CSVs after 206.85 mins
+
+Number of features for LOLA above threshold: 17 out of 29065 points above threshold
+LOLA labelled after 35.60 mins
+M3 threshold: 0.3136517268830671
+Number of features for M3 above threshold: 10303 out of 48471 points above threshold
+M3 labelled after 151.50 mins
+MiniRF threshold: 0.7929150262425837
+MiniRF labelled after 151.50 mins
+Number of features for LOLA above threshold: 54 out of 50174 points above threshold
+LOLA labelled after 57.29 mins
+M3 threshold: 0.8716194152987037
+Number of features for M3 above threshold: 4386 out of 52249 points above threshold
+M3 labelled after 153.07 mins
+MiniRF threshold: 0.8985442622507791
+MiniRF labelled after 153.07 mins
+Number of features for LOLA above threshold: 84 out of 46954 points above threshold
+LOLA labelled after 50.94 mins
+M3 threshold: 0.7544130688312781
+Number of features for M3 above threshold: 3502 out of 78038 points above threshold
+M3 labelled after 157.23 mins
+MiniRF threshold: 0.8345973554393942
+MiniRF labelled after 157.23 mins
+Number of features for LOLA above threshold: 49 out of 28709 points above threshold
+LOLA labelled after 36.16 mins
+M3 threshold: 0.5470077808365313
+Number of features for M3 above threshold: 2619 out of 98280 points above threshold
+M3 labelled after 160.83 mins
+MiniRF threshold: 0.7745776257356629
+MiniRF labelled after 160.83 mins
+Number of features for LOLA above threshold: 118 out of 46431 points above threshold
+LOLA labelled after 52.02 mins
+M3 threshold: 0.56342821128713
+Number of features for M3 above threshold: 7006 out of 85680 points above threshold
+M3 labelled after 172.59 mins
+MiniRF threshold: 0.8629364393666161
+MiniRF labelled after 172.59 mins
+Number of features for LOLA above threshold: 92 out of 49965 points above threshold
+LOLA labelled after 64.24 mins
+M3 threshold: 0.6489228279562814
+Number of features for M3 above threshold: 3494 out of 91269 points above threshold
+M3 labelled after 189.05 mins
+MiniRF threshold: 0.809857366201266
+MiniRF labelled after 189.05 mins
+Number of features for LOLA above threshold: 150 out of 60025 points above threshold
+LOLA labelled after 53.97 mins
+M3 threshold: 0.4565952754355758
+Number of features for M3 above threshold: 4073 out of 98958 points above threshold
+M3 labelled after 157.28 mins
+MiniRF threshold: 0.7667107718901167
+MiniRF labelled after 157.28 mins
+Number of features for LOLA above threshold: 148 out of 33939 points above threshold
+LOLA labelled after 46.04 mins
+M3 threshold: 0.5508337390134107
+Number of features for M3 above threshold: 19844 out of 53706 points above threshold
+M3 labelled after 194.20 mins
+MiniRF threshold: 1.0375591762873007
+MiniRF labelled after 194.20 mins
+Number of features for LOLA above threshold: 94 out of 37456 points above threshold
+LOLA labelled after 49.03 mins
+M3 threshold: 0.7161245441650856
+Number of features for M3 above threshold: 4877 out of 80445 points above threshold
+M3 labelled after 211.74 mins
+MiniRF threshold: 0.8386345171770122
+MiniRF labelled after 211.74 mins
+Number of features for LOLA above threshold: 124 out of 45589 points above threshold
+LOLA labelled after 63.06 mins
+M3 threshold: 0.8106424141483874
+Number of features for M3 above threshold: 2176 out of 59050 points above threshold
+M3 labelled after 192.12 mins
+MiniRF threshold: 0.8034406676324451
+MiniRF labelled after 192.12 mins
+Total label counts
+Label
+0    9531182
+2    3513610
+1     705725
+3     357881
+4     247051
+5      18947
+6      11672
+7        780
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    11283355
+2     3103493
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13908043
+2      467786
+1       11019
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    13050832
+2      849665
+1      486351
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13761087
+1      625761
+Name: count, dtype: int64
+Saved combined_090-120.csv to ../data/Combined_CSVs after 213.55 mins
+
+Number of features for LOLA above threshold: 81 out of 34403 points above threshold
+LOLA labelled after 34.13 mins
+M3 threshold: 0.46494997082318396
+Number of features for M3 above threshold: 21265 out of 42262 points above threshold
+M3 labelled after 150.40 mins
+MiniRF threshold: 0.8603449773311562
+MiniRF labelled after 150.40 mins
+Number of features for LOLA above threshold: 37 out of 56642 points above threshold
+LOLA labelled after 42.74 mins
+M3 threshold: 0.5473428783933146
+Number of features for M3 above threshold: 17748 out of 57270 points above threshold
+M3 labelled after 172.10 mins
+MiniRF threshold: 0.8778932984930069
+MiniRF labelled after 172.10 mins
+Number of features for LOLA above threshold: 191 out of 40844 points above threshold
+LOLA labelled after 40.65 mins
+M3 threshold: 0.6462342777382495
+Number of features for M3 above threshold: 11301 out of 74538 points above threshold
+M3 labelled after 179.40 mins
+MiniRF threshold: 0.9987795758963547
+MiniRF labelled after 179.40 mins
+Number of features for LOLA above threshold: 129 out of 46280 points above threshold
+LOLA labelled after 57.86 mins
+M3 threshold: 0.6744780942290741
+Number of features for M3 above threshold: 13243 out of 62730 points above threshold
+M3 labelled after 198.50 mins
+MiniRF threshold: 0.9291030651581886
+MiniRF labelled after 198.50 mins
+Number of features for LOLA above threshold: 130 out of 53670 points above threshold
+LOLA labelled after 65.37 mins
+M3 threshold: 0.4605020367974957
+Number of features for M3 above threshold: 16032 out of 56938 points above threshold
+M3 labelled after 196.36 mins
+MiniRF threshold: 0.8384777008071852
+MiniRF labelled after 196.36 mins
+Number of features for LOLA above threshold: 115 out of 34810 points above threshold
+LOLA labelled after 44.58 mins
+M3 threshold: 0.5489553821663633
+Number of features for M3 above threshold: 12273 out of 77336 points above threshold
+M3 labelled after 207.35 mins
+MiniRF threshold: 0.8951802099663475
+MiniRF labelled after 207.35 mins
+Number of features for LOLA above threshold: 131 out of 38505 points above threshold
+LOLA labelled after 50.41 mins
+M3 threshold: 0.48999350742986236
+Number of features for M3 above threshold: 17096 out of 52770 points above threshold
+M3 labelled after 216.27 mins
+MiniRF threshold: 0.9780419677399728
+MiniRF labelled after 216.27 mins
+Number of features for LOLA above threshold: 207 out of 46837 points above threshold
+LOLA labelled after 51.48 mins
+M3 threshold: 0.7780475445123056
+Number of features for M3 above threshold: 6901 out of 66965 points above threshold
+M3 labelled after 189.91 mins
+MiniRF threshold: 0.8086662133402951
+MiniRF labelled after 189.91 mins
+Number of features for LOLA above threshold: 140 out of 58992 points above threshold
+LOLA labelled after 61.84 mins
+M3 threshold: 0.7521707083697112
+Number of features for M3 above threshold: 9362 out of 68522 points above threshold
+M3 labelled after 195.97 mins
+MiniRF threshold: 1.0047232192207327
+MiniRF labelled after 195.97 mins
+Number of features for LOLA above threshold: 148 out of 40592 points above threshold
+LOLA labelled after 51.85 mins
+M3 threshold: 0.6422347736670626
+Number of features for M3 above threshold: 11901 out of 72204 points above threshold
+M3 labelled after 199.58 mins
+MiniRF threshold: 0.8979139944636125
+MiniRF labelled after 199.59 mins
+Total label counts
+Label
+0    7798762
+2    4648169
+1    1011638
+3     604014
+4     297363
+5      23355
+6       3455
+7         92
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    9878309
+2    4508539
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13871465
+2      501207
+1       14176
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12512609
+1     1025447
+2      848792
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13695928
+1      690920
+Name: count, dtype: int64
+Saved combined_270-300.csv to ../data/Combined_CSVs after 218.16 mins
+
+Number of features for LOLA above threshold: 201 out of 41308 points above threshold
+LOLA labelled after 30.40 mins
+M3 threshold: 0.7560674327206894
+Number of features for M3 above threshold: 6898 out of 68194 points above threshold
+M3 labelled after 115.81 mins
+MiniRF threshold: 0.8582930059976746
+MiniRF labelled after 115.81 mins
+Number of features for LOLA above threshold: 35 out of 37422 points above threshold
+LOLA labelled after 30.24 mins
+M3 threshold: 0.48792147600598257
+Number of features for M3 above threshold: 17130 out of 49888 points above threshold
+M3 labelled after 142.79 mins
+MiniRF threshold: 0.8195282147803843
+MiniRF labelled after 142.79 mins
+Number of features for LOLA above threshold: 166 out of 39262 points above threshold
+LOLA labelled after 42.26 mins
+M3 threshold: 0.7565423924964242
+Number of features for M3 above threshold: 6744 out of 72289 points above threshold
+M3 labelled after 171.47 mins
+MiniRF threshold: 0.9075473103925076
+MiniRF labelled after 171.47 mins
+Number of features for LOLA above threshold: 147 out of 63843 points above threshold
+LOLA labelled after 72.91 mins
+M3 threshold: 0.7561599506939506
+Number of features for M3 above threshold: 5509 out of 61111 points above threshold
+M3 labelled after 180.07 mins
+MiniRF threshold: 0.8101272634539785
+MiniRF labelled after 180.07 mins
+Number of features for LOLA above threshold: 68 out of 29819 points above threshold
+LOLA labelled after 37.82 mins
+M3 threshold: 0.581268450002433
+Number of features for M3 above threshold: 12382 out of 64334 points above threshold
+M3 labelled after 176.88 mins
+MiniRF threshold: 0.9274210851607696
+MiniRF labelled after 176.88 mins
+Number of features for LOLA above threshold: 148 out of 43027 points above threshold
+LOLA labelled after 50.65 mins
+M3 threshold: 0.6829106688291541
+Number of features for M3 above threshold: 12511 out of 72098 points above threshold
+M3 labelled after 186.35 mins
+MiniRF threshold: 0.8070925537851763
+MiniRF labelled after 186.35 mins
+Number of features for LOLA above threshold: 168 out of 55808 points above threshold
+LOLA labelled after 76.27 mins
+M3 threshold: 0.5693226018958253
+Number of features for M3 above threshold: 11157 out of 67163 points above threshold
+M3 labelled after 211.69 mins
+MiniRF threshold: 0.8916275178611187
+MiniRF labelled after 211.69 mins
+Number of features for LOLA above threshold: 126 out of 53899 points above threshold
+LOLA labelled after 61.08 mins
+M3 threshold: 0.6087458459553907
+Number of features for M3 above threshold: 11938 out of 76744 points above threshold
+M3 labelled after 222.53 mins
+MiniRF threshold: 0.8245756344985576
+MiniRF labelled after 222.53 mins
+Number of features for LOLA above threshold: 123 out of 37156 points above threshold
+LOLA labelled after 47.02 mins
+M3 threshold: 0.6834465082177063
+Number of features for M3 above threshold: 7072 out of 86959 points above threshold
+M3 labelled after 214.37 mins
+MiniRF threshold: 0.8378934654447109
+MiniRF labelled after 214.37 mins
+Number of features for LOLA above threshold: 169 out of 52208 points above threshold
+LOLA labelled after 70.87 mins
+M3 threshold: 0.7663569471357643
+Number of features for M3 above threshold: 7391 out of 72860 points above threshold
+M3 labelled after 221.37 mins
+MiniRF threshold: 0.9188846526939543
+MiniRF labelled after 221.37 mins
+Total label counts
+Label
+0    8385335
+2    4248693
+1     860813
+3     497887
+4     358225
+5      25572
+6      10016
+7        307
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    10282390
+2     4104458
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13867064
+2      504696
+1       15088
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12724054
+2      901058
+1      761736
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13709231
+1      677617
+Name: count, dtype: int64
+Saved combined_180-210.csv to ../data/Combined_CSVs after 224.33 mins
+
+Number of features for LOLA above threshold: 153 out of 29054 points above threshold
+LOLA labelled after 27.53 mins
+M3 threshold: 0.4303013185810269
+Number of features for M3 above threshold: 15725 out of 55144 points above threshold
+M3 labelled after 150.92 mins
+MiniRF threshold: 0.8337311782178891
+MiniRF labelled after 150.92 mins
+Number of features for LOLA above threshold: 14 out of 25589 points above threshold
+LOLA labelled after 24.76 mins
+M3 threshold: 0.27146696826351996
+Number of features for M3 above threshold: 17610 out of 25792 points above threshold
+M3 labelled after 104.32 mins
+MiniRF threshold: 0.7849685258181278
+MiniRF labelled after 104.32 mins
+Number of features for LOLA above threshold: 167 out of 52567 points above threshold
+LOLA labelled after 48.91 mins
+M3 threshold: 0.7968319739296209
+Number of features for M3 above threshold: 9943 out of 60322 points above threshold
+M3 labelled after 162.03 mins
+MiniRF threshold: 0.7826848104708839
+MiniRF labelled after 162.03 mins
+Number of features for LOLA above threshold: 175 out of 35090 points above threshold
+LOLA labelled after 36.10 mins
+M3 threshold: 0.6792030933636737
+Number of features for M3 above threshold: 16431 out of 60251 points above threshold
+M3 labelled after 168.02 mins
+MiniRF threshold: 0.843482076040559
+MiniRF labelled after 168.02 mins
+Number of features for LOLA above threshold: 105 out of 44445 points above threshold
+LOLA labelled after 36.24 mins
+M3 threshold: 0.4782253873646977
+Number of features for M3 above threshold: 17952 out of 61633 points above threshold
+M3 labelled after 165.16 mins
+MiniRF threshold: 0.8465033285532445
+MiniRF labelled after 165.16 mins
+Number of features for LOLA above threshold: 63 out of 48273 points above threshold
+LOLA labelled after 45.45 mins
+M3 threshold: 0.5450770729204377
+Number of features for M3 above threshold: 16621 out of 49014 points above threshold
+M3 labelled after 199.91 mins
+MiniRF threshold: 0.9534136536562156
+MiniRF labelled after 199.91 mins
+Number of features for LOLA above threshold: 106 out of 42243 points above threshold
+LOLA labelled after 42.22 mins
+M3 threshold: 0.5969391909272816
+Number of features for M3 above threshold: 14753 out of 70198 points above threshold
+M3 labelled after 194.42 mins
+MiniRF threshold: 0.8568368525577996
+MiniRF labelled after 194.42 mins
+Number of features for LOLA above threshold: 106 out of 53089 points above threshold
+LOLA labelled after 62.96 mins
+M3 threshold: 0.5756151208880032
+Number of features for M3 above threshold: 16812 out of 51639 points above threshold
+M3 labelled after 207.44 mins
+MiniRF threshold: 0.7698441489614345
+MiniRF labelled after 207.44 mins
+Number of features for LOLA above threshold: 162 out of 55403 points above threshold
+LOLA labelled after 97.68 mins
+M3 threshold: 0.6949828296253306
+Number of features for M3 above threshold: 13957 out of 60478 points above threshold
+M3 labelled after 224.49 mins
+MiniRF threshold: 0.8337972445148354
+MiniRF labelled after 224.49 mins
+Number of features for LOLA above threshold: 242 out of 38332 points above threshold
+LOLA labelled after 50.74 mins
+M3 threshold: 0.8402471142968573
+Number of features for M3 above threshold: 9311 out of 53956 points above threshold
+M3 labelled after 210.85 mins
+MiniRF threshold: 0.800694036311346
+MiniRF labelled after 210.85 mins
+Total label counts
+Label
+0    8210856
+2    4235811
+1    1083050
+3     507963
+4     317892
+5      27699
+6       3098
+7        479
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    10173436
+2     4213412
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13902768
+2      469493
+1       14587
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12593865
+1     1079697
+2      713286
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13762949
+1      623899
+Name: count, dtype: int64
+Saved combined_330-360.csv to ../data/Combined_CSVs after 226.36 mins
+
+Number of features for LOLA above threshold: 34 out of 9645 points above threshold
+LOLA labelled after 11.26 mins
+M3 threshold: 0.5213324540734898
+Number of features for M3 above threshold: 14621 out of 55838 points above threshold
+M3 labelled after 112.13 mins
+MiniRF threshold: 0.9238143316977765
+MiniRF labelled after 112.13 mins
+Number of features for LOLA above threshold: 70 out of 17984 points above threshold
+LOLA labelled after 19.72 mins
+M3 threshold: 0.44841818094044805
+Number of features for M3 above threshold: 19099 out of 41304 points above threshold
+M3 labelled after 140.66 mins
+MiniRF threshold: 0.8457854228422542
+MiniRF labelled after 140.66 mins
+Number of features for LOLA above threshold: 209 out of 50240 points above threshold
+LOLA labelled after 53.13 mins
+M3 threshold: 0.806193558034191
+Number of features for M3 above threshold: 7752 out of 64738 points above threshold
+M3 labelled after 154.86 mins
+MiniRF threshold: 1.0546925761659054
+MiniRF labelled after 154.86 mins
+Number of features for LOLA above threshold: 106 out of 39752 points above threshold
+LOLA labelled after 42.24 mins
+M3 threshold: 0.6306632344998007
+Number of features for M3 above threshold: 12076 out of 72444 points above threshold
+M3 labelled after 162.36 mins
+MiniRF threshold: 0.9632008633953395
+MiniRF labelled after 162.36 mins
+Number of features for LOLA above threshold: 161 out of 50693 points above threshold
+LOLA labelled after 49.52 mins
+M3 threshold: 0.6374383513753967
+Number of features for M3 above threshold: 17676 out of 59178 points above threshold
+M3 labelled after 192.78 mins
+MiniRF threshold: 0.7966938937005675
+MiniRF labelled after 192.78 mins
+Number of features for LOLA above threshold: 127 out of 45210 points above threshold
+LOLA labelled after 43.08 mins
+M3 threshold: 0.7028584115959258
+Number of features for M3 above threshold: 8357 out of 79030 points above threshold
+M3 labelled after 165.41 mins
+MiniRF threshold: 0.9732451037959149
+MiniRF labelled after 165.41 mins
+Number of features for LOLA above threshold: 56 out of 63761 points above threshold
+LOLA labelled after 54.94 mins
+M3 threshold: 0.6603580601728756
+Number of features for M3 above threshold: 16058 out of 63049 points above threshold
+M3 labelled after 195.57 mins
+MiniRF threshold: 0.8728395563328406
+MiniRF labelled after 195.57 mins
+Number of features for LOLA above threshold: 219 out of 42031 points above threshold
+LOLA labelled after 73.73 mins
+M3 threshold: 0.4865344260903538
+Number of features for M3 above threshold: 16982 out of 56123 points above threshold
+M3 labelled after 218.71 mins
+MiniRF threshold: 0.804717150764862
+MiniRF labelled after 218.71 mins
+Number of features for LOLA above threshold: 172 out of 36253 points above threshold
+LOLA labelled after 43.17 mins
+M3 threshold: 0.6879358986534634
+Number of features for M3 above threshold: 12903 out of 60256 points above threshold
+M3 labelled after 224.14 mins
+MiniRF threshold: 0.7724329237751666
+MiniRF labelled after 224.14 mins
+Number of features for LOLA above threshold: 145 out of 51403 points above threshold
+LOLA labelled after 80.87 mins
+M3 threshold: 0.7886775632015506
+Number of features for M3 above threshold: 7396 out of 59709 points above threshold
+M3 labelled after 226.49 mins
+MiniRF threshold: 0.8149893170443738
+MiniRF labelled after 226.49 mins
+Total label counts
+Label
+0    8535619
+2    3928061
+1    1063986
+3     503686
+4     315001
+5      27472
+6      12674
+7        349
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    10548133
+2     3838715
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13919527
+2      452542
+1       14779
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12542722
+1     1024864
+2      819262
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13740512
+1      646336
+Name: count, dtype: int64
+Saved combined_210-240.csv to ../data/Combined_CSVs after 228.29 mins
+
+Number of features for LOLA above threshold: 127 out of 16576 points above threshold
+LOLA labelled after 20.78 mins
+M3 threshold: 0.4441944074265507
+Number of features for M3 above threshold: 19869 out of 37396 points above threshold
+M3 labelled after 152.33 mins
+MiniRF threshold: 0.9521454161981644
+MiniRF labelled after 152.33 mins
+Number of features for LOLA above threshold: 146 out of 40843 points above threshold
+LOLA labelled after 41.61 mins
+M3 threshold: 0.6121797844073398
+Number of features for M3 above threshold: 8890 out of 83642 points above threshold
+M3 labelled after 173.64 mins
+MiniRF threshold: 0.7010735330037363
+MiniRF labelled after 173.64 mins
+Number of features for LOLA above threshold: 122 out of 37866 points above threshold
+LOLA labelled after 37.36 mins
+M3 threshold: 0.8198615890636238
+Number of features for M3 above threshold: 5403 out of 72098 points above threshold
+M3 labelled after 165.00 mins
+MiniRF threshold: 0.853451813598366
+MiniRF labelled after 165.01 mins
+Number of features for LOLA above threshold: 120 out of 32074 points above threshold
+LOLA labelled after 35.62 mins
+M3 threshold: 0.6507117117137937
+Number of features for M3 above threshold: 6297 out of 89624 points above threshold
+M3 labelled after 183.63 mins
+MiniRF threshold: 0.7487440633257945
+MiniRF labelled after 183.63 mins
+Number of features for LOLA above threshold: 133 out of 39989 points above threshold
+LOLA labelled after 31.92 mins
+M3 threshold: 0.67976487389858
+Number of features for M3 above threshold: 11413 out of 63074 points above threshold
+M3 labelled after 177.42 mins
+MiniRF threshold: 0.9360548761854759
+MiniRF labelled after 177.42 mins
+Number of features for LOLA above threshold: 166 out of 41382 points above threshold
+LOLA labelled after 51.03 mins
+M3 threshold: 0.7410560545967713
+Number of features for M3 above threshold: 7669 out of 70317 points above threshold
+M3 labelled after 189.61 mins
+MiniRF threshold: 0.8178731720646233
+MiniRF labelled after 189.61 mins
+Number of features for LOLA above threshold: 36 out of 108707 points above threshold
+LOLA labelled after 126.98 mins
+M3 threshold: 0.2323452012350118
+Number of features for M3 above threshold: 12492 out of 24888 points above threshold
+M3 labelled after 184.35 mins
+MiniRF threshold: 0.826603280377087
+MiniRF labelled after 184.35 mins
+Number of features for LOLA above threshold: 195 out of 42722 points above threshold
+LOLA labelled after 58.80 mins
+M3 threshold: 0.7691156976064943
+Number of features for M3 above threshold: 6827 out of 69463 points above threshold
+M3 labelled after 211.30 mins
+MiniRF threshold: 0.7763079584051705
+MiniRF labelled after 211.30 mins
+Number of features for LOLA above threshold: 144 out of 50113 points above threshold
+LOLA labelled after 66.94 mins
+M3 threshold: 0.4865353814101121
+Number of features for M3 above threshold: 13675 out of 57720 points above threshold
+M3 labelled after 228.76 mins
+MiniRF threshold: 0.823943210474775
+MiniRF labelled after 228.76 mins
+Number of features for LOLA above threshold: 79 out of 49820 points above threshold
+LOLA labelled after 55.81 mins
+M3 threshold: 0.5656887772261625
+Number of features for M3 above threshold: 15395 out of 53119 points above threshold
+M3 labelled after 219.51 mins
+MiniRF threshold: 0.8473971045927742
+MiniRF labelled after 219.51 mins
+Total label counts
+Label
+0    9371218
+2    3391995
+1     965295
+3     356784
+4     279265
+5      19582
+6       2630
+7         79
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    11448924
+2     2937924
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13866947
+2      504545
+1       15356
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12715676
+2      873277
+1      797895
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13780651
+1      606197
+Name: count, dtype: int64
+Saved combined_030-060.csv to ../data/Combined_CSVs after 230.51 mins
+
+Number of features for LOLA above threshold: 80 out of 46227 points above threshold
+LOLA labelled after 28.48 mins
+M3 threshold: 0.7774844044751713
+Number of features for M3 above threshold: 10934 out of 60124 points above threshold
+M3 labelled after 111.45 mins
+MiniRF threshold: 0.7438311078040938
+MiniRF labelled after 111.45 mins
+Number of features for LOLA above threshold: 34 out of 22891 points above threshold
+LOLA labelled after 29.86 mins
+M3 threshold: 0.3788730580281455
+Number of features for M3 above threshold: 20511 out of 35521 points above threshold
+M3 labelled after 168.94 mins
+MiniRF threshold: 0.8609710255406744
+MiniRF labelled after 168.95 mins
+Number of features for LOLA above threshold: 185 out of 37993 points above threshold
+LOLA labelled after 45.18 mins
+M3 threshold: 0.7152109919107965
+Number of features for M3 above threshold: 15082 out of 60277 points above threshold
+M3 labelled after 182.75 mins
+MiniRF threshold: 0.8310835950636817
+MiniRF labelled after 182.75 mins
+Number of features for LOLA above threshold: 70 out of 49634 points above threshold
+LOLA labelled after 40.47 mins
+M3 threshold: 0.495526500423665
+Number of features for M3 above threshold: 18125 out of 45791 points above threshold
+M3 labelled after 152.09 mins
+MiniRF threshold: 0.9113447631405727
+MiniRF labelled after 152.09 mins
+Number of features for LOLA above threshold: 116 out of 47931 points above threshold
+LOLA labelled after 56.67 mins
+M3 threshold: 0.5734925937047249
+Number of features for M3 above threshold: 13133 out of 71306 points above threshold
+M3 labelled after 196.26 mins
+MiniRF threshold: 0.889259492381073
+MiniRF labelled after 196.26 mins
+Number of features for LOLA above threshold: 150 out of 52202 points above threshold
+LOLA labelled after 67.07 mins
+M3 threshold: 0.6685953427612431
+Number of features for M3 above threshold: 12390 out of 72592 points above threshold
+M3 labelled after 206.99 mins
+MiniRF threshold: 0.8587727585505796
+MiniRF labelled after 206.99 mins
+Number of features for LOLA above threshold: 149 out of 36448 points above threshold
+LOLA labelled after 49.82 mins
+M3 threshold: 0.5050832477431004
+Number of features for M3 above threshold: 14626 out of 68184 points above threshold
+M3 labelled after 204.92 mins
+MiniRF threshold: 0.8412567646051745
+MiniRF labelled after 204.92 mins
+Number of features for LOLA above threshold: 101 out of 39706 points above threshold
+LOLA labelled after 71.09 mins
+M3 threshold: 0.34640249054060535
+Number of features for M3 above threshold: 11906 out of 49639 points above threshold
+M3 labelled after 221.18 mins
+MiniRF threshold: 0.8028316638758612
+MiniRF labelled after 221.18 mins
+Number of features for LOLA above threshold: 301 out of 43628 points above threshold
+LOLA labelled after 81.75 mins
+M3 threshold: 0.843621764845873
+Number of features for M3 above threshold: 9833 out of 54804 points above threshold
+M3 labelled after 230.90 mins
+MiniRF threshold: 0.7882942142882536
+MiniRF labelled after 230.90 mins
+Number of features for LOLA above threshold: 180 out of 48777 points above threshold
+LOLA labelled after 65.28 mins
+M3 threshold: 0.6503295753064456
+Number of features for M3 above threshold: 18480 out of 55394 points above threshold
+M3 labelled after 229.33 mins
+MiniRF threshold: 1.091325820684947
+MiniRF labelled after 229.33 mins
+Total label counts
+Label
+0    8403211
+2    4105475
+1    1076583
+3     544917
+4     236465
+5      17378
+6       2781
+7         38
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    10443802
+2     3943046
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13897465
+2      474264
+1       15119
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12610178
+1     1074323
+2      702347
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13743618
+1      643230
+Name: count, dtype: int64
+Number of features for LOLA above threshold: 120 out of 60235 points above threshold
+LOLA labelled after 65.36 mins
+M3 threshold: 0.10799138956868504
+Number of features for M3 above threshold: 736 out of 21613 points above threshold
+M3 labelled after 95.00 mins
+MiniRF threshold: 0.7773401935670564
+MiniRF labelled after 95.00 mins
+Number of features for LOLA above threshold: 53 out of 66554 points above threshold
+LOLA labelled after 52.59 mins
+M3 threshold: 0.8129070502723935
+Number of features for M3 above threshold: 5817 out of 62338 points above threshold
+M3 labelled after 157.66 mins
+MiniRF threshold: 0.8781706276081954
+MiniRF labelled after 157.66 mins
+Number of features for LOLA above threshold: 104 out of 49119 points above threshold
+LOLA labelled after 43.84 mins
+M3 threshold: 0.71956701885792
+Number of features for M3 above threshold: 2356 out of 81144 points above threshold
+M3 labelled after 160.56 mins
+MiniRF threshold: 0.7967852186995855
+MiniRF labelled after 160.57 mins
+Number of features for LOLA above threshold: 140 out of 42820 points above threshold
+LOLA labelled after 68.04 mins
+M3 threshold: 0.628726622321297
+Number of features for M3 above threshold: 3273 out of 83646 points above threshold
+M3 labelled after 185.69 mins
+MiniRF threshold: 0.7582136345789527
+MiniRF labelled after 185.69 mins
+Number of features for LOLA above threshold: 137 out of 48502 points above threshold
+LOLA labelled after 59.18 mins
+M3 threshold: 0.2685197427732773
+Number of features for M3 above threshold: 4203 out of 82909 points above threshold
+M3 labelled after 171.04 mins
+MiniRF threshold: 0.829671562622097
+MiniRF labelled after 171.04 mins
+Number of features for LOLA above threshold: 100 out of 25146 points above threshold
+LOLA labelled after 36.19 mins
+M3 threshold: 0.506283149837119
+Number of features for M3 above threshold: 18396 out of 43802 points above threshold
+M3 labelled after 193.42 mins
+MiniRF threshold: 0.8741792911143256
+MiniRF labelled after 193.42 mins
+Number of features for LOLA above threshold: 14 out of 106869 points above threshold
+LOLA labelled after 111.58 mins
+M3 threshold: 0.3042780698983249
+Number of features for M3 above threshold: 14636 out of 39590 points above threshold
+M3 labelled after 197.88 mins
+MiniRF threshold: 0.7162448355172999
+MiniRF labelled after 197.88 mins
+Number of features for LOLA above threshold: 86 out of 40974 points above threshold
+LOLA labelled after 49.58 mins
+M3 threshold: 0.7599481223085359
+Number of features for M3 above threshold: 7010 out of 69839 points above threshold
+M3 labelled after 212.76 mins
+MiniRF threshold: 0.8962255415878249
+MiniRF labelled after 212.77 mins
+Number of features for LOLA above threshold: 48 out of 35239 points above threshold
+LOLA labelled after 56.66 mins
+M3 threshold: 0.5345915548278248
+Number of features for M3 above threshold: 14968 out of 58897 points above threshold
+M3 labelled after 231.40 mins
+MiniRF threshold: 0.8910553296105304
+MiniRF labelled after 231.40 mins
+Number of features for LOLA above threshold: 151 out of 21981 points above threshold
+LOLA labelled after 32.36 mins
+M3 threshold: 0.6345686956060077
+Number of features for M3 above threshold: 9541 out of 74370 points above threshold
+M3 labelled after 214.75 mins
+MiniRF threshold: 0.8887264609805146
+MiniRF labelled after 214.75 mins
+Total label counts
+Label
+0    9866228
+2    3115597
+1     878379
+3     289889
+4     215205
+5      16504
+6       4977
+7         69
+Name: count, dtype: int64
+
+Diviner label counts
+Diviner label
+0    11839717
+2     2547131
+Name: count, dtype: int64
+
+LOLA label counts
+LOLA label
+0    13835841
+2      540079
+1       10928
+Name: count, dtype: int64
+
+M3 label counts
+M3 label
+0    12993236
+2      771774
+1      621838
+Name: count, dtype: int64
+
+MiniRF label counts
+MiniRF label
+0    13784657
+1      602191
+Name: count, dtype: int64
+Saved combined_300-330.csv to ../data/Combined_CSVs after 232.67 mins
+
+Saved combined_060-090.csv to ../data/Combined_CSVs after 233.18 mins
+
+Finished processing data after 233.18 mins
+Completed on Mon 19 Aug 15:11:45 BST 2024
+
+====================================
+CPU Time used: 336:33:05
+CPU Percent: 8741%
+Memory usage: 99707944kb
+Approx Power usage: 4.038600000000001
+Walltime usage: 03:53:29
+
+====================================
