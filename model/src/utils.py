@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from sklearn.utils import resample
 from collections import Counter
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader as GeoDataLoader  # Avoid name conflict with PyTorch DataLoader
@@ -28,15 +29,70 @@ def load_data(data_path):
     if not isinstance(data, pd.DataFrame):
         data = pd.DataFrame(data)
 
-    print("3 largest values in Label column")
-    print(data.nlargest(3, 'Label'))
-    print("\n3 smallest values in Label column")
-    print(data.nsmallest(3, 'Label'))
-    print("\nDescription of labeled data")
-    print(data.describe())
-    print()
-
+    label_counts = Counter(data['Label'])
+    total_count = sum(label_counts.values())
+    label_percentages = {label: (count / total_count) * 100 for label, count in label_counts.items()}
+    print("Percentage of each label in the dataset:")
+    for label in sorted(label_percentages.keys()):
+        print(f"Label {label}: {label_percentages[label]:.4f}%")
+    
     return data
+
+
+def balanced_sample(data, target_column, fraction, random_state=42):
+    total_samples = int(len(data) * fraction)
+    label_0_target = total_samples // 4
+    other_label_target = total_samples // 8
+    
+    # Split the data by label
+    grouped = data.groupby(target_column)
+    
+    samples = []
+    sampled_counts = {i: 0 for i in range(8)}
+    
+    # First, try to sample the desired number of examples from each label
+    for label in range(8):
+        if label in grouped.groups:
+            label_data = grouped.get_group(label)
+            target_samples = label_0_target if label == 0 else other_label_target
+            available_samples = len(label_data)
+            
+            if available_samples >= target_samples:
+                sampled_data = resample(label_data, replace=False, n_samples=target_samples, random_state=random_state)
+                sampled_counts[label] += target_samples
+            else:
+                sampled_data = label_data
+                sampled_counts[label] += available_samples
+                
+            samples.append(sampled_data)
+    
+    # Calculate how many more samples are needed
+    current_total_samples = sum(sampled_counts.values())
+    remaining_samples = total_samples - current_total_samples
+    
+    # Keep sampling from the smallest available datasets until we reach the target size
+    while remaining_samples > 0:
+        for label in range(8):
+            if label in grouped.groups and remaining_samples > 0:
+                label_data = grouped.get_group(label)
+                target_samples = min(len(label_data), remaining_samples)
+                
+                if sampled_counts[label] < len(label_data):
+                    additional_samples = min(target_samples, len(label_data) - sampled_counts[label])
+                    sampled_data = resample(label_data, replace=False, n_samples=additional_samples, random_state=random_state)
+                    samples.append(sampled_data)
+                    sampled_counts[label] += additional_samples
+                    remaining_samples -= additional_samples
+    
+    balanced_data = pd.concat(samples).reset_index(drop=True)
+    final_proportions = {label: count / total_samples for label, count in sampled_counts.items()}
+
+    print("Best available proportions for the fraction:")
+    for label, proportion in final_proportions.items():
+        print(f"Label {label}: {proportion:.4f}")
+    
+    return balanced_data
+
 
 
 def create_FCNN_loader(inputs, targets, device, batch_size=128, shuffle=True, num_workers=1, standardise_scalar=None, normalise_scalar=None, scale_targets=False):

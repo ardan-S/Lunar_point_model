@@ -2,14 +2,16 @@
         Parameters of saved FCNN:
         Hidden dimension: 512
         Epochs: 400
-        Learning rate: 5e-05
-        Dropout rate: 0.15
+        Learning rate: 0.0001
+        Dropout rate: 0.1
         Batch size: 524288
-        Beta: 0.1
-        Weight decay: 0.0001
+        Beta: 0.15
+        Weight decay: 0.0005
 
         Test set:
-        Mean Squared Error (MSE): 0.5692
-        Loss: 0.3261
-        R-squared (R²): 0.5163
+        Mean Squared Error (MSE): 0.4935
+        Loss: 0.2814
+        R-squared (R²): 0.5806
+
+        Saved on 2024-08-25 19:43:28
         
