@@ -141,9 +141,7 @@ def setup_GCN_loader(train_graph_data, val_graph_data, test_graph_data, device, 
 def setup_GCN_model(input_dim, args, device):
     model = GCN(input_dim, args.hidden_dim, 1, args.dropout_rate).to(device)
     optimiser = optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
-    # criterion = nn.MSELoss()
     criterion = nn.SmoothL1Loss(beta=args.beta)
-    # criterion = CustomHuberLossWithPenalty(delta=args.beta, penalty_weight=50, target_range=(0, 7))
     scaler = torch.amp.GradScaler()    # Initialise GradScaler for mixed precision training
 
     return model, criterion, optimiser, scaler

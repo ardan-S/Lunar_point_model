@@ -1,637 +1,766 @@
-/var/spool/pbs/mom_priv/jobs/20519.pbs-7.SC: line 27: ./logs/update_venv.log: No such file or directory
+/var/spool/pbs/mom_priv/jobs/21061.pbs-7.SC: line 27: ./logs/update_venv.log: No such file or directory
 Percentage of each label in the dataset:
-Label 0: 60.9151%
-Label 1: 6.7404%
-Label 2: 27.0044%
-Label 3: 3.1592%
-Label 4: 1.9822%
-Label 5: 0.1543%
-Label 6: 0.0424%
-Label 7: 0.0019%
-Best available proportions for the fraction:
-Label 0: 0.2500
-Label 1: 0.1250
-Label 2: 0.1250
-Label 3: 0.1250
-Label 4: 0.1250
-Label 5: 0.1250
-Label 6: 0.1250
-Label 7: 0.0076
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0005
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 5e-05, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.1, 'weight_decay': 0.0005}
-New best loss: 0.9749
-Completed in 10.91 mins
+Label 0: 60.92%
+Label 1: 6.74%
+Label 2: 27.00%
+Label 3: 3.16%
+Label 4: 1.98%
+Label 5: 0.15%
+Label 6: 0.04%
+Label 7: 0.00%
+Percentage of each label after resampling:
+Label 0: 25.00%
+Label 1: 12.50%
+Label 2: 12.50%
+Label 3: 12.50%
+Label 4: 12.50%
+Label 5: 12.50%
+Label 6: 12.50%
+Label 7: 0.76%
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 1e-05
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 1e-05, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.1, 'weight_decay': 1e-05}
+New best loss: 1.3296
+Completed in 8.80 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.73 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 1e-05, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.1, 'weight_decay': 0.001}
+New best loss: 1.3048
+Completed in 8.70 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 1e-05
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 1e-05, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.15, 'weight_decay': 1e-05}
+New best loss: 1.3016
+Completed in 8.64 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.63 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.61 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.64 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 1e-05, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.2, 'weight_decay': 0.0001}
+New best loss: 1.2992
+Completed in 8.56 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.60 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.63 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 1e-05, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.25, 'weight_decay': 0.0001}
+New best loss: 1.2773
+Completed in 8.66 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.64 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.62 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.60 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.59 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.59 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 1e-05, 'dropout_rate': 0.3, 'k': 20, 'beta': 0.15, 'weight_decay': 0.0001}
+New best loss: 1.2761
+Completed in 8.63 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.60 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.60 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.59 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.71 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.62 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 1e-05, 'dropout_rate': 0.3, 'k': 20, 'beta': 0.25, 'weight_decay': 0.0001}
+New best loss: 1.2753
+Completed in 8.58 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 1e-05, 'dropout_rate': 0.3, 'k': 20, 'beta': 0.25, 'weight_decay': 0.001}
+New best loss: 1.2731
+Completed in 8.57 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.61 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.60 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.56 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.54 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.64 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.62 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.61 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.61 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.66 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.69 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.54 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.58 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.60 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.59 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.52 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.53 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.56 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.61 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.54 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.59 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.57 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.60 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 1e-05, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.25, 'weight_decay': 0.0001}
+New best loss: 1.2264
+Completed in 8.58 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.55 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.57 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.58 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.57 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.58 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.61 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.59 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.62 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.69 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.78 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.70 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.65 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.63 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.72 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.74 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.76 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.62 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.66 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.65 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.68 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.62 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.68 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.60 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.62 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.67 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.52 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.56 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.72 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.77 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.69 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.65 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.74 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.72 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.77 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.76 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.75 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.81 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.81 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.71 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.71 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.69 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.72 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.67 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.79 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.73 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.71 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.70 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.65 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.76 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.74 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.78 mins
+
+Training with learning rate: 1e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.83 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.80 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.68 mins
+
+Training with learning rate: 1e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.77 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.76 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.72 mins
+
+Training with learning rate: 1e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.75 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.75 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.76 mins
+
+Training with learning rate: 1e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.68 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.63 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.65 mins
 
 Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.001
-Completed in 10.66 mins
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 5e-05, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.1, 'weight_decay': 0.001}
+New best loss: 1.1826
+Completed in 8.76 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0015
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 5e-05, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.1, 'weight_decay': 0.0015}
-New best loss: 0.9601
-Completed in 10.94 mins
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 1e-05
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 5e-05, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.15, 'weight_decay': 1e-05}
+New best loss: 1.0625
+Completed in 8.74 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.002
-Completed in 10.86 mins
-
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0005
-Completed in 10.92 mins
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.73 mins
 
 Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.001
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 5e-05, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.15, 'weight_decay': 0.001}
-New best loss: 0.9303
-Completed in 10.89 mins
+Completed in 8.73 mins
 
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0015
-Completed in 10.85 mins
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.79 mins
 
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.002
-Completed in 10.86 mins
-
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0005
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 5e-05, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.2, 'weight_decay': 0.0005}
-New best loss: 0.9127
-Completed in 10.92 mins
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.72 mins
 
 Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.001
-Completed in 10.81 mins
+Completed in 8.67 mins
 
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0015
-Completed in 10.70 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.68 mins
 
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.002
-Completed in 10.51 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 5e-05, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.25, 'weight_decay': 0.0001}
+New best loss: 0.9957
+Completed in 8.58 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0005
-Completed in 10.57 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 5e-05, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.25, 'weight_decay': 0.001}
+New best loss: 0.9593
+Completed in 8.66 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.67 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.64 mins
 
 Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.001
-Completed in 10.49 mins
+Completed in 8.59 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0015
-Completed in 10.52 mins
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.71 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.002
-Completed in 10.88 mins
-
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0005
-Completed in 10.88 mins
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.69 mins
 
 Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.001
-Completed in 10.90 mins
+Completed in 8.65 mins
 
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0015
-Completed in 11.00 mins
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.63 mins
 
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.002
-Completed in 10.90 mins
-
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0005
-Completed in 10.87 mins
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.68 mins
 
 Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.001
-Completed in 10.91 mins
+Completed in 8.69 mins
 
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0015
-Completed in 10.85 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.61 mins
 
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.002
-Completed in 11.14 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.69 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0005
-Completed in 11.02 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.63 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.60 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.53 mins
 
 Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.001
-Completed in 10.94 mins
+Completed in 8.48 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0015
-Completed in 10.94 mins
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.56 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.002
-Completed in 10.95 mins
-
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0005
-Completed in 10.93 mins
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.57 mins
 
 Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.001
-Completed in 10.97 mins
+Completed in 8.63 mins
 
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0015
-Completed in 10.94 mins
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.64 mins
 
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.002
-Completed in 10.79 mins
-
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0005
-Completed in 10.90 mins
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.72 mins
 
 Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.001
-Completed in 11.15 mins
+Completed in 8.61 mins
 
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0015
-Completed in 11.08 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.65 mins
 
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.002
-Completed in 11.16 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.75 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0005
-Completed in 11.07 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.77 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.78 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.81 mins
 
 Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.001
-Completed in 11.11 mins
+Completed in 8.77 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0015
-Completed in 11.17 mins
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.81 mins
 
-Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.002
-Completed in 11.17 mins
-
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0005
-Completed in 11.11 mins
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.70 mins
 
 Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.001
-Completed in 11.13 mins
+Completed in 8.71 mins
 
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0015
-Completed in 11.07 mins
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.68 mins
 
-Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.002
-Completed in 11.02 mins
-
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0005
-Completed in 11.21 mins
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.71 mins
 
 Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.001
-Completed in 11.12 mins
+Completed in 8.78 mins
 
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0015
-Completed in 11.11 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.78 mins
 
-Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.002
-Completed in 11.14 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.74 mins
 
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0005
-Completed in 11.12 mins
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.58 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.59 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.61 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.71 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.72 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.77 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.89 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.78 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.86 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.79 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.67 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.65 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.66 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.71 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.74 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.70 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.66 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.60 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.64 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.66 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.75 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.60 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.60 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.52 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.61 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.60 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.53 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.52 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.54 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.56 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.53 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.53 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.52 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.51 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.68 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.71 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.72 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.71 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.76 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.71 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.78 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.76 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.77 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.72 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.74 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.73 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.74 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.78 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.75 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 1e-05
+Completed in 8.68 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.0001
+Completed in 8.73 mins
+
+Training with learning rate: 5e-05, beta: 0.1, weight decay: 0.001
+Completed in 8.75 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 1e-05
+Completed in 8.79 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.0001
+Completed in 8.74 mins
+
+Training with learning rate: 5e-05, beta: 0.15, weight decay: 0.001
+Completed in 8.76 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 1e-05
+Completed in 8.71 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.0001
+Completed in 8.78 mins
+
+Training with learning rate: 5e-05, beta: 0.2, weight decay: 0.001
+Completed in 8.78 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 1e-05
+Completed in 8.67 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.0001
+Completed in 8.74 mins
+
+Training with learning rate: 5e-05, beta: 0.25, weight decay: 0.001
+Completed in 8.75 mins
+
+Training with learning rate: 0.0001, beta: 0.1, weight decay: 1e-05
+Completed in 8.77 mins
+
+Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0001
+Completed in 8.78 mins
 
 Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.001
-Completed in 11.20 mins
+Completed in 8.74 mins
 
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0015
-Completed in 11.14 mins
+Training with learning rate: 0.0001, beta: 0.15, weight decay: 1e-05
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 0.0001, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.15, 'weight_decay': 1e-05}
+New best loss: 0.9453
+Completed in 8.74 mins
 
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.002
-Completed in 11.07 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0005
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 0.0001, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.15, 'weight_decay': 0.0005}
-New best loss: 0.9098
-Completed in 11.08 mins
+Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0001
+Completed in 8.71 mins
 
 Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.001
-Completed in 11.13 mins
+Completed in 8.73 mins
 
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0015
-Completed in 11.13 mins
+Training with learning rate: 0.0001, beta: 0.2, weight decay: 1e-05
+Completed in 8.79 mins
 
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.002
-Completed in 11.10 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.0005
-Completed in 11.04 mins
+Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.0001
+Completed in 8.78 mins
 
 Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.001
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 0.0001, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.2, 'weight_decay': 0.001}
-New best loss: 0.9052
-Completed in 11.13 mins
+Completed in 8.74 mins
 
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.0015
-Completed in 11.12 mins
+Training with learning rate: 0.0001, beta: 0.25, weight decay: 1e-05
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 0.0001, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.25, 'weight_decay': 1e-05}
+New best loss: 0.9409
+Completed in 8.76 mins
 
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.002
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 0.0001, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.2, 'weight_decay': 0.002}
-New best loss: 0.8839
-Completed in 11.04 mins
+Training with learning rate: 0.0001, beta: 0.25, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 65536, 'learning_rate': 0.0001, 'dropout_rate': 0.3, 'k': 15, 'beta': 0.25, 'weight_decay': 0.0001}
+New best loss: 0.9227
+Completed in 8.75 mins
 
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0005
-Completed in 11.14 mins
+Training with learning rate: 0.0001, beta: 0.25, weight decay: 0.001
+Completed in 8.70 mins
+
+Training with learning rate: 0.0001, beta: 0.1, weight decay: 1e-05
+Completed in 8.74 mins
+
+Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0001
+Completed in 8.72 mins
 
 Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.001
-Completed in 11.13 mins
+Completed in 8.75 mins
 
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0015
-Completed in 11.23 mins
+Training with learning rate: 0.0001, beta: 0.15, weight decay: 1e-05
+Completed in 8.73 mins
 
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.002
-Completed in 11.08 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0005
-Completed in 11.16 mins
+Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0001
+Completed in 8.77 mins
 
 Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.001
-Completed in 11.12 mins
+Completed in 8.72 mins
 
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0015
-Completed in 11.17 mins
+Training with learning rate: 0.0001, beta: 0.2, weight decay: 1e-05
+Completed in 8.74 mins
 
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.002
-Completed in 11.09 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.0005
-Completed in 11.01 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.001
-Completed in 11.15 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.0015
-Completed in 11.10 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.002
-Completed in 11.11 mins
-
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0005
-Completed in 11.15 mins
-
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.001
-Completed in 11.10 mins
-
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0015
-Completed in 11.04 mins
-
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.002
-Completed in 11.12 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0005
-Completed in 10.97 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.001
-Completed in 11.10 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0015
-Completed in 11.13 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.002
-Completed in 11.09 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.0005
-Completed in 10.98 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.001
-Completed in 11.06 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.0015
-Completed in 11.05 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.002
-Completed in 11.11 mins
-
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0005
-Completed in 11.00 mins
-
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.001
-Completed in 11.01 mins
-
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.0015
-Completed in 11.10 mins
-
-Training with learning rate: 0.0001, beta: 0.1, weight decay: 0.002
-Completed in 11.17 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0005
-Completed in 11.14 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.001
-Completed in 10.92 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.0015
-Completed in 10.95 mins
-
-Training with learning rate: 0.0001, beta: 0.15, weight decay: 0.002
-Completed in 11.00 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.0005
-Completed in 11.12 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.001
-Completed in 10.97 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.0015
-Completed in 11.04 mins
-
-Training with learning rate: 0.0001, beta: 0.2, weight decay: 0.002
-Completed in 11.01 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.0005
-Completed in 10.94 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.001
-Completed in 11.00 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.0015
-Completed in 11.07 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.002
-Completed in 11.00 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.0005
-Completed in 10.99 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.001
-Completed in 11.02 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.0015
-Completed in 11.01 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.002
-Completed in 10.96 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.0005
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 0.00015, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.2, 'weight_decay': 0.0005}
-New best loss: 0.8751
-Completed in 10.97 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.001
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 0.00015, 'dropout_rate': 0.4, 'k': 15, 'beta': 0.2, 'weight_decay': 0.001}
-New best loss: 0.8742
-Completed in 10.90 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.0015
-Completed in 10.97 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.002
-Completed in 10.97 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.0005
-Completed in 11.01 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.001
-Completed in 11.03 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.0015
-Completed in 11.09 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.002
-Completed in 12.01 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.0005
-Completed in 10.99 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.001
-Completed in 10.91 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.0015
-Completed in 11.07 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.002
-Completed in 10.95 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.0005
-New best hyperparameters: {'batch_size': 65536, 'learning_rate': 0.00015, 'dropout_rate': 0.45, 'k': 15, 'beta': 0.2, 'weight_decay': 0.0005}
-New best loss: 0.8677
-Completed in 10.96 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.001
-Completed in 10.86 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.0015
-Completed in 10.80 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.002
-Completed in 10.85 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.0005
-Completed in 10.95 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.001
-Completed in 10.93 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.0015
-Completed in 10.85 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.002
-Completed in 10.88 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.0005
-Completed in 10.92 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.001
-Completed in 10.97 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.0015
-Completed in 10.94 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.002
-Completed in 10.95 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.0005
-Completed in 10.88 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.001
-Completed in 11.34 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.0015
-Completed in 11.45 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.002
-Completed in 10.90 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.0005
-Completed in 10.92 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.001
-Completed in 11.03 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.0015
-Completed in 11.00 mins
-
-Training with learning rate: 0.00015, beta: 0.1, weight decay: 0.002
-Completed in 10.96 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.0005
-Completed in 10.96 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.001
-Completed in 10.93 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.0015
-Completed in 10.92 mins
-
-Training with learning rate: 0.00015, beta: 0.15, weight decay: 0.002
-Completed in 11.02 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.0005
-Completed in 10.95 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.001
-Completed in 11.02 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.0015
-Completed in 10.98 mins
-
-Training with learning rate: 0.00015, beta: 0.2, weight decay: 0.002
-Completed in 10.93 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.0005
-Completed in 10.94 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.001
-Completed in 10.93 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.0015
-Completed in 10.92 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.002
-Completed in 10.89 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.0005
-Completed in 10.93 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.001
-Completed in 10.93 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.0015
-Completed in 10.88 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.002
-Completed in 11.00 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.0005
-Completed in 10.96 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.001
-Completed in 11.03 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.0015
-Completed in 11.02 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.002
-Completed in 10.89 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.0005
-Completed in 10.94 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.001
-Completed in 10.99 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.0015
-Completed in 10.92 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.002
-Completed in 10.92 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.0005
-Completed in 10.89 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.001
-Completed in 11.03 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.0015
-Completed in 11.07 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.002
-Completed in 11.15 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.0005
-Completed in 11.14 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.001
-Completed in 11.07 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.0015
-Completed in 11.11 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.002
-Completed in 11.08 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.0005
-Completed in 10.98 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.001
-Completed in 11.06 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.0015
-Completed in 10.91 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.002
-Completed in 11.03 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.0005
-Completed in 11.07 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.001
-Completed in 11.16 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.0015
-Completed in 10.98 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.002
-Completed in 11.08 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.0005
-Completed in 11.09 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.001
-Completed in 11.03 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.0015
-Completed in 11.01 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.002
-Completed in 11.07 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.0005
-Completed in 11.02 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.001
-Completed in 10.89 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.0015
-Completed in 10.95 mins
-
-Training with learning rate: 0.0002, beta: 0.1, weight decay: 0.002
-Completed in 11.00 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.0005
-Completed in 10.90 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.001
-Completed in 10.99 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.0015
-Completed in 11.04 mins
-
-Training with learning rate: 0.0002, beta: 0.15, weight decay: 0.002
-Completed in 10.96 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.0005
-Completed in 10.97 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.001
-Completed in 10.99 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.0015
-Completed in 11.01 mins
-
-Training with learning rate: 0.0002, beta: 0.2, weight decay: 0.002
-Completed in 10.99 mins
-
-
-Best hyperparameters:
-Batch size: 65536 out of 65536
-Learning rate: 0.00015 out of [5e-05, 0.0001, 0.00015, 0.0002]
-Dropout rate: 0.45 out of [0.4, 0.45, 0.5, 0.55]
-Best k: 15 out of [15]
-Best beta: 0.2 out of [0.1, 0.15, 0.2]
-Best weight decay: 0.0005 out of [0.0005, 0.001, 0.0015, 0.002]
-
-Best loss: 0.8677
-Best MSE: 1.8708
-R² for best hyperparams: 0.5928
-Completed on Wed 28 Aug 06:55:09 BST 2024
+=>> PBS: job killed: walltime 129617 exceeded limit 129600
 
 ====================================
-CPU Time used: 58:23:30
-CPU Percent: 165%
-Memory usage: 23555964kb
-Approx Power usage: 0.7006
-Walltime usage: 35:17:43
+CPU Time used: 56:13:18
+CPU Percent: 156%
+Memory usage: 23696096kb
+Approx Power usage: 0.6746
+Walltime usage: 36:00:28
 
 ====================================
