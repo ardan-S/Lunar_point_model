@@ -5,9 +5,7 @@ import torch.nn as nn
 from torch_geometric.utils import add_self_loops
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.model_selection import StratifiedShuffleSplit
 import joblib
-
 import time
 import argparse
 import numpy as np
@@ -18,7 +16,10 @@ from evaluate import evaluate, validate
 
 
 def prepare_data(coords, features, labels, k, normalise_scalar=None, standardise_scalar=None, scale_labels=False):
-
+    """
+    Function to prepare the data for the GCN model.
+    Scales and normalises the features and labels, creates the edge index, and returns the PyG Data object.
+    """
     if standardise_scalar is not None:
         features = standardise_scalar.transform(features)
         if scale_labels:
@@ -34,7 +35,7 @@ def prepare_data(coords, features, labels, k, normalise_scalar=None, standardise
 
     nbrs = NearestNeighbors(n_neighbors=k, algorithm='ball_tree').fit(coords)
 
-    batch_size = 2000 
+    batch_size = 2000
     num_batches = int(np.ceil(len(coords) / batch_size))
 
     indices = np.zeros((len(coords), k), dtype=int)
@@ -89,6 +90,10 @@ def prepare_data(coords, features, labels, k, normalise_scalar=None, standardise
 
 
 def setup_GCN_data(args):
+    """
+    Function to set up the data for the GCN model.
+    Loads the data, balances the classes, and splits the data into training, validation, and test sets, normalises and scales the features.
+    """
     rand_state = 42
     torch.manual_seed(rand_state)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -96,14 +101,9 @@ def setup_GCN_data(args):
     labeled_data = load_data(args.data_path)
     labeled_data = balanced_sample(labeled_data, 'Label', 0.001, random_state=rand_state)
 
-    # sss = StratifiedShuffleSplit(n_splits=1, test_size=0.0025, random_state=rand_state)
-    # _, test_index = next(sss.split(labeled_data, labeled_data["Label"]))
-    # labeled_data = labeled_data.iloc[test_index]
-    # print(f"Size of selected dataset: {labeled_data.shape[0]}")
-
     labeled_x = labeled_data[['Latitude', 'Longitude', 'Diviner', 'LOLA', 'M3', 'MiniRF', 'Elevation']]
     labeled_y = labeled_data['Label']
-    
+
     input_dim = labeled_x.shape[1]
 
     train_x, val_x, test_x, train_y, val_y, test_y = stratified_split_data(labeled_x, labeled_y, rand_state=rand_state)
@@ -113,7 +113,7 @@ def setup_GCN_data(args):
         features = data_x[['Diviner', 'LOLA', 'M3', 'MiniRF', 'Elevation']]
         labels = data_y.values
         return coords, features, labels
-    
+
     train_coords, train_features, train_targets = split_data(train_x, train_y)
     val_coords, val_features, val_targets = split_data(val_x, val_y)
     test_coords, test_features, test_targets = split_data(test_x, test_y)
@@ -131,6 +131,9 @@ def setup_GCN_data(args):
 
 
 def setup_GCN_loader(train_graph_data, val_graph_data, test_graph_data, device, args):
+    """
+    Function to set up the data loaders for the GCN model.
+    """
     train_loader = create_GCN_loader([train_graph_data], device, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers)
     test_loader = create_GCN_loader([test_graph_data], device, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers)
     val_loader = create_GCN_loader([val_graph_data], device, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers)
@@ -139,6 +142,9 @@ def setup_GCN_loader(train_graph_data, val_graph_data, test_graph_data, device, 
 
 
 def setup_GCN_model(input_dim, args, device):
+    """
+    Function to set up the GCN model, criterion, optimizer, and scaler.
+    """
     model = GCN(input_dim, args.hidden_dim, 1, args.dropout_rate).to(device)
     optimiser = optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     criterion = nn.SmoothL1Loss(beta=args.beta)
@@ -147,17 +153,12 @@ def setup_GCN_model(input_dim, args, device):
     return model, criterion, optimiser, scaler
 
 
-def compute_gradient_norms(model):
-    total_norm = 0.0
-    for param in model.parameters():
-        if param.grad is not None:
-            param_norm = param.grad.data.norm(2)  # Compute L2 norm of the gradient
-            total_norm += param_norm.item() ** 2
-    total_norm = total_norm ** (1. / 2)
-    return total_norm
-
-
 def train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, model_save_path=None, img_save_path=None):
+    """
+    Function to train the GCN model.
+    Trains the model on the training set and validates on the validation set.
+    Evaluates on the test set and saves the model and training metrics if specified.
+    """
     train_losses = []
     val_losses = []
     val_mses = []
@@ -179,12 +180,12 @@ def train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loa
                     print(f"Invalid edge_index. Max: {data.edge_index.max()}, Min: {data.edge_index.min()}")
                     print(f"Max index: {data.x.size(0) - 1}")
                     raise ValueError("edge_index contains invalid node indices.")
-                
+
                 max_index = data.x.size(0) - 1
                 if not torch.all((data.edge_index[0] <= max_index) & (data.edge_index[1] <= max_index)):
                     print(f"Edge indices out of bounds. Max index: {max_index}")
                     raise ValueError("edge_index out of bounds in edge_index tensor.")
-                
+
                 data.edge_index = data.edge_index.t()
 
                 outputs = model(data.x, data.edge_index).squeeze()
@@ -194,14 +195,11 @@ def train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loa
             scaler.step(optimiser)
             scaler.update()
 
-            # grad_norm = compute_gradient_norms(model)
-            # print(f'Epoch {epoch+1}, Gradient Norm: {grad_norm}')
-
             running_loss += loss.item() * data.num_graphs
 
         epoch_train_loss = running_loss / len(train_loader.dataset)
         val_loss, val_mse, val_r2 = validate(device, model, criterion, val_loader)
-        
+
         train_losses.append(epoch_train_loss)
         val_losses.append(val_loss)
         val_mses.append(val_mse)
@@ -241,7 +239,13 @@ def train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loa
 
     return model, test_loss, test_mse, test_r2
 
+
 def main():
+    """
+    Main function to train the GCN model.
+    Calls the setup functions, trains the model, and prints the test metrics.
+    Creates a random graph from the test loader and prints the true labels and predictions.
+    """
     args = parse_arguments()
     start_time = time.time()
     device, input_dim, train_graph_data, val_graph_data, test_graph_data = setup_GCN_data(args)
@@ -265,7 +269,7 @@ def main():
     edge_index = random_graph.edge_index
     if edge_index.shape[0] != 2:
         edge_index = edge_index.t().contiguous()
-    
+
     edge_index, _ = add_self_loops(edge_index, num_nodes=inputs.size(0))
     edge_index = edge_index.to(device)
     outputs = model(inputs, edge_index).squeeze()
@@ -276,7 +280,6 @@ def main():
     print(f"True labels (first 4): {targets_np}")
     print(f"Model output (first 4): {outputs_np}")
 
-    
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Train a PointRankingModel.')
@@ -291,6 +294,7 @@ def parse_arguments():
     parser.add_argument('--weight_decay', type=float, default=1e-3, help='Weight decay for the optimizer.')
     parser.add_argument('--n_workers', type=int, default=0, help='Number of workers for data loaders.')
     return parser.parse_args()
+
 
 if __name__ == '__main__':
     main()

@@ -141,7 +141,7 @@ def process_image_file(file_path, file_extension, lines, line_samples, metadata,
     """
     Process an image file based on its format and extract the relevant data.
     Outputs the processed image data.
-    """    
+    """
     if file_extension == 'jp2':
         image_data = glymur.Jp2k(file_path)[:]
 
@@ -172,7 +172,7 @@ def process_image_file(file_path, file_extension, lines, line_samples, metadata,
                 raise ValueError(f"Unsupported number of bands: {bands}")
     else:
         raise ValueError("Unsupported file extension: {}".format(file_extension))
-        
+
     return image_data
 
 
@@ -186,7 +186,7 @@ def extract_M3_image(image_url, metadata):
             with open(url, 'r') as file:
                 return file.read()
         else:  # Assume the source is a URL
-            for attempt in range (retries):
+            for attempt in range(retries):
                 try:
                     response = requests.get(url)
                     response.raise_for_status()
@@ -249,7 +249,7 @@ def extract_M3_image(image_url, metadata):
 
     for idx, channel in enumerate(test_channels):
         channel_start_idx = channel - 1    # Convert to 0-based index
-        
+
         for i in range(lines):
             start_idx = (i * bands + channel_start_idx) * line_samples
             end_idx = start_idx + line_samples
@@ -266,10 +266,10 @@ def extract_M3_image(image_url, metadata):
     del image_data
 
     # Element-wise operation to handle NaNs and sum the bands
-    reference_bands = np.where(np.isnan(reference_band_up), 2 * reference_band_down, 
-                                np.where(np.isnan(reference_band_down), 2 * reference_band_up, 
+    reference_bands = np.where(np.isnan(reference_band_up), 2 * reference_band_down,
+                               np.where(np.isnan(reference_band_down), 2 * reference_band_up,
                                         reference_band_up + reference_band_down))
-    
+
     # Remove invalid and out of range values
     extracted_bands = np.where((extracted_bands == invalid_constant) | (extracted_bands == 2 * invalid_constant), np.nan, extracted_bands)
     reference_bands = np.where((reference_bands == invalid_constant) | (reference_bands == 2 * invalid_constant), np.nan, reference_bands)
@@ -309,7 +309,7 @@ def process_M3_image(trough, shoulder):
     Process M3 image data using the target (trough) and reference (shoulder) bands.
     Used to calculate and output the band depth ratio (BDR).
     """
-    BDRs = shoulder / (2*trough)    # Band depth ratio
+    BDRs = shoulder / (2 * trough)    # Band depth ratio
     output_vals = np.min(BDRs, axis=2)    # Take the band with the minimum BDR for each point
     max = 1.75
     output_vals = np.clip(output_vals, None, max)  # Clip values to [0, max]
@@ -335,7 +335,7 @@ def generate_LRO_coords(image_shape, metadata, data_type):
 
     # Generate pixel coordinates
     x = (np.arange(samples) - sample_proj_offset) / map_res
-    y = (np.arange(lines) - line_proj_offset) / map_res 
+    y = (np.arange(lines) - line_proj_offset) / map_res
     x, y = np.meshgrid(x, y)
 
     if center_lat == 0.0:  # Equatorial (Mini-RF) - Simple Cylindrical
@@ -426,7 +426,7 @@ def generate_M3_coords(image_shape, metadata):
 
     if dtype != np.float64:
         raise ValueError(f"Unsupported combination of SAMPLE_TYPE: {sample_type} and SAMPLE_BITS: {sample_bits}")
-    
+
     if lines is None or line_samples is None or bands is None:
         raise ValueError("Missing metadata values for lines, line_samples or bands")
 
@@ -488,7 +488,6 @@ def process_image(metadata, image_path, data_type, output_csv_path=None):
         output_vals = process_LRO_image(image_data, metadata, address, data_type)
         lons, lats = generate_LRO_coords(image_data.shape, metadata, data_type)
 
-
     df = pd.DataFrame({
         'Longitude': lons.flatten(),
         'Latitude': lats.flatten(),
@@ -501,7 +500,7 @@ def process_image(metadata, image_path, data_type, output_csv_path=None):
     # Raise if error with coordinate generation
     if np.any(df['Longitude'] < 0) or np.any(df['Longitude'] > 360):
         raise ValueError("Some longitude values are out of bounds")
-    
+
     if np.any(df['Latitude'] < -90) or np.any(df['Latitude'] > 90):
         raise ValueError("Some latitude values are out of bounds")
 
@@ -515,18 +514,18 @@ def filter_and_optimize_df(df, data_type, metadata):
     # Ensure all Lat values are in the ranges of either [-75, -90] or [75, 90]
     df = df[(df['Latitude'] <= -75) & (df['Latitude'] >= -90) | (df['Latitude'] <= 90) & (df['Latitude'] >= 75)]
 
-    sense_check_functions = {   
-    'MiniRF': MiniRF_sense_check,
-    'LOLA': LOLA_sense_check,
-    'Diviner': lambda df: Diviner_sense_check(df, metadata),
-    'M3': M3_sense_check
+    sense_check_functions = {
+        'MiniRF': MiniRF_sense_check,
+        'LOLA': LOLA_sense_check,
+        'Diviner': lambda df: Diviner_sense_check(df, metadata),
+        'M3': M3_sense_check
     }
-    
+
     if data_type in sense_check_functions:
         df = sense_check_functions[data_type](df)
     else:
         raise ValueError(f"Sense check function not found for data type '{data_type}'")
-    
+
     return optimize_df(df)
 
 

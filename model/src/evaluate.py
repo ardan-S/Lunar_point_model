@@ -1,9 +1,12 @@
 import torch
 from torch_geometric.data import Data
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score
 
 
 def validate(device, model, criterion, data_loader):
+    """
+    Used to calculate the loss, mean squared error, and R² score of the model on the validation set during training.
+    """
     model.eval()
 
     val_loss = 0.0
@@ -43,6 +46,9 @@ def validate(device, model, criterion, data_loader):
 
 
 def evaluate(device, model, criterion, test_loader):
+    """
+    Used to calculate the loss, mean squared error, and R² score of the model on the test set after training.
+    """
     model.eval()
 
     test_loss = 0.0

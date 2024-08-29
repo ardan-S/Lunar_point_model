@@ -13,6 +13,9 @@ from utils import get_random_filtered_graph, load_data
 
 @contextmanager
 def suppress_output():
+    """
+    Function to suppress stdout.
+    """
     with open('/dev/null', 'w') as fnull:
         old_stdout = sys.stdout
         sys.stdout = fnull
@@ -23,6 +26,9 @@ def suppress_output():
 
 
 def get_random_line(file_path, label_value=None, seed=42):
+    """
+    Get a random line from the data. Load data reads in all combined files
+    """
     with suppress_output():
         data = load_data(file_path, output=False)
     filtered_data = data if label_value is None else data[data['Label'] == label_value]
@@ -30,12 +36,15 @@ def get_random_line(file_path, label_value=None, seed=42):
 
 
 def main():
+    """
+    Main function to load in the models and run 10 random trials through them.
+    """
     args = parse_arguments()
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     num_trials = 10
 
-    #FCNN
+    # FCNN
     print("\nFCNN:")
     FCNN_model = FCNN(args.FCNN_input_dim, args.FCNN_hidden_dim, 1, args.FCNN_dropout_rate)
     FCNN_model.load_state_dict(torch.load(args.FCNN_load_path, map_location=device, weights_only=True))
@@ -59,7 +68,7 @@ def main():
         data_np = standardise_scalar_FCNN.transform(data_df)
         data_df = pd.DataFrame(data_np, columns=expected_columns)
         data_np = normalise_scalar_FCNN.transform(data_df)
-        
+
         data_tensor = torch.tensor(data_np, dtype=torch.float32).to(device)
         output = FCNN_model(data_tensor).squeeze().cpu().detach().numpy()
         lat = line['Latitude']
@@ -76,7 +85,6 @@ def main():
     normalise_scalar_GCN = joblib.load('../saved_models/normalise_scalar_GCN.joblib')
 
     k = 5
-    # target_idx = k*k//2 + k//2
 
     for i in range(num_trials):
         seed = 42 * i
@@ -99,6 +107,7 @@ def main():
         lon = lat_lon_df.iloc[target_idx]['Longitude']
         print(f"Trial {i+1}, Lat: {lat:.2f}, Lon: {lon:.2f}, True label: {labels[target_idx].item()}, Prediction: {output[target_idx]:.2f}")
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Run points through the FCNN and GCN models.')
     parser.add_argument('--FCNN_input_dim', type=int, default=7, help='Input dimension of the FCNN model.')
@@ -111,6 +120,7 @@ def parse_arguments():
     parser.add_argument('--GCN_load_path', type=str, default='../saved_models/GCN.pth', help='Path to the saved GCN model.')
     parser.add_argument('--data_csv', type=str, default='../../data/Combined_CSVs/', help='Path to the data file.')
     return parser.parse_args()
+
 
 if __name__ == '__main__':
     main()

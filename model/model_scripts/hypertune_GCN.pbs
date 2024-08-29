@@ -13,10 +13,6 @@
 #PBS -j oe
 #PBS -o ../logs/qsub.log.hypertune_GCN
 
-# Email when job starts and ends
-#PBS -M as5023@ic.ac.uk
-#PBS -m abe
-
 # Change to the directory where the job was submitted
 cd $PBS_O_WORKDIR
 

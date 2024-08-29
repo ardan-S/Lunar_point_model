@@ -1,14 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
-import pandas as pd
-import dask.dataframe as dd
 import os
-from filelock import FileLock
 import gc
 
 import aiohttp
-import asyncio
 
 from process_image_dask import process_image, parse_metadata_content
 
@@ -148,7 +144,7 @@ def process_urls_in_parallel(client, lbl_urls, data_type, output_dir):
     Process a list of URLs in parallel using Dask, saving the results to CSV files.
     """
     url_info_list = [(lbl_url, construct_image_url(lbl_url, data_type), output_dir, data_type) for lbl_url in lbl_urls]
-    
+
     # Create directory for CSVs if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
 
@@ -174,7 +170,7 @@ def process_urls_in_parallel(client, lbl_urls, data_type, output_dir):
     # Initialise CSVs with headers if they don't exist
     for file_name in file_names:
         if not os.path.isfile(file_name):
-            with open (file_name, 'w') as f:
+            with open(file_name, 'w') as f:
                 if data_type == 'M3':
                     f.write(f'Longitude,Latitude,{data_type},Elevation\n')
                 else:
@@ -204,5 +200,5 @@ def process_urls_in_parallel(client, lbl_urls, data_type, output_dir):
             # After the entire df is saved to CSV, remove from memory
             del result_df
             gc.collect()
-    
+
     print('Files saved into respective CSVs')

@@ -10,6 +10,9 @@ from trainGNN import setup_GCN_data, setup_GCN_loader, setup_GCN_model, train_GC
 
 @contextlib.contextmanager
 def suppress_stdout():
+    """
+    Function to suppress stdout during hyperparameter tuning.
+    """
     with open(os.devnull, 'w') as fnull:
         old_stdout = sys.stdout
         sys.stdout = fnull
@@ -20,6 +23,9 @@ def suppress_stdout():
 
 
 def hyperparameter_tuning(args):
+    """
+    Function to perform hyperparameter tuning for the GCN model.
+    """
     # Define the hyperparameter grid
     batch_sizes = [2**16]
     learning_rates = [0.00001, 0.00005, 0.0001, 0.0005]
@@ -32,7 +38,7 @@ def hyperparameter_tuning(args):
     best_hyperparams = None
 
     device, input_dim, train_graph_data, val_graph_data, test_graph_data = setup_GCN_data(args)
-    
+
     # Iterate over all combinations of hyperparameters
     for batch_size, lr, dropout, k, beta, decay in itertools.product(batch_sizes, learning_rates, dropout_rates, k_vals, betas, weight_decays):
         start_time = time.time()
@@ -67,7 +73,7 @@ def hyperparameter_tuning(args):
 
         print(f"Completed in {(time.time() - start_time) / 60 :.2f} mins\n")
 
-    print(f"\nBest hyperparameters:")
+    print("\nBest hyperparameters:")
     print(f"Batch size: {best_hyperparams['batch_size']} out of {args.batch_size}")
     print(f"Learning rate: {best_hyperparams['learning_rate']} out of {learning_rates}")
     print(f"Dropout rate: {best_hyperparams['dropout_rate']} out of {dropout_rates}")
@@ -81,6 +87,7 @@ def hyperparameter_tuning(args):
 
     return best_hyperparams, best_loss, best_mse, best_r2
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Hyperparameter tuning for a PointRankingModel.')
     parser.add_argument('--data_path', type=str, default='../../data/Combined_CSVs', help='Path to the input data file.')
@@ -90,6 +97,7 @@ def parse_arguments():
     parser.add_argument('--k', type=int, default=10, help='Number of nearest neighbours to consider.')
     return parser.parse_args()
 
+
 if __name__ == '__main__':
     args = parse_arguments()
-    best_hyperparams, best_loss, best_mse, best_r2  = hyperparameter_tuning(args)
+    best_hyperparams, best_loss, best_mse, best_r2 = hyperparameter_tuning(args)

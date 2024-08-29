@@ -1,28 +1,13 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_geometric.nn import GCNConv, global_mean_pool
-from torch_geometric.data import Data
-
-"""
-Key
-fc: Fully connected layer
-bn: Batch normalization
-dropout: Dropout layer
-"""
-
-"""Attention layer:
-This allows the model to focus on important features, potentially improving its
-ability to learn relevant patterns in the data, particularly if some features 
-(e.g., specific remote sensing values) are more indicative of water presence.
-The model can learn to focus on these important features dynamically."""
-
-"""Residual connection:
-Improves gradient flow, enabling the model to learn more effectively even with
-deeper networks. This can capture more complex patterns in the data."""
+from torch_geometric.nn import GCNConv
 
 
 class SelfAttentionLayer(nn.Module):
+    """
+    Class for a self-attention layer used in the FCNN model.
+    """
     def __init__(self, hidden_dim):
         super(SelfAttentionLayer, self).__init__()
         self.hidden_dim = hidden_dim
@@ -32,6 +17,10 @@ class SelfAttentionLayer(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
+        """
+        Forward pass for the self-attention layer.
+        Computes the attention weights and the weighted sum of the values.
+        """
         q = self.query(x)
         k = self.key(x)
         v = self.value(x)
@@ -42,6 +31,9 @@ class SelfAttentionLayer(nn.Module):
 
 
 class FCNN(nn.Module):
+    """
+    Class for a fully connected neural network model.
+    """
     def __init__(self, input_dim=6, hidden_dim=128, output_dim=1, dropout_rate=0.3):
         super(FCNN, self).__init__()
         self.fc1 = nn.Linear(input_dim, hidden_dim)
@@ -59,6 +51,9 @@ class FCNN(nn.Module):
         self.residual_fc = nn.Linear(hidden_dim, hidden_dim)
 
     def forward(self, x):
+        """
+        Forward pass with 4 fully connected layers and a self-attention layer.
+        """
         x = F.relu(self.bn1(self.fc1(x)))
 
         residual = x
@@ -72,14 +67,13 @@ class FCNN(nn.Module):
 
         x = self.self_attention(x.unsqueeze(1))
         x = self.output(x.squeeze(1))
-        # x = torch.sigmoid(x) * 7    # Scale the output to the range [0, 7]
         return x
-    
-def custom_activation(x):
-    return 7 * torch.sigmoid(torch.log(torch.exp(x) + 1))
 
 
 class GCN(nn.Module):
+    """
+    Class for a graph convolutional neural network model.
+    """
     def __init__(self, in_channels, hidden_channels, out_channels, dropout_rate=0.3):
         super(GCN, self).__init__()
         self.conv1 = GCNConv(in_channels, hidden_channels)
@@ -97,6 +91,9 @@ class GCN(nn.Module):
         self.residual_conv = nn.Linear(hidden_channels, hidden_channels)
 
     def forward(self, x, edge_index):
+        """
+        Forward pass with 4 graph convolutional layers and a self-attention layer.
+        """
         x = F.relu(self.bn1(self.conv1(x, edge_index)))
 
         residual = x
@@ -111,7 +108,4 @@ class GCN(nn.Module):
         x = self.attention(x.unsqueeze(0), x.unsqueeze(0), x.unsqueeze(0))[0]
 
         x = self.output(x)
-        # x = torch.sigmoid(x)*7  # Scale the output to the range [0, 7]
-        # x = custom_activation(x)
-        return x    
-
+        return x
