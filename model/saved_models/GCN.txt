@@ -1,18 +1,18 @@
 
         Parameters of saved GCN:
         Hidden dimension: 512
-        Epochs: 300
-        Learning rate: 1e-05
-        Dropout rate: 0.4
-        Batch size: 65536
-        K: 15
-        Beta: 0.15
-        Weight decay: 1e-05
+        Epochs: 1000
+        Learning rate: 5e-06
+        Dropout rate: 0.75
+        Batch size: 32768
+        K: 30
+        Beta: 0.25
+        Weight decay: 0.05
 
         Test set:
-        Mean Squared Error (MSE): 0.9592
-        Loss: 0.5487
-        R-squared (R²): 0.2397
+        Mean Squared Error (MSE): 3.3332
+        Loss: 1.2303
+        R-squared (R²): 0.3280
 
-        Saved on 2024-08-25 18:56:12
+        Saved on 2024-08-28 23:18:59
         

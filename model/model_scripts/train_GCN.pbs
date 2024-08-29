@@ -34,13 +34,13 @@ export CUDA_LAUNCH_BLOCKING=1
 # Run the Python script
 python ../src/trainGNN.py --data_path ../../data/Combined_CSVs\
                 --hidden_dim 512 \
-                --num_epochs 300 \
-                --learning_rate 0.00001 \
-                --dropout_rate 0.4 \
-                --batch_size 65536 \
-                --k 15 \
-                --beta 0.15 \
-                --weight_decay 0.00001 \
+                --num_epochs 1000 \
+                --learning_rate 0.000005 \
+                --dropout_rate 0.75 \
+                --batch_size 32768  \
+                --k 30 \
+                --beta 0.25 \
+                --weight_decay 0.05 \
                 --n_workers 2
    
 

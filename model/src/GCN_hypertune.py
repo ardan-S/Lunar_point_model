@@ -22,11 +22,11 @@ def suppress_stdout():
 def hyperparameter_tuning(args):
     # Define the hyperparameter grid
     batch_sizes = [2**16]
-    learning_rates = [4e-4, 3e-4, 2e-4]
-    dropout_rates = [0.1, 0.15, 0.2, 0.25]
-    k_vals = [15]
-    betas = [0.1, 0.15, 0.2]
-    weight_decays = [1e-3, 5e-4, 1e-4, 5e-5]
+    learning_rates = [0.00001, 0.00005, 0.0001, 0.0005]
+    dropout_rates = [0.3, 0.4, 0.5]
+    k_vals = [15, 20, 25]
+    betas = [0.1, 0.15, 0.2, 0.25]
+    weight_decays = [0.00001, 0.0001, 0.001]
 
     best_loss = float('inf')
     best_hyperparams = None

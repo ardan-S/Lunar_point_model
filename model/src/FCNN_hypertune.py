@@ -24,7 +24,7 @@ def hyperparameter_tuning(args):
     learning_rates = [1e-4, 5e-5, 1e-5]
     dropout_rates = [0.1, 0.15, 0.2]
     betas = [0.05, 0.1, 0.15]
-    weight_decays = [5e-4, 1e-4]
+    weight_decays = [5e-4, 1e-4, 5e-5]
 
     best_loss = float('inf')
     best_hyperparams = None

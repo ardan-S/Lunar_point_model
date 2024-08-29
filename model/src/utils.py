@@ -7,6 +7,11 @@ from collections import Counter
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader as GeoDataLoader  # Avoid name conflict with PyTorch DataLoader
 
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+from sklearn.neighbors import NearestNeighbors
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -17,7 +22,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 from data_processing.label import apply_labels
 
 
-def load_data(data_path):
+def load_data(data_path, output=True):
     if not os.path.isdir(data_path):
         raise FileNotFoundError(f"Directory {data_path} not found")
     
@@ -32,19 +37,19 @@ def load_data(data_path):
     label_counts = Counter(data['Label'])
     total_count = sum(label_counts.values())
     label_percentages = {label: (count / total_count) * 100 for label, count in label_counts.items()}
-    print("Percentage of each label in the dataset:")
-    for label in sorted(label_percentages.keys()):
-        print(f"Label {label}: {label_percentages[label]:.4f}%")
+    if output:
+        print("Percentage of each label in the dataset:")
+        for label in sorted(label_percentages.keys()):
+            print(f"Label {label}: {label_percentages[label]:.5f}%")
     
     return data
 
 
 def balanced_sample(data, target_column, fraction, random_state=42):
     total_samples = int(len(data) * fraction)
-    label_0_target = total_samples // 4
-    other_label_target = total_samples // 8
+    label_0_target = total_samples *2 //9
+    other_label_target = total_samples // 9
     
-    # Split the data by label
     grouped = data.groupby(target_column)
     
     samples = []
@@ -66,7 +71,6 @@ def balanced_sample(data, target_column, fraction, random_state=42):
                 
             samples.append(sampled_data)
     
-    # Calculate how many more samples are needed
     current_total_samples = sum(sampled_counts.values())
     remaining_samples = total_samples - current_total_samples
     
@@ -87,12 +91,11 @@ def balanced_sample(data, target_column, fraction, random_state=42):
     balanced_data = pd.concat(samples).reset_index(drop=True)
     final_proportions = {label: count / total_samples for label, count in sampled_counts.items()}
 
-    print("Best available proportions for the fraction:")
+    print("Percentage of each label after resampling:")
     for label, proportion in final_proportions.items():
-        print(f"Label {label}: {proportion:.4f}")
+        print(f"Label {label}: {proportion*100:.2f}%")
     
     return balanced_data
-
 
 
 def create_FCNN_loader(inputs, targets, device, batch_size=128, shuffle=True, num_workers=1, standardise_scalar=None, normalise_scalar=None, scale_targets=False):
@@ -258,6 +261,37 @@ def stratified_split_data(features, targets, rand_state=42):
 
 
     return train_features, val_features, test_features, train_targets, val_targets, test_targets
+
+
+def get_random_filtered_graph(file_path, label_value=None, k=5):
+    data = load_data(file_path)
+
+    selected_row = data[data['Label'] == label_value].sample(n=1) if label_value else data.sample(n=1)
+    if selected_row.empty:
+        raise ValueError(f"No data found for label value {label_value}")
+    
+    selected_coords = selected_row[['Latitude', 'Longitude']].values
+    nbrs = NearestNeighbors(n_neighbors=k*k, algorithm='ball_tree').fit(data[['Latitude', 'Longitude']].values)
+    subgraph_indices = nbrs.kneighbors(selected_coords)[1][0]
+    subgraph_data = data.iloc[subgraph_indices]   # Get the indices of the k*k nearest neighbours
+
+    node_features = torch.tensor(subgraph_data[['Latitude', 'Longitude', 'Diviner', 'LOLA', 'M3', 'MiniRF', 'Elevation']].values, dtype=torch.float32)
+    node_labels = torch.tensor(subgraph_data['Label'].values, dtype=torch.float32)
+
+    target_idx = subgraph_indices.tolist().index(selected_row.index[0])
+    edge_index_list = []
+
+    for i in range(k*k):
+        for j in range(k*k):
+            if i != j:
+                edge_index_list.append([i, j])
+
+    edge_index = torch.tensor(edge_index_list, dtype=torch.long).t().contiguous()
+
+    self_loops = torch.arange(k*k, dtype=torch.long).unsqueeze(0).repeat(2, 1)
+    edge_index = torch.cat([edge_index, self_loops], dim=1)
+
+    return node_features, edge_index, node_labels, target_idx
 
 
 def plot_metrics(num_epochs, 

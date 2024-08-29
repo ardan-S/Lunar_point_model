@@ -6,6 +6,7 @@ import argparse
 import sys
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import joblib
 
 from models import FCNN
 from utils import load_data, create_FCNN_loader, stratified_split_data, plot_metrics, balanced_sample
@@ -17,17 +18,10 @@ def setup_FCNN_data(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     labeled_data = load_data(args.data_path)
-    # labeled_data = balanced_sample(labeled_data, 'Label', 0.01, random_state=rand_state)
-    original_size = labeled_data.shape[0]
-    print(f"Size of original dataset: {original_size}")
-
-    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.01, random_state=rand_state)
-    _, test_index = next(sss.split(labeled_data, labeled_data["Label"]))
-    labeled_data = labeled_data.iloc[test_index]
-    print(f"Size of selected dataset: {labeled_data.shape[0]}")
+    labeled_data = balanced_sample(labeled_data, 'Label', 0.001, random_state=rand_state)
 
     features = labeled_data[["LOLA", "Diviner", "M3", "MiniRF", "Elevation", "Latitude", "Longitude"]]
-    print(f"Features: {features.columns.tolist()}")
+    # print(f"Features: {features.columns.tolist()}")
 
     targets = labeled_data["Label"]
     input_dim = features.shape[1]
@@ -40,6 +34,9 @@ def setup_FCNN_data(args):
 def setup_FCNN_loader(train_features, train_targets, val_features, val_targets, test_features, test_targets, device, args):
     standardise_scalar = StandardScaler().fit(train_features)   # Fit the scalers on the training data only
     normalise_scalar = MinMaxScaler().fit(train_features)
+
+    joblib.dump(standardise_scalar, '../saved_models/standardise_scalar_FCNN.joblib')
+    joblib.dump(normalise_scalar, '../saved_models/normalise_scalar_FCNN.joblib')
 
     train_loader = create_FCNN_loader(train_features, train_targets, device, batch_size=args.batch_size, shuffle=True, num_workers=args.n_workers, standardise_scalar=standardise_scalar, normalise_scalar=normalise_scalar)
     test_loader = create_FCNN_loader(test_features, test_targets, device, batch_size=args.batch_size, shuffle=False, num_workers=args.n_workers, standardise_scalar=standardise_scalar, normalise_scalar=normalise_scalar)
@@ -71,6 +68,7 @@ def setup_FCNN_model(input_dim, args, device):
     optimiser = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     # criterion = nn.MSELoss()
     criterion = nn.SmoothL1Loss(beta=args.beta)
+    # criterion = CustomHuberLossWithPenalty(delta=args.beta, penalty_weight=0.5, target_range=(0, 7))
     scaler = torch.amp.GradScaler()    # Initialise GradScaler for mixed precision training 
 
     return model, criterion, optimiser, scaler
@@ -159,6 +157,7 @@ def train_FCNN(device, model, criterion, optimiser, scaler, train_loader, val_lo
         """
         with open(file_path, 'w') as f:
             f.write(content)
+        print(f"Model saved at {model_save_path}")
 
     if img_save_path:
         plot_metrics(iter, train_losses, val_losses, test_loss, val_mses, val_r2s, test_mse, test_r2, save_path=img_save_path)
@@ -186,9 +185,11 @@ def main():
     inputs, targets = random_line
     inputs, targets = inputs.to(device), targets.to(device)
     outputs = model(inputs).squeeze()
-    print(f"Random line from test loader: {random_line}")
-    print(f"Model output: {outputs.cpu().detach().numpy()}")
 
+    targets_np = targets.cpu().detach().numpy()[:5]
+    outputs_np = outputs.cpu().detach().numpy()[:5]
+    print(f"True labels: {targets_np}")
+    print(f"Predictions: {outputs_np}")
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Train a PointRankingModel.')
