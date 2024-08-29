@@ -1,4 +1,4 @@
-# Using deep learning to map potential resource distribution of lunar permanently shadowed regions
+# Using deep learning to predict water ice presence at the lunar poles
 
 <p>
 <strong>- Independent Research Project by Ardan Suphi (as5023)</strong><br>
