@@ -2,9 +2,11 @@ import torch
 import torch.optim as optim
 import torch_geometric.data as geo_data
 import torch.nn as nn
+from torch_geometric.utils import add_self_loops
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import StratifiedShuffleSplit
+import joblib
 
 import time
 import argparse
@@ -92,12 +94,12 @@ def setup_GCN_data(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     labeled_data = load_data(args.data_path)
-    # labeled_data = balanced_sample(labeled_data, 'Label', 0.0025, random_state=rand_state)
+    labeled_data = balanced_sample(labeled_data, 'Label', 0.001, random_state=rand_state)
 
-    sss = StratifiedShuffleSplit(n_splits=1, test_size=0.0025, random_state=rand_state)
-    _, test_index = next(sss.split(labeled_data, labeled_data["Label"]))
-    labeled_data = labeled_data.iloc[test_index]
-    print(f"Size of selected dataset: {labeled_data.shape[0]}")
+    # sss = StratifiedShuffleSplit(n_splits=1, test_size=0.0025, random_state=rand_state)
+    # _, test_index = next(sss.split(labeled_data, labeled_data["Label"]))
+    # labeled_data = labeled_data.iloc[test_index]
+    # print(f"Size of selected dataset: {labeled_data.shape[0]}")
 
     labeled_x = labeled_data[['Latitude', 'Longitude', 'Diviner', 'LOLA', 'M3', 'MiniRF', 'Elevation']]
     labeled_y = labeled_data['Label']
@@ -118,6 +120,8 @@ def setup_GCN_data(args):
 
     standardise_scalar = StandardScaler().fit(train_features)
     normalise_scalar = MinMaxScaler().fit(standardise_scalar.transform(train_features))
+    joblib.dump(standardise_scalar, '../saved_models/standardise_scalar_GCN.joblib')
+    joblib.dump(normalise_scalar, '../saved_models/normalise_scalar_GCN.joblib')
 
     train_graph_data = prepare_data(train_coords, train_features, train_targets, args.k, normalise_scalar, standardise_scalar)
     val_graph_data = prepare_data(val_coords, val_features, val_targets, args.k, normalise_scalar, standardise_scalar)
@@ -136,12 +140,23 @@ def setup_GCN_loader(train_graph_data, val_graph_data, test_graph_data, device, 
 
 def setup_GCN_model(input_dim, args, device):
     model = GCN(input_dim, args.hidden_dim, 1, args.dropout_rate).to(device)
-    optimiser = optim.Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
+    optimiser = optim.AdamW(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     # criterion = nn.MSELoss()
     criterion = nn.SmoothL1Loss(beta=args.beta)
+    # criterion = CustomHuberLossWithPenalty(delta=args.beta, penalty_weight=50, target_range=(0, 7))
     scaler = torch.amp.GradScaler()    # Initialise GradScaler for mixed precision training
 
     return model, criterion, optimiser, scaler
+
+
+def compute_gradient_norms(model):
+    total_norm = 0.0
+    for param in model.parameters():
+        if param.grad is not None:
+            param_norm = param.grad.data.norm(2)  # Compute L2 norm of the gradient
+            total_norm += param_norm.item() ** 2
+    total_norm = total_norm ** (1. / 2)
+    return total_norm
 
 
 def train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, model_save_path=None, img_save_path=None):
@@ -181,6 +196,9 @@ def train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loa
             scaler.step(optimiser)
             scaler.update()
 
+            # grad_norm = compute_gradient_norms(model)
+            # print(f'Epoch {epoch+1}, Gradient Norm: {grad_norm}')
+
             running_loss += loss.item() * data.num_graphs
 
         epoch_train_loss = running_loss / len(train_loader.dataset)
@@ -218,6 +236,7 @@ def train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loa
         """
         with open(file_path, 'w') as f:
             f.write(content)
+        print(f"Model saved at {model_save_path}")
 
     if img_save_path:
         plot_metrics(args.num_epochs, train_losses, val_losses, test_loss, val_mses, val_r2s, test_mse, test_r2, save_path=img_save_path)
@@ -233,12 +252,32 @@ def main():
     print(f"Data loaders setup completed in {(time.time() - start_time) / 60 :.2f} mins")
     model, criterion, optimiser, scaler = setup_GCN_model(input_dim, args, device)
     print(f"Model setup completed in {(time.time() - start_time) / 60 :.2f} mins")
-    model, test_loss, test_mse, test_r2 = train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, img_save_path='../figs/training_metrics_GCN.png')
+    model, test_loss, test_mse, test_r2 = train_GCN(device, model, criterion, optimiser, scaler, train_loader, val_loader, test_loader, args, img_save_path='../figs/training_metrics_GCN.png', model_save_path='../saved_models/GCN.pth')
     print(f"Training completed in {(time.time() - start_time) / 60 :.2f} mins")
     print("\nTest set:")
     print(f'Mean Squared Error (MSE): {test_mse:.4f}')
     print(f'Loss: {test_loss:.4f}')
     print(f'R-squared (R²): {test_r2:.4f}\n')
+
+    # Get random graph from test loader
+    random_graph = next(iter(test_loader))
+    inputs, targets = random_graph.x, random_graph.y
+    inputs, targets = inputs.to(device), targets.to(device)
+
+    edge_index = random_graph.edge_index
+    if edge_index.shape[0] != 2:
+        edge_index = edge_index.t().contiguous()
+    
+    edge_index, _ = add_self_loops(edge_index, num_nodes=inputs.size(0))
+    edge_index = edge_index.to(device)
+    outputs = model(inputs, edge_index).squeeze()
+
+    targets_np = targets.cpu().detach().numpy()[:5]
+    outputs_np = outputs.cpu().detach().numpy()[:5]
+
+    print(f"True labels (first 4): {targets_np}")
+    print(f"Model output (first 4): {outputs_np}")
+
     
 
 def parse_arguments():

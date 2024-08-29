@@ -7,7 +7,7 @@
 #PBS -l select=1:ncpus=2:mem=128GB:ngpus=1
 
 # Time required
-#PBS -l walltime=48:00:00
+#PBS -l walltime=36:00:00
 
 # File to contain standard out and error
 #PBS -j oe
@@ -32,7 +32,7 @@ source ~/venv/IRP/bin/activate
 # Run the Python script
 python ../src/FCNN_hypertune.py --data_path ../../data/Combined_CSVs\
                 --hidden_dim 512\
-                --num_epochs 150\
+                --num_epochs 250\
                 --n_workers 2
    
 

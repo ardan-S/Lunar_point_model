@@ -1,114 +1,129 @@
-/var/spool/pbs/mom_priv/jobs/19816.pbs-7.SC: line 27: ./logs/update_venv.log: No such file or directory
-3 largest values in Label column
-          Longitude   Latitude        M3  ...      LOLA    MiniRF  Label
-1664307  357.004931 -86.533365  0.403852  ...  0.356271  0.885893      7
-1687056  356.981187 -86.485876  0.217298  ...  0.371904  0.897541      7
-1687057  356.989102 -86.485876  0.449432  ...  0.373295  0.947498      7
-
-[3 rows x 8 columns]
-
-3 smallest values in Label column
-      Longitude  Latitude        M3  ...    LOLA    MiniRF  Label
-176  331.400901     -90.0  0.943733  ...  0.3782  0.455917      0
-177  331.408815     -90.0  0.948430  ...  0.3782  0.465806      0
-178  331.416730     -90.0  0.951627  ...  0.3782  0.474920      0
-
-[3 rows x 8 columns]
-
-Description of labeled data
-          Longitude      Latitude  ...        MiniRF         Label
-count  1.726422e+08  1.726422e+08  ...  1.726422e+08  1.726422e+08
-mean   1.800023e+02  3.128672e-03  ...  5.134967e-01  7.919539e-01
-std    1.039233e+02  8.261377e+01  ...  1.820878e-01  1.084744e+00
-min    0.000000e+00 -9.000000e+01  ...  6.916347e-06  0.000000e+00
-25%    9.000345e+01 -8.249687e+01  ...  3.878470e-01  0.000000e+00
-50%    1.800023e+02  3.128672e-03  ...  4.816309e-01  0.000000e+00
-75%    2.700011e+02  8.250313e+01  ...  6.034228e-01  2.000000e+00
-max    3.600046e+02  9.000626e+01  ...  1.500000e+00  7.000000e+00
-
-[8 rows x 8 columns]
-
-Size of original dataset: 172642176
-Size of selected dataset: 1726422
-Features: ['LOLA', 'Diviner', 'M3', 'MiniRF', 'Elevation', 'Latitude', 'Longitude']
+/var/spool/pbs/mom_priv/jobs/21036.pbs-7.SC: line 27: ./logs/update_venv.log: No such file or directory
+Percentage of each label in the dataset:
+Label 0: 60.92%
+Label 1: 6.74%
+Label 2: 27.00%
+Label 3: 3.16%
+Label 4: 1.98%
+Label 5: 0.15%
+Label 6: 0.04%
+Label 7: 0.00%
+Percentage of each label after resampling:
+Label 0: 25.00%
+Label 1: 12.50%
+Label 2: 12.50%
+Label 3: 12.50%
+Label 4: 12.50%
+Label 5: 12.50%
+Label 6: 12.50%
+Label 7: 1.90%
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.1, beta: 0.05, weight decay: 0.0005
 New best hyperparameters: {'batch_size': 131072, 'learning_rate': 0.0001, 'dropout_rate': 0.1, 'beta': 0.05, 'weight_decay': 0.0005}
-New best loss: 0.2813
+New best loss: 0.7888
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.1, beta: 0.05, weight decay: 0.0001
-New best hyperparameters: {'batch_size': 131072, 'learning_rate': 0.0001, 'dropout_rate': 0.1, 'beta': 0.05, 'weight_decay': 0.0001}
-New best loss: 0.2585
+Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.1, beta: 0.05, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.1, beta: 0.1, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.1, beta: 0.1, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.1, beta: 0.1, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.1, beta: 0.15, weight decay: 0.0005
-New best hyperparameters: {'batch_size': 131072, 'learning_rate': 0.0001, 'dropout_rate': 0.1, 'beta': 0.15, 'weight_decay': 0.0005}
-New best loss: 0.2232
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.1, beta: 0.15, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 131072, 'learning_rate': 0.0001, 'dropout_rate': 0.1, 'beta': 0.15, 'weight_decay': 0.0001}
+New best loss: 0.7569
+Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.1, beta: 0.15, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.15, beta: 0.05, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.15, beta: 0.05, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 131072, 'learning_rate': 0.0001, 'dropout_rate': 0.15, 'beta': 0.05, 'weight_decay': 0.0001}
+New best loss: 0.7391
+Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.15, beta: 0.05, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.15, beta: 0.1, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.15, beta: 0.1, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.15, beta: 0.1, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.15, beta: 0.15, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.15, beta: 0.15, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.15, beta: 0.15, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.2, beta: 0.05, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.2, beta: 0.05, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.2, beta: 0.05, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.2, beta: 0.1, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.2, beta: 0.1, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.2, beta: 0.1, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.2, beta: 0.15, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.2, beta: 0.15, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 0.0001, dropout rate: 0.2, beta: 0.15, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.1, beta: 0.05, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.1, beta: 0.05, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.1, beta: 0.05, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.1, beta: 0.1, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.1, beta: 0.1, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.1, beta: 0.1, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.1, beta: 0.15, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.1, beta: 0.15, weight decay: 0.0001
+New best hyperparameters: {'batch_size': 131072, 'learning_rate': 5e-05, 'dropout_rate': 0.1, 'beta': 0.15, 'weight_decay': 0.0001}
+New best loss: 0.7156
+Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.1, beta: 0.15, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.15, beta: 0.05, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.15, beta: 0.05, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.15, beta: 0.05, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.15, beta: 0.1, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.15, beta: 0.1, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.15, beta: 0.1, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.15, beta: 0.15, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.15, beta: 0.15, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.15, beta: 0.15, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.2, beta: 0.05, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.2, beta: 0.05, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.2, beta: 0.05, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.2, beta: 0.1, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.2, beta: 0.1, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.2, beta: 0.1, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.2, beta: 0.15, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.2, beta: 0.15, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 5e-05, dropout rate: 0.2, beta: 0.15, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.1, beta: 0.05, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.1, beta: 0.05, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.1, beta: 0.05, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.1, beta: 0.1, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.1, beta: 0.1, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.1, beta: 0.1, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.1, beta: 0.15, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.1, beta: 0.15, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.1, beta: 0.15, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.15, beta: 0.05, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.15, beta: 0.05, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.15, beta: 0.05, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.15, beta: 0.1, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.15, beta: 0.1, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.15, beta: 0.1, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.15, beta: 0.15, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.15, beta: 0.15, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.15, beta: 0.15, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.2, beta: 0.05, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.2, beta: 0.05, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.2, beta: 0.05, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.2, beta: 0.1, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.2, beta: 0.1, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.2, beta: 0.1, weight decay: 5e-05
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.2, beta: 0.15, weight decay: 0.0005
 Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.2, beta: 0.15, weight decay: 0.0001
+Training with batch size: 131072, learning rate: 1e-05, dropout rate: 0.2, beta: 0.15, weight decay: 5e-05
 
 Best hyperparameters:
 Batch size: 131072 out of [131072]
-Learning rate: 0.0001 out of [0.0001, 5e-05, 1e-05]
+Learning rate: 5e-05 out of [0.0001, 5e-05, 1e-05]
 Dropout rate: 0.1 out of [0.1, 0.15, 0.2]
 Beta: 0.15 out of [0.05, 0.1, 0.15]
-Weight decay: 0.0005 out of [0.0005, 0.0001]
+Weight decay: 0.0001 out of [0.0005, 0.0001, 5e-05]
 
-Best loss: 0.2232
-Best MSE: 0.3546
-R² for best hyperparams: 0.6986
-Completed on Sun 25 Aug 18:11:22 BST 2024
+Best loss: 0.7156
+Best MSE: 1.3013
+R² for best hyperparams: 0.7261
+Completed on Wed 28 Aug 16:55:40 BST 2024
 
 ====================================
-CPU Time used: 46:14:36
-CPU Percent: 182%
-Memory usage: 26281960kb
-Approx Power usage: 0.5548
-Walltime usage: 25:22:33
+CPU Time used: 29:00:17
+CPU Percent: 151%
+Memory usage: 23726972kb
+Approx Power usage: 0.348
+Walltime usage: 19:11:29
 
 ====================================
