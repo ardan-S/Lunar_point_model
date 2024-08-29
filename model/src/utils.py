@@ -151,7 +151,7 @@ def create_GCN_loader(data, device, batch_size=32, shuffle=True, num_workers=1):
 def gen_rand_data(npoints=100, rand_state=42):
     """
     Function to generate random labelled data for testing purposes.
-    Used in place of interpolated files for each dataset. 
+    Used in place of interpolated files for each dataset.
     """
     torch.manual_seed(rand_state)
     print("!!!! TRAINING ON RANDOM DATA !!!!")
@@ -267,11 +267,9 @@ def plot_metrics(num_epochs,
                  train_losses, val_losses, test_loss,
                  val_mses, val_r2s, test_mse, test_r2,
                  save_path='../figs/training_metrics.png'):
-    
     """
     Function to plot the training and validation losses, and the validation MSE and R² scores.
     """
-
     num_epochs = num_epochs.cpu().numpy() if isinstance(num_epochs, torch.Tensor) else num_epochs
     train_losses = train_losses.cpu().numpy() if isinstance(train_losses, torch.Tensor) else train_losses
     test_loss = test_loss.cpu().numpy() if isinstance(test_loss, torch.Tensor) else test_loss
