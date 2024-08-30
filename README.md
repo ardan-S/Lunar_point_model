@@ -52,12 +52,21 @@ These were then trained, tuned and saved to produce the final model which could 
 <a name="structure"></a>
 ## File structure
 
+The `data` directory is used for the initial processing of the images. `evaluate.pbs` uses functions from the `data_processing` directory as well as specific scripts for each dataset to generate save CSVs of each dataset.
+
+In addition to providing functions for use in the `data` directory, the `data_processing` directory contains functions and jobscripts to run the interpolation and labelling processes. Utility and plotting functions are also stored here.
+
+The `lit_review` directory contains a notebook which was used to evaluate the effect of removing 4 datasets from the original 8 and uses Kendall's Tau, Spearman's Rank Correlation and Rank Biased Overlap to compare the two lists.
+
+The `model` directory contains the machine learning element of this project including model classes, training, hyperparameter tuning and use of the saved models. 
+
     ├── data/
     │   ├── Combined_CSVs/
     │   ├── Diviner-temp/
     │   ├── LOLA-Albedo/
     │   ├── M3/
-    │   └── Mini-RF/
+    │   ├── Mini-RF/
+    │   └── evaluate.pbs
     ├── data_processing
     │   ├── logs/
     │   ├── interp.pbs
