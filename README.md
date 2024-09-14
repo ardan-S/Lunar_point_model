@@ -6,6 +6,7 @@
 <strong>- Department of Earth Science and Engineering, Imperial College London</strong>
 </p>
 
+### NOTE: This repo was copied from the original submission for the above course and has been edited since that time for continued research
 
 ## Table of Contents
 
