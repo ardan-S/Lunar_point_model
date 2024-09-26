@@ -10,6 +10,8 @@ import argparse
 import os
 import shutil
 from urllib.parse import urljoin
+import asyncio
+import aiohttp
 import requests
 from bs4 import BeautifulSoup
 
@@ -21,30 +23,36 @@ def clear_dir(home_dir):
             shutil.rmtree(full_path)
 
 
-def download_file(url, download_dir):
+async def download_file(session, url, download_dir):
     local_filename = os.path.join(download_dir, os.path.basename(url))
+    try:
+        async with session.get(url) as response:
+            if response.status == 200:
+                # Write file in chunks to avoid memory overload
+                with open(local_filename, 'wb') as f:
+                    while True:
+                        chunk = await response.content.read(8192)
+                        if not chunk:
+                            break
+                        f.write(chunk)
+            else:
+                print(f"Failed to download {url}. HTTP Status: {response.status}")
+    except Exception as e:
+        print(f"Error downloading {url}: {e}")
 
-    # Stream the content to handle large files
-    with requests.get(url, stream=True) as response:
-        if response.status_code == 200:
-            # Write file in chunks to avoid memory overload
-            with open(local_filename, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-        else:
-            print(f"Failed to download {url}. HTTP Status: {response.status_code}")
 
-
-def download_diviner(download_dir, home_url):
+async def download_diviner(download_dir, home_url, session):
     years = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
+    tasks = []
 
     for year in years:
         url = urljoin(home_url, f'{year}/polar/jp2/')
 
         try:
-            response = requests.get(url)
-            response.raise_for_status()
-        except requests.RequestException as e:
+            async with session.get(url) as response:
+                response.raise_for_status()
+                content = await response.read()
+        except Exception as e:
             print(f"Failed to fetch Diviner data from {url}. Error: {e}")
             continue
 
@@ -59,21 +67,27 @@ def download_diviner(download_dir, home_url):
         for jp2_url in jp2_urls:
             lbl_url = jp2_url.replace('.jp2', '.lbl')
 
-            # download_file(jp2_url, download_dir)
-            # download_file(lbl_url, download_dir)
-            print(jp2_url)
-            print(lbl_url)
+        #     # download_file(jp2_url, download_dir)
+        #     # download_file(lbl_url, download_dir)
+        #     print(jp2_url)
+        #     print(lbl_url)
 
+            tasks.append(download_file(session, jp2_url, download_dir))
+            tasks.append(download_file(session, lbl_url, download_dir))
             break
 
         break
 
+    # await asyncio.gather(*tasks)
 
-def download_lola(download_dir, home_url):
+
+async def download_lola(download_dir, home_url, session):
+    tasks = []
     try:
-        response = requests.get(home_url)
-        response.raise_for_status()
-    except requests.RequestException as e:
+        async with session.get(home_url) as response:
+            response.raise_for_status()
+            content = await response.read()
+    except Exception as e:
         print(f"Failed to fetch LOLA data from {home_url}. Error: {e}")
         return
 
@@ -92,15 +106,22 @@ def download_lola(download_dir, home_url):
         print(jp2_url)
         print(lbl_url)
 
+        tasks.append(download_file(session, jp2_url, download_dir))
+        tasks.append(download_file(session, lbl_url, download_dir))
+
         break
 
+    # await asyncio.gather(*tasks)
 
-def download_m3(download_dir, home_url, img_extension, lbl_extension, keyword='DATA'):
+
+async def download_m3(download_dir, home_url, img_extension, lbl_extension, session, keyword='DATA'):
     base_url = home_url.rsplit('/', 1)[0] + '/'
+    tasks = []
     try:
-        response = requests.get(home_url)
-        response.raise_for_status()
-    except requests.RequestException as e:
+        async with session.get(home_url) as response:
+            response.raise_for_status()
+            text = await response.text()
+    except Exception as e:
         print(f"Failed to fetch M3 data from {home_url}. Error: {e}")
         return
 
@@ -121,15 +142,22 @@ def download_m3(download_dir, home_url, img_extension, lbl_extension, keyword='D
         print(img_url)
         print(lbl_url)
 
+        tasks.append(download_file(session, img_url, download_dir))
+        tasks.append(download_file(session, lbl_url, download_dir))
+
         break
+    
+    # await asyncio.gather(*tasks)
 
 
-def download_mini_rf(download_dir, home_url):
+async def download_mini_rf(download_dir, home_url, session):
+    tasks = []
     try:
-        response = requests.get(home_url)
-        response.raise_for_status()
-    except requests.RequestException as e:
-        print(f"Failed to fetch LOLA data from {home_url}. Error: {e}")
+        async with session.get(home_url) as response:
+            response.raise_for_status()
+            text = await response.text()
+    except Exception as e:
+        print(f"Failed to fetch Mini-RF data from {home_url}. Error: {e}")
         return
 
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -147,14 +175,19 @@ def download_mini_rf(download_dir, home_url):
 
         print(img_url)
         print(lbl_url)
+
+        tasks.append(download_file(session, img_url, download_dir))
+        tasks.append(download_file(session, lbl_url, download_dir))
         break
+
+    # await asyncio.gather(*tasks)
 
 
 def count_files_in_directory(directory):
     return sum(1 for entry in os.scandir(directory) if entry.is_file())
 
 
-def main(args):
+async def main(args):
     dataset_dict = {
         'Diviner': {
             'url': 'https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gdr_l3/',
@@ -187,32 +220,34 @@ def main(args):
     if args.existing_dirs == "Replace":             # Clear the download directory if the user specifies 'Replace'
         clear_dir(args.download_dir)
 
-    # Loop through each dataset in dataset_dict and execute the download process
-    for dataset, info in dataset_dict.items():
-        url = info['url']
-        download_path = info['path']
-        download_func = info['download_func']
+    async with aiohttp.ClientSession() as session:
 
-        # Skip existing directories if the user specifies 'Skip'
-        if os.path.exists(download_path) and args.existing_dirs == "Skip":
-            print(f"Skipping {dataset} download as directory already exists")
-            continue
+        # Loop through each dataset in dataset_dict and execute the download process
+        for dataset, info in dataset_dict.items():
+            url = info['url']
+            download_path = info['path']
+            download_func = info['download_func']
 
-        # Otherwise, create the directory and download the dataset
-        os.makedirs(download_path, exist_ok=True)
-        print(f"Downloading {dataset} to {download_path}")
+            # Skip existing directories if the user specifies 'Skip'
+            if os.path.exists(download_path) and args.existing_dirs == "Skip":
+                print(f"Skipping {dataset} download as directory already exists")
+                continue
 
-        try:
-            if dataset == 'M3':
-                download_func(download_path, url, '_RFL.IMG', '_L2.LBL')
-            elif dataset == 'M3_loc':
-                download_func(download_path, url, '_LOC.IMG', '_L1B.LBL')
-            else:
-                download_func(download_path, url)
-            num_files = count_files_in_directory(download_path)
-            print(f"Successfully downloaded {num_files} {dataset} files from {url} to {download_path}\n")
-        except Exception as e:
-            print(f"Failed to download {dataset} from {url}. Error: {e}\n")
+            # Otherwise, create the directory and download the dataset
+            os.makedirs(download_path, exist_ok=True)
+            print(f"Downloading {dataset} to {download_path}")
+
+            try:
+                if dataset == 'M3':
+                    await download_func(download_path, url, '_RFL.IMG', '_L2.LBL', session)
+                elif dataset == 'M3_loc':
+                    await download_func(download_path, url, '_LOC.IMG', '_L1B.LBL', session)
+                else:
+                    await download_func(download_path, url, session)
+                num_files = count_files_in_directory(download_path)
+                print(f"Successfully downloaded {num_files} {dataset} files from {url} to {download_path}\n")
+            except Exception as e:
+                print(f"Failed to download {dataset} from {url}. Error: {e}\n")
 
 
 def parse_args():
@@ -224,5 +259,5 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    main(args)
+    asyncio.run(main(args))
     print("Downloaded all files successfully")

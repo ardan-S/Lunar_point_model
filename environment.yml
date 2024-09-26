@@ -3,10 +3,25 @@ channels:
   - defaults
   - conda-forge
 dependencies:
+ - python=3.11
  - pip
  - ipython
  - jupyter
  - numpy
  - scipy
+ - matplotlib
+ - pandas
+ - scikit-learn
+ - scikit-image
+ - dask
+ - dask[dataframe]
+ - dask[distributed]
+ - aiohttp
+ - pytest
+ - glymur
+ - memory_profiler
  - pip:
-   - -r requirements.txt
+   - jupyter-book
+   - pybryt
+   - torch
+   - torch_geometric
