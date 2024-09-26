@@ -12,7 +12,6 @@ import shutil
 from urllib.parse import urljoin
 import asyncio
 import aiohttp
-import requests
 from bs4 import BeautifulSoup
 
 
@@ -27,7 +26,7 @@ async def download_file(session, url, download_dir):
     local_filename = os.path.join(download_dir, os.path.basename(url))
     try:
         async with session.get(url) as response:
-            await response.raise_for_status()
+            response.raise_for_status()
             with open(local_filename, 'wb') as f:
                 async for chunk in response.content.iter_chunked(8192):
                     f.write(chunk)
@@ -44,7 +43,7 @@ async def download_diviner(download_dir, home_url, session):
 
         try:
             async with session.get(url) as response:
-                await response.raise_for_status()
+                response.raise_for_status()
                 content = await response.read()
         except Exception as e:
             print(f"Failed to fetch Diviner data from {url}. Error: {e}")
@@ -61,13 +60,11 @@ async def download_diviner(download_dir, home_url, session):
         for jp2_url in jp2_urls:
             lbl_url = jp2_url.replace('.jp2', '.lbl')
 
-        #     # download_file(jp2_url, download_dir)
-        #     # download_file(lbl_url, download_dir)
-        #     print(jp2_url)
-        #     print(lbl_url)
+            print(jp2_url)
+            print(lbl_url)
 
-            tasks.append(download_file(session, jp2_url, download_dir))
-            tasks.append(download_file(session, lbl_url, download_dir))
+            # tasks.append(download_file(session, jp2_url, download_dir))
+            # tasks.append(download_file(session, lbl_url, download_dir))
             break
 
         break
@@ -79,7 +76,7 @@ async def download_lola(download_dir, home_url, session):
     tasks = []
     try:
         async with session.get(home_url) as response:
-            await response.raise_for_status()
+            response.raise_for_status()
             content = await response.read()
     except Exception as e:
         print(f"Failed to fetch LOLA data from {home_url}. Error: {e}")
@@ -95,13 +92,11 @@ async def download_lola(download_dir, home_url, session):
     for jp2_url in jp2_urls:
         lbl_url = jp2_url.replace('.jp2', '_jp2.lbl')
 
-        # download_file(jp2_url, download_dir)
-        # download_file(lbl_url, download_dir)
         print(jp2_url)
         print(lbl_url)
 
-        tasks.append(download_file(session, jp2_url, download_dir))
-        tasks.append(download_file(session, lbl_url, download_dir))
+        # tasks.append(download_file(session, jp2_url, download_dir))
+        # tasks.append(download_file(session, lbl_url, download_dir))
 
         break
 
@@ -113,7 +108,7 @@ async def download_m3(download_dir, home_url, img_extension, lbl_extension, sess
     tasks = []
     try:
         async with session.get(home_url) as response:
-            await response.raise_for_status()
+            response.raise_for_status()
             text = await response.text()
     except Exception as e:
         print(f"Failed to fetch M3 data from {home_url}. Error: {e}")
@@ -131,16 +126,14 @@ async def download_m3(download_dir, home_url, img_extension, lbl_extension, sess
     for img_url in img_urls:
         lbl_url = img_url.replace(img_extension, lbl_extension)
 
-        # download_file(img_url, download_dir)
-        # download_file(lbl_url, download_dir)
         print(img_url)
         print(lbl_url)
 
-        tasks.append(download_file(session, img_url, download_dir))
-        tasks.append(download_file(session, lbl_url, download_dir))
+        # tasks.append(download_file(session, img_url, download_dir))
+        # tasks.append(download_file(session, lbl_url, download_dir))
 
         break
-    
+
     # await asyncio.gather(*tasks)
 
 
@@ -148,7 +141,7 @@ async def download_mini_rf(download_dir, home_url, session):
     tasks = []
     try:
         async with session.get(home_url) as response:
-            await response.raise_for_status()
+            response.raise_for_status()
             text = await response.text()
     except Exception as e:
         print(f"Failed to fetch Mini-RF data from {home_url}. Error: {e}")
@@ -164,14 +157,11 @@ async def download_mini_rf(download_dir, home_url, session):
     for img_url in img_urls:
         lbl_url = img_url.replace('.img', '.lbl')
 
-        # download_file(url, download_dir)
-        # download_file(lbl_url, download_dir)
-
         print(img_url)
         print(lbl_url)
 
-        tasks.append(download_file(session, img_url, download_dir))
-        tasks.append(download_file(session, lbl_url, download_dir))
+        # tasks.append(download_file(session, img_url, download_dir))
+        # tasks.append(download_file(session, lbl_url, download_dir))
         break
 
     # await asyncio.gather(*tasks)
@@ -239,7 +229,7 @@ async def main(args):
                 else:
                     await download_func(download_path, url, session)
                 num_files = count_files_in_directory(download_path)
-                print(f"Successfully downloaded {num_files} {dataset} files from {url} to {download_path}\n")
+                print(f"Downloaded {num_files} {dataset} files from web to {download_path}\n")
             except Exception as e:
                 print(f"Failed to download {dataset} from {url}. Error: {e}\n")
 
