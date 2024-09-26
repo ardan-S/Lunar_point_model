@@ -27,16 +27,10 @@ async def download_file(session, url, download_dir):
     local_filename = os.path.join(download_dir, os.path.basename(url))
     try:
         async with session.get(url) as response:
-            if response.status == 200:
-                # Write file in chunks to avoid memory overload
-                with open(local_filename, 'wb') as f:
-                    while True:
-                        chunk = await response.content.read(8192)
-                        if not chunk:
-                            break
-                        f.write(chunk)
-            else:
-                print(f"Failed to download {url}. HTTP Status: {response.status}")
+            await response.raise_for_status()
+            with open(local_filename, 'wb') as f:
+                async for chunk in response.content.iter_chunked(8192):
+                    f.write(chunk)
     except Exception as e:
         print(f"Error downloading {url}: {e}")
 
@@ -50,13 +44,13 @@ async def download_diviner(download_dir, home_url, session):
 
         try:
             async with session.get(url) as response:
-                response.raise_for_status()
+                await response.raise_for_status()
                 content = await response.read()
         except Exception as e:
             print(f"Failed to fetch Diviner data from {url}. Error: {e}")
             continue
 
-        soup = BeautifulSoup(response.content, 'html.parser')
+        soup = BeautifulSoup(content, 'html.parser')
         jp2_urls = [
             urljoin(url, link['href'])
             for link in soup.find_all('a', href=True)
@@ -85,13 +79,13 @@ async def download_lola(download_dir, home_url, session):
     tasks = []
     try:
         async with session.get(home_url) as response:
-            response.raise_for_status()
+            await response.raise_for_status()
             content = await response.read()
     except Exception as e:
         print(f"Failed to fetch LOLA data from {home_url}. Error: {e}")
         return
 
-    soup = BeautifulSoup(response.content, 'html.parser')
+    soup = BeautifulSoup(content, 'html.parser')
     jp2_urls = [
         urljoin(home_url, link['href'])  # Construct the full URL
         for link in soup.find_all('a', href=True)  # Find all <a> tags with href attribute
@@ -119,7 +113,7 @@ async def download_m3(download_dir, home_url, img_extension, lbl_extension, sess
     tasks = []
     try:
         async with session.get(home_url) as response:
-            response.raise_for_status()
+            await response.raise_for_status()
             text = await response.text()
     except Exception as e:
         print(f"Failed to fetch M3 data from {home_url}. Error: {e}")
@@ -127,7 +121,7 @@ async def download_m3(download_dir, home_url, img_extension, lbl_extension, sess
 
     img_urls = [
         urljoin(base_url, parts[1])  # Join the base URL with the file path
-        for line in response.text.splitlines()  # Iterate through each line of text
+        for line in text.splitlines()  # Iterate through each line of text
         if (parts := line.split())  # Split each line by spaces
         and len(parts) == 2  # Ensure there are exactly two parts: checksum and file path
         and parts[1].endswith(img_extension)  # Filter by file extension
@@ -154,13 +148,13 @@ async def download_mini_rf(download_dir, home_url, session):
     tasks = []
     try:
         async with session.get(home_url) as response:
-            response.raise_for_status()
+            await response.raise_for_status()
             text = await response.text()
     except Exception as e:
         print(f"Failed to fetch Mini-RF data from {home_url}. Error: {e}")
         return
 
-    soup = BeautifulSoup(response.text, 'html.parser')
+    soup = BeautifulSoup(text, 'html.parser')
     img_urls = [
         urljoin(home_url, link['href'])  # Construct the full URL
         for link in soup.find_all('a', href=True)  # Find all <a> tags with href attribute
@@ -260,4 +254,3 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     asyncio.run(main(args))
-    print("Downloaded all files successfully")
