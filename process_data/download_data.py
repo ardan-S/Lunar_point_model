@@ -236,7 +236,7 @@ async def main(args):
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--download_dir", type=str, default="data/raw")
+    parser.add_argument("--download_dir", type=str, default="../../data/raw")
     parser.add_argument("--existing_dirs", type=str, default="Replace", help="Replace or Skip")
     return parser.parse_args()
 

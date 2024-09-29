@@ -8,10 +8,12 @@
 #SBATCH --ntasks=1                        # Run on a single task
 #SBATCH --cpus-per-task=1                 # Number of CPU cores per task
 #SBATCH --mem=16G                         # Memory limit per node
-#SBATCH --time=00:03:00                   # Time limit
+#SBATCH --time=01:00:00                   # Time limit
 
 source /scratch_dgxl/as5023/conda/miniconda3/etc/profile.d/conda.sh
 conda activate IRP
+
+start_time=$(date +%s)
 
 # Navigate to the directory where your script is located
 cd $SLURM_SUBMIT_DIR
@@ -19,5 +21,7 @@ cd $SLURM_SUBMIT_DIR
 # Run the Python script
 python ../download_data.py
 
-# Print completion message
+end_time=$(date +%s)
+
 echo "Job finished successfully"
+echo "Total runtime: $((end_time - start_time)) seconds"
