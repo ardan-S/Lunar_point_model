@@ -4,7 +4,7 @@
 #SBATCH --output=/scratch_dgxl/as5023/ardan-S/Lunar_point_model/process_data/logs/download_data.log
 #SBATCH --partition=dgxl_irp              # Partition name (dedicated partition)
 #SBATCH --qos=dgxl_irp_high               # QoS, use high priority to access GPU faster
-#SBATCH --gres=gpu:1                      # Request 1 GPU
+##SBATCH --gres=gpu:1                      # Request 1 GPU
 #SBATCH --ntasks=1                        # Run on a single task
 #SBATCH --cpus-per-task=1                 # Number of CPU cores per task
 #SBATCH --mem=16G                         # Memory limit per node
