@@ -1,3 +1,4 @@
 *.csv
 example_code/
 __pycache__/
+data/raw/
