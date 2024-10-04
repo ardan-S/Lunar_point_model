@@ -1,4 +1,0 @@
-/var/spool/slurmd/job12938/slurm_script: line 14: module: command not found
-/var/spool/slurmd/job12938/slurm_script: line 20: /scratch_dgxl/as5023/myenv/bin/activate: No such file or directory
-/var/spool/slurmd/job12938/slurm_script: line 23: python: command not found
-Job finished successfully

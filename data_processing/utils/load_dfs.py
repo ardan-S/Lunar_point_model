@@ -4,29 +4,30 @@ from pathlib import Path
 import numpy as np
 import requests
 
-from utils import download_parse_metadata, get_metadata_value, clean_metadata_value, parse_metadata_content
-from utils import decode_image_file, plot_df, get_closest_channels
+from utils.utils import get_metadata_value, clean_metadata_value, parse_metadata_content
+from utils.utils import decode_image_file, get_closest_channels, plot_polar_data
 
 
-def process_LRO_image(image_file, address, metadata, data_type):
+def process_LRO_image(image_file, address, metadata, data_type, max_val=1.0, min_val=0.0):
     # Extract image data
-    lines = get_metadata_value(metadata, address, 'LINES')
-    line_samples = int(get_metadata_value(metadata, address, 'LINE_SAMPLES'))
-
     file_path = Path(image_file)
     assert file_path.is_file(), f"File not found: {file_path}"
 
     file_extension = file_path.suffix[1:].lower()
-    image_data = np.asarray(decode_image_file(file_path, file_extension, lines, line_samples, metadata, address))
+    image_data = np.asarray(decode_image_file(file_path, file_extension, metadata, address))
+    print(f"Number of zeros in image data 1: {np.sum(image_data == 0)} ({np.sum(image_data == 0) / image_data.size:.2%})")
+    print(f"Number of non-zero values 1: {np.sum(image_data != 0)} ({np.sum(image_data != 0) / image_data.size:.2%})")
+    print(f"Number of NaN values 1: {np.sum(np.isnan(image_data))} ({np.sum(np.isnan(image_data)) / image_data.size:.2%})")
+    print(f"Range of values 1: {np.min(image_data)} to {np.max(image_data)}")
 
     # Convert to scientific values
-    address = 'COMPRESSED_FILE' if data_type == 'LOLA' else address
     scaling_factor = float(get_metadata_value(metadata, address, 'SCALING_FACTOR'))
     offset = float(get_metadata_value(metadata, address, 'OFFSET'))
     assert scaling_factor is not None or offset is not None, "Scaling factor and offset not found in metadata"
+    print(f"Scaling factor: {scaling_factor}, Offset: {offset}")
 
     missing_constants = {
-        'LOLA': clean_metadata_value(metadata.get('IMAGE_MISSING_CONSTANT', -32768)),
+        'LOLA': clean_metadata_value(metadata.get('MISSING_CONSTANT', -32768)),
         'MiniRF': clean_metadata_value(metadata.get('MISSING_CONSTANT', -1.7976931E+308)),
         'Diviner': clean_metadata_value(metadata.get('MISSING_CONSTANT', -32768))
     }
@@ -36,7 +37,12 @@ def process_LRO_image(image_file, address, metadata, data_type):
 
     mask = (image_data != missing_constant)
     output_vals = np.where(mask, (image_data * scaling_factor) + offset, np.nan)    # Remove missing values BEFORE applying transform
-    output_vals = np.where(output_vals > 1e10, np.nan, output_vals)
+    output_vals = np.where(output_vals > max_val, np.nan, output_vals)  # Remove extreme values
+    output_vals = np.where(output_vals < min_val, np.nan, output_vals)
+    print(f"Number of zeros in image data 2: {np.sum(output_vals == 0)} ({np.sum(output_vals == 0) / output_vals.size:.2%})")
+    print(f"Number of non-zero values 2: {np.sum(output_vals != 0)} ({np.sum(output_vals != 0) / output_vals.size:.2%})")
+    print(f"Number of NaN values 2: {np.sum(np.isnan(output_vals))} ({np.sum(np.isnan(output_vals)) / output_vals.size:.2%})")
+    print(f"Range of values 2: {np.nanmin(output_vals)} to {np.nanmax(output_vals)}")
     return image_data, output_vals
 
 
@@ -89,11 +95,16 @@ def generate_LRO_coords(image_shape, metadata):
     return lons, lats
 
 
-def load_lro_df(data_dict, data_type, plot_save_path=None):
-
+def load_lro_df(data_dict, data_type):
     file_path = data_dict['file_path']
     address = data_dict['address']
     lbl_ext = data_dict['lbl_ext']
+    csv_save_path = data_dict['save_path'] if 'save_path' in data_dict else None
+    plot_save_path = data_dict['plot_path'] if 'plot_path' in data_dict else None
+    max_val = data_dict['max']
+    min_val = data_dict['min']
+
+    print(f"File path: {file_path}")
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
 
@@ -102,24 +113,39 @@ def load_lro_df(data_dict, data_type, plot_save_path=None):
     all_output_vals = []
 
     for lbl_file in lbl_files:
-        metadata = download_parse_metadata(f"{file_path}/{lbl_file}")
-        img_file = lbl_file.replace(data_dict['lbl_ext'], data_dict['img_ext'])
+        lbl_path = f"{file_path}/{lbl_file}"
+        print(f"Label file: {lbl_path}")
+        metadata = parse_metadata_content(lbl_path)
 
-        image_data, output_vals = process_LRO_image(img_file, metadata, address, data_type)
+        img_file = lbl_path.replace(data_dict['lbl_ext'], data_dict['img_ext'])
+
+        image_data, output_vals = process_LRO_image(img_file, address, metadata, data_type, max_val, min_val)
         lons, lats = generate_LRO_coords(image_data.shape, metadata)
 
-        all_lons.extend(lons)
-        all_lats.extend(lats)
-        all_output_vals.extend(output_vals)
+        all_lons.extend(lons.flatten())
+        all_lats.extend(lats.flatten())
+        all_output_vals.extend(output_vals.flatten())
 
     df = pd.DataFrame({
-        'lon': all_lons,
-        'lat': all_lats,
-        'output_val': all_output_vals
+        'Longitude': all_lons,
+        'Latitude': all_lats,
+        data_type: all_output_vals
     })
 
+    assert not np.any((df['Longitude'] < 0) | (df['Longitude'] > 360)), "Some longitude values are out of bounds."
+    assert not np.any((df['Latitude'] < -90) | (df['Latitude'] > 90)), "Some latitude values are out of bounds."
+    df = df[((df['Latitude'] <= -75) & (df['Latitude'] >= -90)) | ((df['Latitude'] <= 90) & (df['Latitude'] >= 75))]    # Filter out non-polar data
+
+    print(f"Number of missing values: {df[data_type].isna().sum()}")
+    df.loc[(df[data_type] < min_val) | (df[data_type] > max_val), data_type] = np.nan
+    print(f"Number of NaN values after clipping: {df[data_type].isna().sum()}")
+    print(f"Number of zeros in output vals: {np.sum(df[data_type] == 0)} ({np.sum(df[data_type] == 0) / df[data_type].size:.2%})")
+
+    # if csv_save_path:
+    #     df.to_csv(csv_save_path, index=False)
+
     if plot_save_path:
-        plot_df(df, plot_save_path)
+        plot_polar_data(df, data_type, frac=0.25, save_path=plot_save_path)
 
     return df
 
@@ -199,32 +225,47 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     lines = response.text.splitlines()
 
     loc_file_dir = data_dict['file_path']
-    loc_lbl_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_lbl_ext'])]
-    loc_img_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_img_ext'])]
+    loc_lbl_ext = data_dict['loc_lbl_ext']
+    loc_img_ext = data_dict['loc_img_ext']
+
     loc_img_name = str(get_metadata_value(metadata, '', 'CH1:PIXEL_LOCATION_FILE_NAME', string=True))
-    loc_lbl_name = loc_img_name.replace('LOC.IMG', 'L1B.LBL')
+    loc_lbl_name = loc_img_name.replace(loc_img_ext, loc_lbl_ext)
 
-    loc_lbl_file = None
-    loc_img_file = None
+    loc_img_path = os.path.join(loc_file_dir, loc_img_name)
+    loc_lbl_path = os.path.join(loc_file_dir, loc_lbl_name)
 
-    # Loop through the lines and find the one that contains the loc_file_name
-    for loc_lbl_url in loc_lbl_urls:
-        if loc_lbl_name in loc_lbl_url:
-            loc_lbl_file = loc_lbl_url
-            break
+    if not os.path.isfile(loc_img_path):
+        raise FileNotFoundError(f"Location image file not found: {loc_img_path}")
+    if not os.path.isfile(loc_lbl_path):
+        raise FileNotFoundError(f"Location label file not found: {loc_lbl_path}")
 
-    # Loop through lines in the text file and find the one that contains the loc_img_name
-    for loc_img_url in loc_img_urls:
-        if loc_img_name in loc_img_url:
-            loc_img_file = loc_img_url
-            break
 
-    if not loc_lbl_file or not loc_img_file:
-        raise ValueError(f"Location file not found for {loc_lbl_name} or {loc_img_name}")
+    # loc_lbl_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_lbl_ext'])]
+    # loc_img_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_img_ext'])]
 
-    with open(loc_lbl_url, 'rb') as f:
+
+    # loc_lbl_file = None
+    # loc_img_file = None
+
+    # # Loop through the lines and find the one that contains the loc_file_name
+    # for loc_lbl_url in loc_lbl_urls:
+    #     if loc_lbl_name in loc_lbl_url:
+    #         loc_lbl_file = loc_lbl_url
+    #         break
+
+    # # Loop through lines in the text file and find the one that contains the loc_img_name
+    # for loc_img_url in loc_img_urls:
+    #     if loc_img_name in loc_img_url:
+    #         loc_img_file = loc_img_url
+    #         break
+
+    # if not loc_lbl_file or not loc_img_file:
+    #     raise ValueError(f"Location file not found for {loc_lbl_name} or {loc_img_name}")
+
+    with open(loc_lbl_path, 'rb') as f:
         loc_metadata = parse_metadata_content(f.read())
-    loc_address = 'LOC_FILE.LOC_IMAGE'
+    
+    loc_address = data_dict['loc_address']
 
     lines = int(get_metadata_value(loc_metadata, loc_address, 'LINES'))
     line_samples = int(get_metadata_value(loc_metadata, loc_address, 'LINE_SAMPLES'))
@@ -232,46 +273,51 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     sample_bits = int(get_metadata_value(loc_metadata, loc_address, 'SAMPLE_BITS'))
     sample_type = str(get_metadata_value(loc_metadata, loc_address, 'SAMPLE_TYPE'))
 
-    if loc_lbl_url.split('.')[-1].lower() != 'lbl':
-        raise ValueError("Unsupported file extension: {}".format(loc_lbl_url.split('.')[-1].lower()))
+    if loc_lbl_path.split('.')[-1].lower() != 'lbl':
+        raise ValueError("Unsupported file extension: {}".format(loc_lbl_path.split('.')[-1].lower()))
 
     dtype = {
         (32, 'PC_REAL'): np.float32,
         (64, 'PC_REAL'): np.float64
     }.get((sample_bits, sample_type))
 
-    if dtype != np.float64:
+    if dtype is None:
         raise ValueError(f"Unsupported combination of SAMPLE_TYPE: {sample_type} and SAMPLE_BITS: {sample_bits}")
 
     if lines is None or line_samples is None or bands is None:
         raise ValueError("Missing metadata values for lines, line_samples or bands")
 
-    with open(loc_img_url, 'rb') as f:
+    with open(loc_img_path, 'rb') as f:
         loc_data = np.fromfile(f, dtype='<f8')
 
     if loc_data.size != lines * line_samples * bands:
         raise ValueError(f"Mismatch in data size: expected {lines * line_samples * bands}, got {loc_data.size}")
+    
+    # METHOD 1
+    loc_data = loc_data.reshape((bands, lines, line_samples))
+    lons = loc_data[0]
+    lats = loc_data[1]
+    radii = loc_data[2]
 
-    # Initialize empty arrays for longitude, latitude, and radii
-    lons = np.empty((lines, line_samples))
-    lats = np.empty((lines, line_samples))
-    radii = np.empty((lines, line_samples))
+    # METHOD 2
+    # lons = np.empty((lines, line_samples))
+    # lats = np.empty((lines, line_samples))
+    # radii = np.empty((lines, line_samples))
 
-    index = 0
+    # index = 0
 
-    for i in range(lines):
-        for arr in (lons, lats, radii):
-            arr[i, :] = loc_data[index:index + line_samples]
-            index += line_samples
+    # for i in range(lines):
+    #     for arr in (lons, lats, radii):
+    #         arr[i, :] = loc_data[index:index + line_samples]
+    #         index += line_samples
 
     # Raise if any lon or lat values are out of bounds
-    if np.any(lons < 0) or np.any(lons > 360) or np.any(lats < -90) or np.any(lats > 90):
-        raise ValueError(f"Some coordinate values are out of bounds.\nMin/max for lon, lat: {np.min(lons)}, {np.max(lons)}, {np.min(lats)}, {np.max(lats)}")
+    if not (np.all((0 <= lons) & (lons <= 360)) and np.all((-90 <= lats) & (lats <= 90))):
+        raise ValueError("Some coordinate values are out of bounds.")
 
     reference_elevation = 1737400   # https://pds-imaging.jpl.nasa.gov/documentation/Isaacson_M3_Workshop_Final.pdf (pg.26, accessed 30/07/2024)
     elev = radii - reference_elevation
 
-    del loc_data, loc_metadata
     return lons, lats, elev
 
 
@@ -284,26 +330,29 @@ def load_m3_df(data_dict, plot_save_path=None):
 
     all_lons = []
     all_lats = []
+    all_elev = []
     all_output_vals = []
 
     for lbl_file in lbl_files:
-        metadata = download_parse_metadata(f"{file_path}/{lbl_file}")
+        metadata = parse_metadata_content(f"{file_path}/{lbl_file}")
         img_file = lbl_file.replace(data_dict['lbl_ext'], data_dict['img_ext'])
 
         image_data, output_vals = process_M3_image(img_file, metadata, address)
-        lons, lats = generate_M3_coords(image_data.shape, metadata, data_dict)
+        lons, lats, elev = generate_M3_coords(image_data.shape, metadata, data_dict)
 
         all_lons.extend(lons)
         all_lats.extend(lats)
+        all_elev.extend(elev)
         all_output_vals.extend(output_vals)
 
     df = pd.DataFrame({
         'lon': all_lons,
         'lat': all_lats,
+        'elev': all_elev,
         'output_val': all_output_vals
     })
 
     if plot_save_path:
-        plot_df(df, plot_save_path)
+        plot_polar_data(df, 'M3', frac=0.25, save_path=plot_save_path)
 
     return df

@@ -1,4 +1,12 @@
 *.csv
+*.img
+*.IMG
+*.jp2
+*.lbl
+*.LBL
+
 example_code/
 __pycache__/
 data/raw/
+data/raw/
+

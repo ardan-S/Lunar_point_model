@@ -1,0 +1,83 @@
+Job started on Thu Oct  3 21:07:40 UTC 2024
+File path: ../../data/raw/Diviner
+Label file: ../../data/raw/Diviner/dgdr_tbol_avg_poln_20090705d_240_jp2.lbl
+Reading JP2 file: ../../data/raw/Diviner/dgdr_tbol_avg_poln_20090705d_240_jp2.jp2
+Number of zeros in image data 1: 0 (0.00%)
+Number of non-zero values 1: 14531344 (100.00%)
+Number of NaN values 1: 0 (0.00%)
+Range of values 1: -32768 to 15967
+Scaling factor: 0.02, Offset: 0.0
+Number of zeros in image data 2: 0 (0.00%)
+Number of non-zero values 2: 14531344 (100.00%)
+Number of NaN values 2: 7199510 (49.54%)
+Range of values 2: 41.96 to 319.34000000000003
+Number of missing values: 7199510
+Number of NaN values after clipping: 7199510
+Number of zeros in output vals: 0 (0.00%)
+No data for South Pole
+Plot saved to ../../data/plots
+Diviner df
+    Longitude   Latitude  Diviner
+0  225.000000  75.000000      NaN
+1  225.015038  75.003936      NaN
+2  225.030084  75.007872      NaN
+3  225.045138  75.011806      NaN
+4  225.060200  75.015739      NaN
+5  225.075270  75.019672      NaN
+6  225.090348  75.023603      NaN
+7  225.105434  75.027533      NaN
+8  225.120527  75.031462   251.72
+9  225.135629  75.035390   255.80
+
+          Longitude      Latitude       Diviner
+count  1.453134e+07  1.453134e+07  7.331834e+06
+mean   1.800000e+02  8.188349e+01  1.456491e+02
+std    1.034039e+02  3.022931e+00  5.561176e+01
+min    1.503432e-02  7.500000e+01  4.196000e+01
+25%    9.000752e+01  7.963361e+01  9.720000e+01
+50%    1.800000e+02  8.153659e+01  1.418600e+02
+75%    2.699925e+02  8.401658e+01  1.901800e+02
+max    3.599850e+02  9.000000e+01  3.193400e+02
+
+File path: ../../data/raw/LOLA
+Label file: ../../data/raw/LOLA/ldam_50n_1000m_jp2.lbl
+Reading JP2 file: ../../data/raw/LOLA/ldam_50n_1000m.jp2
+Number of zeros in image data 1: 0 (0.00%)
+Number of non-zero values 1: 6411024 (100.00%)
+Number of NaN values 1: 0 (0.00%)
+Range of values 1: 1493 to 5685
+Scaling factor: 0.0001, Offset: 0.0
+Number of zeros in image data 2: 0 (0.00%)
+Number of non-zero values 2: 6411024 (100.00%)
+Number of NaN values 2: 0 (0.00%)
+Range of values 2: 0.14930000000000002 to 0.5685
+Number of missing values: 0
+Number of NaN values after clipping: 0
+Number of zeros in output vals: 0 (0.00%)
+No data for South Pole
+Plot saved to ../../data/plots
+LOLA df
+          Longitude   Latitude    LOLA
+1505269  269.616043  75.000093  0.3185
+1505270  269.701365  75.000226  0.3236
+1505271  269.786688  75.000326  0.3275
+1505272  269.872013  75.000392  0.3216
+1505273  269.957337  75.000426  0.3127
+1505274  270.042663  75.000426  0.3025
+1505275  270.127987  75.000392  0.2940
+1505276  270.213312  75.000326  0.3094
+1505277  270.298635  75.000226  0.3254
+1505278  270.383957  75.000093  0.3383
+
+          Longitude      Latitude          LOLA
+count  1.416660e+06  1.416660e+06  1.416660e+06
+mean   1.800000e+02  8.000523e+01  3.238547e-01
+std    1.039230e+02  3.539248e+00  2.141611e-02
+min    4.266252e-02  7.500009e+01  2.306000e-01
+25%    9.002133e+01  7.701179e+01  3.093000e-01
+50%    1.800000e+02  7.939825e+01  3.221000e-01
+75%    2.699787e+02  8.250796e+01  3.364000e-01
+max    3.599573e+02  9.000000e+01  5.155000e-01
+
+Job finished on Thu Oct  3 21:08:51 UTC 2024
+Total runtime: 1 minutes and 11 seconds

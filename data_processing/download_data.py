@@ -13,6 +13,7 @@ from urllib.parse import urljoin
 import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
+import time
 
 
 def clear_dir(home_dir):
@@ -25,16 +26,18 @@ def clear_dir(home_dir):
 async def download_file(session, url, download_dir):
     local_filename = os.path.join(download_dir, os.path.basename(url))
     try:
-        async with session.get(url) as response:
+        async with session.get(url, timeout=aiohttp.ClientTimeout(total=14400)) as response:
             response.raise_for_status()
             with open(local_filename, 'wb') as f:
-                async for chunk in response.content.iter_chunked(8192):
+                async for chunk in response.content.iter_chunked(4096):
                     f.write(chunk)
+    except asyncio.TimeoutError:
+        print(f"Timeout downloading {url}")
     except Exception as e:
-        print(f"Error downloading {url}: {e}")
+        print(f"Error downloading {url}: {e} ({type(e).__name__})")
 
 
-async def download_diviner(download_dir, home_url, session):
+async def download_diviner(download_dir, home_url, session, keyword='tbol'):
     years = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
     tasks = []
 
@@ -54,6 +57,7 @@ async def download_diviner(download_dir, home_url, session):
             urljoin(url, link['href'])
             for link in soup.find_all('a', href=True)
             if link['href'].endswith('.jp2')
+            and keyword in link['href']
         ]
 
         # Download each .jp2 file and its corresponding .lbl file
@@ -63,16 +67,16 @@ async def download_diviner(download_dir, home_url, session):
             print(jp2_url)
             print(lbl_url)
 
-            # tasks.append(download_file(session, jp2_url, download_dir))
-            # tasks.append(download_file(session, lbl_url, download_dir))
+            tasks.append(download_file(session, jp2_url, download_dir))
+            tasks.append(download_file(session, lbl_url, download_dir))
             break
 
         break
 
-    # await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks)
 
 
-async def download_lola(download_dir, home_url, session):
+async def download_lola(download_dir, home_url, session, keyword='ldam'):
     tasks = []
     try:
         async with session.get(home_url) as response:
@@ -87,6 +91,7 @@ async def download_lola(download_dir, home_url, session):
         urljoin(home_url, link['href'])  # Construct the full URL
         for link in soup.find_all('a', href=True)  # Find all <a> tags with href attribute
         if link['href'].endswith('.jp2')  # Filter for .jp2 files
+        and keyword in link['href']  # Ensure the keyword (e.g., 'ldam') is in the file path
     ]
 
     for jp2_url in jp2_urls:
@@ -95,12 +100,12 @@ async def download_lola(download_dir, home_url, session):
         print(jp2_url)
         print(lbl_url)
 
-        # tasks.append(download_file(session, jp2_url, download_dir))
-        # tasks.append(download_file(session, lbl_url, download_dir))
+        tasks.append(download_file(session, jp2_url, download_dir))
+        tasks.append(download_file(session, lbl_url, download_dir))
 
         break
 
-    # await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks)
 
 
 async def download_m3(download_dir, home_url, img_extension, lbl_extension, session, keyword='DATA'):
@@ -129,15 +134,16 @@ async def download_m3(download_dir, home_url, img_extension, lbl_extension, sess
         print(img_url)
         print(lbl_url)
 
-        # tasks.append(download_file(session, img_url, download_dir))
-        # tasks.append(download_file(session, lbl_url, download_dir))
+        tasks.append(download_file(session, img_url, download_dir))
+        tasks.append(download_file(session, lbl_url, download_dir))
 
         break
 
-    # await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks)
 
 
-async def download_mini_rf(download_dir, home_url, session):
+async def download_mini_rf(download_dir, home_url, session, keyword='cpr'):
+    start_time = time.time()
     tasks = []
     try:
         async with session.get(home_url) as response:
@@ -151,7 +157,8 @@ async def download_mini_rf(download_dir, home_url, session):
     img_urls = [
         urljoin(home_url, link['href'])  # Construct the full URL
         for link in soup.find_all('a', href=True)  # Find all <a> tags with href attribute
-        if link['href'].endswith('.img') and 'cpr' in link['href'].lower()  # Filter for .IMG files with 'cpr'
+        if link['href'].endswith('.img')
+        and keyword in link['href'].lower()  # Filter for .IMG files with 'cpr'
     ]
 
     for img_url in img_urls:
@@ -160,15 +167,12 @@ async def download_mini_rf(download_dir, home_url, session):
         print(img_url)
         print(lbl_url)
 
-        # tasks.append(download_file(session, img_url, download_dir))
-        # tasks.append(download_file(session, lbl_url, download_dir))
+        tasks.append(download_file(session, img_url, download_dir))
+        tasks.append(download_file(session, lbl_url, download_dir))
         break
 
-    # await asyncio.gather(*tasks)
-
-
-def count_files_in_directory(directory):
-    return sum(1 for entry in os.scandir(directory) if entry.is_file())
+    await asyncio.gather(*tasks)
+    print(f"Time taken to download Mini-RF: {time.time() - start_time:.2f} seconds")
 
 
 async def main(args):
@@ -205,19 +209,17 @@ async def main(args):
         clear_dir(args.download_dir)
 
     async with aiohttp.ClientSession() as session:
-
-        # Loop through each dataset in dataset_dict and execute the download process
-        for dataset, info in dataset_dict.items():
+        for dataset, info in dataset_dict.items():  # Loop through each dataset in dataset_dict and execute the download process
             url = info['url']
             download_path = info['path']
             download_func = info['download_func']
 
-            # Skip existing directories if the user specifies 'Skip'
+            # Skip existing dataset directories if the user specifies 'Skip'
             if os.path.exists(download_path) and args.existing_dirs == "Skip":
                 print(f"Skipping {dataset} download as directory already exists")
                 continue
 
-            # Otherwise, create the directory and download the dataset
+            # Otherwise, create the dataset directory (inside the download directory) and download the dataset
             os.makedirs(download_path, exist_ok=True)
             print(f"Downloading {dataset} to {download_path}")
 
@@ -228,7 +230,7 @@ async def main(args):
                     await download_func(download_path, url, '_LOC.IMG', '_L1B.LBL', session)
                 else:
                     await download_func(download_path, url, session)
-                num_files = count_files_in_directory(download_path)
+                num_files = sum(1 for entry in os.scandir(download_path) if entry.is_file())
                 print(f"Downloaded {num_files} {dataset} files from web to {download_path}\n")
             except Exception as e:
                 print(f"Failed to download {dataset} from {url}. Error: {e}\n")

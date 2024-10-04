@@ -1,0 +1,28 @@
+Downloading Diviner to ../../data/raw/Diviner
+https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gdr_l3/2009/polar/jp2/dgdr_tbol_avg_poln_20090705d_240_jp2.jp2
+https://pds-geosciences.wustl.edu/lro/urn-nasa-pds-lro_diviner_derived1/data_derived_gdr_l3/2009/polar/jp2/dgdr_tbol_avg_poln_20090705d_240_jp2.lbl
+Downloaded 2 Diviner files from web to ../../data/raw/Diviner
+
+Downloading LOLA to ../../data/raw/LOLA
+https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/jp2/ldam_50n_1000m.jp2
+https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/jp2/ldam_50n_1000m_jp2.lbl
+Downloaded 2 LOLA files from web to ../../data/raw/LOLA
+
+Downloading M3 to ../../data/raw/M3
+https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20081118_20090214/200811/L2/M3G20081118T222604_V01_RFL.IMG
+https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20081118_20090214/200811/L2/M3G20081118T222604_V01_L2.LBL
+Downloaded 2 M3 files from web to ../../data/raw/M3
+
+Downloading M3_loc to ../../data/raw/M3
+https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_LOC.IMG
+https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20081118_20090214/200811/L1B/M3G20081118T222604_V03_L1B.LBL
+Downloaded 4 M3_loc files from web to ../../data/raw/M3
+
+Downloading Mini-RF to ../../data/raw/Mini-RF
+https://pds-geosciences.wustl.edu/lro/lro-l-mrflro-5-global-mosaic-v1/lromrf_1001/data/128ppd/global_cpr_128ppd_simp_0c.img
+https://pds-geosciences.wustl.edu/lro/lro-l-mrflro-5-global-mosaic-v1/lromrf_1001/data/128ppd/global_cpr_128ppd_simp_0c.lbl
+Time taken to download Mini-RF: 1710.74 seconds
+Downloaded 2 Mini-RF files from web to ../../data/raw/Mini-RF
+
+Job finished on Thu Oct  3 15:33:34 UTC 2024
+Total runtime: 30 minutes and 54 seconds

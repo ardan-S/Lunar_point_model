@@ -1,7 +1,7 @@
 name: IRP
 channels:
-  - defaults
   - conda-forge
+  - defaults
 dependencies:
  - python=3.11
  - pip
@@ -20,6 +20,7 @@ dependencies:
  - pytest
  - glymur
  - memory_profiler
+ - gdal
  - pip:
    - jupyter-book
    - pybryt
