@@ -1,7 +1,6 @@
 import argparse
 import sys
 import os
-import matplotlib.pyplot as plt
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -11,13 +10,11 @@ from data_processing.utils.label import combine, label
 
 
 def main(args):
-    download_dir = args.download_dir
-    save_dir = args.save_dir
 
     dataset_dict = {
         'Diviner': {
-            'file_path': f"{download_dir}/Diviner",
-            'save_path': f"{save_dir}/Diviner",
+            'file_path': f"{args.download_dir}/Diviner",
+            'save_path': f"{args.save_dir}/Diviner",
             'plot_path': f"{args.plot_dir}",
             'Orbiter': "LRO",
             'img_ext': '.jp2',
@@ -27,8 +24,8 @@ def main(args):
             'min': 0
         },
         'LOLA': {
-            'file_path': f"{download_dir}/LOLA",
-            'save_path': f"{save_dir}/LOLA",
+            'file_path': f"{args.download_dir}/LOLA",
+            'save_path': f"{args.save_dir}/LOLA",
             'plot_path': f"{args.plot_dir}",
             'Orbiter': "LRO",
             'img_ext': '.jp2',
@@ -38,8 +35,8 @@ def main(args):
             'min': 0.0
         },
         'M3': {
-            'file_path': f"{download_dir}/M3",
-            'save_path': f"{save_dir}/M3",
+            'file_path': f"{args.download_dir}/M3",
+            'save_path': f"{args.save_dir}/M3",
             'plot_path': f"{args.plot_dir}",
             'Orbiter': "Chandrayaan-1",
             'img_ext': '_RFL.IMG',
@@ -53,8 +50,8 @@ def main(args):
 
         },
         'MiniRF': {
-            'file_path': f"{download_dir}/Mini-RF",
-            'save_path': f"{save_dir}/Mini-RF",
+            'file_path': f"{args.download_dir}/Mini-RF",
+            'save_path': f"{args.save_dir}/Mini-RF",
             'plot_path': f"{args.plot_dir}",
             'Orbiter': "LRO",
             'img_ext': '.img',
@@ -65,47 +62,14 @@ def main(args):
         },
     }
 
-    diviner_df = load_lro_df(dataset_dict['Diviner'], 'Diviner')
-    print("Diviner df")
-    print(diviner_df.head(10))
-    print()
-    print(diviner_df.describe())
-    print()
+    load_lro_df(dataset_dict['Diviner'], 'Diviner', debug=True)
+    load_lro_df(dataset_dict['LOLA'], 'LOLA', debug=True)
+    load_m3_df(dataset_dict['M3'], debug=True)
+    load_lro_df(dataset_dict['MiniRF'], 'MiniRF', debug=True)
 
-    plt.figure(figsize=(8, 6))
-    plt.hist(diviner_df['Diviner'], bins=50, edgecolor='black')
-    plt.title('Histogram of Diviner data')
-    plt.xlabel('Value')
-    plt.ylabel('Frequency')
-    plt.savefig('../../data/plots/Diviner_hist.png')
-    sys.stdout.flush()
 
-    lola_df = load_lro_df(dataset_dict['LOLA'], 'LOLA')
-    print("LOLA df")
-    print(lola_df.head(10))
-    print()
-    print(lola_df.describe())
-    print()
+    interpolate(dataset_dict['Diviner']['save_path'], 'Diviner', debug=True)
 
-    plt.figure(figsize=(8, 6))
-    plt.hist(lola_df['LOLA'], bins=50, edgecolor='black')
-    plt.title('Histogram of LOLA data')
-    plt.xlabel('Value')
-    plt.ylabel('Frequency')
-    plt.savefig('../../data/plots/LOLA_hist.png')
-    sys.stdout.flush()
-
-    # m3_df = load_m3_df(dataset_dict['M3'])
-    # mini_rf_df = load_lro_df(dataset_dict['MiniRF'], 'MiniRF')
-    # print("MiniRF df")
-    # print(mini_rf_df.head(10))
-    # print()
-    # print(mini_rf_df.describe())
-    # print()
-    # print("Dataframes created")
-    # sys.stdout.flush()
-
-    # diviner_df = interpolate(diviner_df)
     # lola_df = interpolate(lola_df)
     # m3_df = interpolate(m3_df)
     # mini_rf_df = interpolate(mini_rf_df)

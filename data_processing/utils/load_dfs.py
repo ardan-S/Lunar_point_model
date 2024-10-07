@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 import numpy as np
 import requests
+import matplotlib.pyplot as plt
+import sys
 
 from utils.utils import get_metadata_value, clean_metadata_value, parse_metadata_content
 from utils.utils import decode_image_file, get_closest_channels, plot_polar_data
@@ -15,16 +17,11 @@ def process_LRO_image(image_file, address, metadata, data_type, max_val=1.0, min
 
     file_extension = file_path.suffix[1:].lower()
     image_data = np.asarray(decode_image_file(file_path, file_extension, metadata, address))
-    print(f"Number of zeros in image data 1: {np.sum(image_data == 0)} ({np.sum(image_data == 0) / image_data.size:.2%})")
-    print(f"Number of non-zero values 1: {np.sum(image_data != 0)} ({np.sum(image_data != 0) / image_data.size:.2%})")
-    print(f"Number of NaN values 1: {np.sum(np.isnan(image_data))} ({np.sum(np.isnan(image_data)) / image_data.size:.2%})")
-    print(f"Range of values 1: {np.min(image_data)} to {np.max(image_data)}")
 
     # Convert to scientific values
     scaling_factor = float(get_metadata_value(metadata, address, 'SCALING_FACTOR'))
     offset = float(get_metadata_value(metadata, address, 'OFFSET'))
     assert scaling_factor is not None or offset is not None, "Scaling factor and offset not found in metadata"
-    print(f"Scaling factor: {scaling_factor}, Offset: {offset}")
 
     missing_constants = {
         'LOLA': clean_metadata_value(metadata.get('MISSING_CONSTANT', -32768)),
@@ -39,10 +36,7 @@ def process_LRO_image(image_file, address, metadata, data_type, max_val=1.0, min
     output_vals = np.where(mask, (image_data * scaling_factor) + offset, np.nan)    # Remove missing values BEFORE applying transform
     output_vals = np.where(output_vals > max_val, np.nan, output_vals)  # Remove extreme values
     output_vals = np.where(output_vals < min_val, np.nan, output_vals)
-    print(f"Number of zeros in image data 2: {np.sum(output_vals == 0)} ({np.sum(output_vals == 0) / output_vals.size:.2%})")
-    print(f"Number of non-zero values 2: {np.sum(output_vals != 0)} ({np.sum(output_vals != 0) / output_vals.size:.2%})")
-    print(f"Number of NaN values 2: {np.sum(np.isnan(output_vals))} ({np.sum(np.isnan(output_vals)) / output_vals.size:.2%})")
-    print(f"Range of values 2: {np.nanmin(output_vals)} to {np.nanmax(output_vals)}")
+
     return image_data, output_vals
 
 
@@ -64,10 +58,8 @@ def generate_LRO_coords(image_shape, metadata):
         assert proj_type == 'SIMPLE CYLINDRICAL', f"Unsupported projection type: {proj_type}"
         assert center_lat == 0.0 and center_lon == 0.0, "Center latitude and longitude must be 0.0 for Simple Cylindrical"
         lons = np.degrees(x / a)
-        print(f"Range of lons before adjustment: {np.min(lons)} to {np.max(lons)}")
         lon_scale = 360 / (2 * np.max(np.abs(lons)))  # Scale factor for longitudes
         lons = (lons * lon_scale + 360) % 360  # Apply scaling and wrap to [0, 360)
-        print(f"Range of lons after adjustment: {np.min(lons)} to {np.max(lons)}")
 
         # Map y directly to latitude range [-90, 90]
         lats = y * (max_lat - min_lat) / np.max(np.abs(y))  # Scale y to latitude range
@@ -95,7 +87,7 @@ def generate_LRO_coords(image_shape, metadata):
     return lons, lats
 
 
-def load_lro_df(data_dict, data_type):
+def load_lro_df(data_dict, data_type, debug=False):
     file_path = data_dict['file_path']
     address = data_dict['address']
     lbl_ext = data_dict['lbl_ext']
@@ -104,7 +96,7 @@ def load_lro_df(data_dict, data_type):
     max_val = data_dict['max']
     min_val = data_dict['min']
 
-    print(f"File path: {file_path}")
+    assert csv_save_path or plot_save_path, "At least one of 'save_path' or 'plot_path' must be provided."
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
 
@@ -114,7 +106,6 @@ def load_lro_df(data_dict, data_type):
 
     for lbl_file in lbl_files:
         lbl_path = f"{file_path}/{lbl_file}"
-        print(f"Label file: {lbl_path}")
         metadata = parse_metadata_content(lbl_path)
 
         img_file = lbl_path.replace(data_dict['lbl_ext'], data_dict['img_ext'])
@@ -136,21 +127,23 @@ def load_lro_df(data_dict, data_type):
     assert not np.any((df['Latitude'] < -90) | (df['Latitude'] > 90)), "Some latitude values are out of bounds."
     df = df[((df['Latitude'] <= -75) & (df['Latitude'] >= -90)) | ((df['Latitude'] <= 90) & (df['Latitude'] >= 75))]    # Filter out non-polar data
 
-    print(f"Number of missing values: {df[data_type].isna().sum()}")
     df.loc[(df[data_type] < min_val) | (df[data_type] > max_val), data_type] = np.nan
     print(f"Number of NaN values after clipping: {df[data_type].isna().sum()}")
-    print(f"Number of zeros in output vals: {np.sum(df[data_type] == 0)} ({np.sum(df[data_type] == 0) / df[data_type].size:.2%})")
 
-    # if csv_save_path:
-    #     df.to_csv(csv_save_path, index=False)
+    if csv_save_path:
+        df.to_csv(csv_save_path, index=False)
 
     if plot_save_path:
         plot_polar_data(df, data_type, frac=0.25, save_path=plot_save_path)
 
-    return df
+    if debug:
+        print(f"{data_type} df:")
+        print(df.describe())
+        create_hist(df, data_type)
 
 
 def process_M3_image(image_file, address, metadata):
+
     lines = int(get_metadata_value(metadata, address, 'LINES'))
     line_samples = int(get_metadata_value(metadata, address, 'LINE_SAMPLES'))
     bands = int(get_metadata_value(metadata, address, 'BANDS'))
@@ -216,10 +209,6 @@ def process_M3_image(image_file, address, metadata):
 
 
 def generate_M3_coords(image_shape, metadata, data_dict):
-    """
-    Generate geographic coordinates for an M3 image based on its metadata.
-    In addition to longitude and latitude, elevation data is also generated.
-    """
     text_file = 'https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003_md5.txt'
     response = requests.get(text_file)
     lines = response.text.splitlines()
@@ -234,11 +223,8 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     loc_img_path = os.path.join(loc_file_dir, loc_img_name)
     loc_lbl_path = os.path.join(loc_file_dir, loc_lbl_name)
 
-    if not os.path.isfile(loc_img_path):
-        raise FileNotFoundError(f"Location image file not found: {loc_img_path}")
-    if not os.path.isfile(loc_lbl_path):
-        raise FileNotFoundError(f"Location label file not found: {loc_lbl_path}")
-
+    assert os.path.isfile(loc_img_path), f"Location image file not found: {loc_img_path}"
+    assert os.path.isfile(loc_lbl_path), f"Location label file not found: {loc_lbl_path}"
 
     # loc_lbl_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_lbl_ext'])]
     # loc_img_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_img_ext'])]
@@ -262,8 +248,9 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     # if not loc_lbl_file or not loc_img_file:
     #     raise ValueError(f"Location file not found for {loc_lbl_name} or {loc_img_name}")
 
-    with open(loc_lbl_path, 'rb') as f:
-        loc_metadata = parse_metadata_content(f.read())
+    # with open(loc_lbl_path, 'rb') as f:
+    #     loc_metadata = parse_metadata_content(f.read())
+    loc_metadata = parse_metadata_content(loc_lbl_path)
     
     loc_address = data_dict['loc_address']
 
@@ -294,22 +281,22 @@ def generate_M3_coords(image_shape, metadata, data_dict):
         raise ValueError(f"Mismatch in data size: expected {lines * line_samples * bands}, got {loc_data.size}")
     
     # METHOD 1
-    loc_data = loc_data.reshape((bands, lines, line_samples))
-    lons = loc_data[0]
-    lats = loc_data[1]
-    radii = loc_data[2]
+    # loc_data = loc_data.reshape((bands, lines, line_samples))
+    # lons = loc_data[0]
+    # lats = loc_data[1]
+    # radii = loc_data[2]
 
     # METHOD 2
-    # lons = np.empty((lines, line_samples))
-    # lats = np.empty((lines, line_samples))
-    # radii = np.empty((lines, line_samples))
+    lons = np.empty((lines, line_samples))
+    lats = np.empty((lines, line_samples))
+    radii = np.empty((lines, line_samples))
 
-    # index = 0
+    index = 0
 
-    # for i in range(lines):
-    #     for arr in (lons, lats, radii):
-    #         arr[i, :] = loc_data[index:index + line_samples]
-    #         index += line_samples
+    for i in range(lines):
+        for arr in (lons, lats, radii):
+            arr[i, :] = loc_data[index:index + line_samples]
+            index += line_samples
 
     # Raise if any lon or lat values are out of bounds
     if not (np.all((0 <= lons) & (lons <= 360)) and np.all((-90 <= lats) & (lats <= 90))):
@@ -321,10 +308,14 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     return lons, lats, elev
 
 
-def load_m3_df(data_dict, plot_save_path=None):
+def load_m3_df(data_dict, debug=False):
     file_path = data_dict['file_path']
     address = data_dict['address']
     lbl_ext = data_dict['lbl_ext']
+    plot_save_path = data_dict['plot_path'] if 'plot_path' in data_dict else None
+    csv_save_path = data_dict['save_path'] if 'save_path' in data_dict else None
+
+    assert plot_save_path or csv_save_path, "At least one of 'plot_path' or 'save_path' must be provided."
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
 
@@ -334,25 +325,41 @@ def load_m3_df(data_dict, plot_save_path=None):
     all_output_vals = []
 
     for lbl_file in lbl_files:
-        metadata = parse_metadata_content(f"{file_path}/{lbl_file}")
-        img_file = lbl_file.replace(data_dict['lbl_ext'], data_dict['img_ext'])
+        lbl_path = f"{file_path}/{lbl_file}"
+        metadata = parse_metadata_content(lbl_path)
+        img_file = lbl_path.replace(data_dict['lbl_ext'], data_dict['img_ext'])
 
-        image_data, output_vals = process_M3_image(img_file, metadata, address)
+        image_data, output_vals = process_M3_image(img_file, address, metadata)
         lons, lats, elev = generate_M3_coords(image_data.shape, metadata, data_dict)
 
-        all_lons.extend(lons)
-        all_lats.extend(lats)
-        all_elev.extend(elev)
-        all_output_vals.extend(output_vals)
+        all_lons.extend(lons.flatten())
+        all_lats.extend(lats.flatten())
+        all_elev.extend(elev.flatten())
+        all_output_vals.extend(output_vals.flatten())
 
     df = pd.DataFrame({
-        'lon': all_lons,
-        'lat': all_lats,
-        'elev': all_elev,
-        'output_val': all_output_vals
+        'Longitude': all_lons,
+        'Latitude': all_lats,
+        'Elevation': all_elev,
+        'M3': all_output_vals
     })
+
+    df.to_csv(csv_save_path, index=False)
 
     if plot_save_path:
         plot_polar_data(df, 'M3', frac=0.25, save_path=plot_save_path)
 
-    return df
+    if debug:
+        print(f"M3 df:")
+        print(df.describe())
+        create_hist(df, 'M3')
+
+
+def create_hist(df, name):
+    plt.figure(figsize=(8, 6))
+    plt.hist(df[name], bins=50, edgecolor='black')
+    plt.title(f'Histogram of {name} data')
+    plt.xlabel('Value')
+    plt.ylabel('Frequency')
+    plt.savefig(f'../../data/plots/{name}_hist.png')
+    sys.stdout.flush()
