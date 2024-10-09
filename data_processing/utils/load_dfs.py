@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import sys
 
 from utils.utils import get_metadata_value, clean_metadata_value, parse_metadata_content
-from utils.utils import decode_image_file, get_closest_channels, plot_polar_data
+from utils.utils import decode_image_file, get_closest_channels, plot_polar_data, save_by_lon_range
 
 
 def process_LRO_image(image_file, address, metadata, data_type, max_val=1.0, min_val=0.0):
@@ -88,6 +88,12 @@ def generate_LRO_coords(image_shape, metadata):
 
 
 def load_lro_df(data_dict, data_type, debug=False):
+
+    csvs_in_dir = [f for f in os.listdir(data_dict['file_path']) if f.endswith('.csv') and 'lon' in f]
+    if len(csvs_in_dir) == 12:
+        print(f"CSVs appear to exist for {data_type} data. Skipping load_lro_df.")
+        return
+
     file_path = data_dict['file_path']
     address = data_dict['address']
     lbl_ext = data_dict['lbl_ext']
@@ -97,6 +103,7 @@ def load_lro_df(data_dict, data_type, debug=False):
     min_val = data_dict['min']
 
     assert csv_save_path or plot_save_path, "At least one of 'save_path' or 'plot_path' must be provided."
+    assert isinstance(data_type, str), "data_type must be a string."
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
 
@@ -129,9 +136,10 @@ def load_lro_df(data_dict, data_type, debug=False):
 
     df.loc[(df[data_type] < min_val) | (df[data_type] > max_val), data_type] = np.nan
     print(f"Number of NaN values after clipping: {df[data_type].isna().sum()}")
+    df = df.dropna(subset=[data_type])
 
     if csv_save_path:
-        df.to_csv(csv_save_path, index=False)
+        save_by_lon_range(df, csv_save_path)
 
     if plot_save_path:
         plot_polar_data(df, data_type, frac=0.25, save_path=plot_save_path)
@@ -309,6 +317,12 @@ def generate_M3_coords(image_shape, metadata, data_dict):
 
 
 def load_m3_df(data_dict, debug=False):
+
+    csvs_in_dir = [f for f in os.listdir(data_dict['file_path']) if f.endswith('.csv') and 'lon' in f]
+    if len(csvs_in_dir) == 12:
+        print(f"CSVs appear to exist for M3 data. Skipping load_lro_df.")
+        return
+
     file_path = data_dict['file_path']
     address = data_dict['address']
     lbl_ext = data_dict['lbl_ext']
@@ -344,7 +358,8 @@ def load_m3_df(data_dict, debug=False):
         'M3': all_output_vals
     })
 
-    df.to_csv(csv_save_path, index=False)
+    if csv_save_path:
+        save_by_lon_range(df, csv_save_path)
 
     if plot_save_path:
         plot_polar_data(df, 'M3', frac=0.25, save_path=plot_save_path)

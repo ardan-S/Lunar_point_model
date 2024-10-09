@@ -153,8 +153,32 @@ def get_closest_channels(metadata, address, target_wavelengths):
     return test_channels
 
 
-def save_by_lon_range():
-    pass
+def save_by_lon_range(df, output_dir):
+    os.makedirs(output_dir, exist_ok=True)
+
+    lon_ranges = [(0, 30), (30, 60), (60, 90),
+                  (90, 120), (120, 150), (150, 180),
+                  (180, 210), (210, 240), (240, 270),
+                  (270, 300), (300, 330), (330, 360)]
+    file_names = [
+        os.path.join(output_dir, 'lon_000_030.csv'),
+        os.path.join(output_dir, 'lon_030_060.csv'),
+        os.path.join(output_dir, 'lon_060_090.csv'),
+        os.path.join(output_dir, 'lon_090_120.csv'),
+        os.path.join(output_dir, 'lon_120_150.csv'),
+        os.path.join(output_dir, 'lon_150_180.csv'),
+        os.path.join(output_dir, 'lon_180_210.csv'),
+        os.path.join(output_dir, 'lon_210_240.csv'),
+        os.path.join(output_dir, 'lon_240_270.csv'),
+        os.path.join(output_dir, 'lon_270_300.csv'),
+        os.path.join(output_dir, 'lon_300_330.csv'),
+        os.path.join(output_dir, 'lon_330_360.csv')
+    ]
+
+    for lon_range, file_name in zip(lon_ranges, file_names):
+        lon_min, lon_max = lon_range
+        df_slice = df[(df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max)]
+        df_slice.to_csv(file_name, index=False)
 
 
 def plot_polar_data(df, variable, frac=None, random_state=42, save_path=None):

@@ -15,6 +15,7 @@ def main(args):
         'Diviner': {
             'file_path': f"{args.download_dir}/Diviner",
             'save_path': f"{args.save_dir}/Diviner",
+            'interp_dir': f"{args.interp_dir}/Diviner",
             'plot_path': f"{args.plot_dir}",
             'Orbiter': "LRO",
             'img_ext': '.jp2',
@@ -26,6 +27,7 @@ def main(args):
         'LOLA': {
             'file_path': f"{args.download_dir}/LOLA",
             'save_path': f"{args.save_dir}/LOLA",
+            'interp_dir': f"{args.interp_dir}/LOLA",
             'plot_path': f"{args.plot_dir}",
             'Orbiter': "LRO",
             'img_ext': '.jp2',
@@ -37,6 +39,7 @@ def main(args):
         'M3': {
             'file_path': f"{args.download_dir}/M3",
             'save_path': f"{args.save_dir}/M3",
+            'interp_dir': f"{args.interp_dir}/M3",
             'plot_path': f"{args.plot_dir}",
             'Orbiter': "Chandrayaan-1",
             'img_ext': '_RFL.IMG',
@@ -52,6 +55,7 @@ def main(args):
         'MiniRF': {
             'file_path': f"{args.download_dir}/Mini-RF",
             'save_path': f"{args.save_dir}/Mini-RF",
+            'interp_dir': f"{args.interp_dir}/Mini-RF",
             'plot_path': f"{args.plot_dir}",
             'Orbiter': "LRO",
             'img_ext': '.img',
@@ -68,7 +72,7 @@ def main(args):
     load_lro_df(dataset_dict['MiniRF'], 'MiniRF', debug=True)
 
 
-    interpolate(dataset_dict['Diviner']['save_path'], 'Diviner', debug=True)
+    interpolate(dataset_dict['Diviner'], 'Diviner', debug=True)
 
     # lola_df = interpolate(lola_df)
     # m3_df = interpolate(m3_df)
@@ -84,7 +88,8 @@ def main(args):
 def parse_args():
     parser = argparse.ArgumentParser(description="Process data")
     parser.add_argument("--download_dir", type=str, default="../../data/raw")
-    parser.add_argument("--save_dir", type=str, default="../../data/CSVs")
+    parser.add_argument("--save_dir", type=str, default="../../data/CSVs/raw")
+    parser.add_argument("--interp_dir", type=str, default="../../data/CSVs/interpolated")
     parser.add_argument("--plot_dir", type=str, default="../../data/plots")
     return parser.parse_args()
 
