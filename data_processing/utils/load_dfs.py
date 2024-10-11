@@ -87,10 +87,9 @@ def generate_LRO_coords(image_shape, metadata):
     return lons, lats
 
 
-def load_lro_df(data_dict, data_type, debug=False):
-
-    csvs_in_dir = [f for f in os.listdir(data_dict['file_path']) if f.endswith('.csv') and 'lon' in f]
-    if len(csvs_in_dir) == 12:
+def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
+    
+    if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"CSVs appear to exist for {data_type} data. Skipping load_lro_df.")
         return
 
@@ -110,19 +109,37 @@ def load_lro_df(data_dict, data_type, debug=False):
     all_lons = []
     all_lats = []
     all_output_vals = []
+    print(f"Processing {data_type} data..."); sys.stdout.flush()
 
     for lbl_file in lbl_files:
         lbl_path = f"{file_path}/{lbl_file}"
         metadata = parse_metadata_content(lbl_path)
+        print("Metadata parsed"); sys.stdout.flush()
 
         img_file = lbl_path.replace(data_dict['lbl_ext'], data_dict['img_ext'])
 
         image_data, output_vals = process_LRO_image(img_file, address, metadata, data_type, max_val, min_val)
-        lons, lats = generate_LRO_coords(image_data.shape, metadata)
+        output_vals = output_vals.flatten()
+        print("Image processed"); sys.stdout.flush()
 
-        all_lons.extend(lons.flatten())
-        all_lats.extend(lats.flatten())
-        all_output_vals.extend(output_vals.flatten())
+        lons, lats = generate_LRO_coords(image_data.shape, metadata)
+        lons = lons.flatten()
+        lats = lats.flatten()
+        print("Coordinates generated"); sys.stdout.flush()
+
+        assert np.all((lons >= 0) & (lons <= 360)), "Some longitude values are out of bounds."
+        assert np.all((lats >= -90) & (lats <= 90)), "Some latitude values are out of bounds."
+
+        output_vals[(output_vals < min_val) | (output_vals > max_val)] = np.nan
+
+        valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
+        valid_mask &= np.isfinite(output_vals)
+        print("Masks created"); sys.stdout.flush()
+
+        all_lons.extend(lons[valid_mask])
+        all_lats.extend(lats[valid_mask])
+        all_output_vals.extend(output_vals[valid_mask])
+        print("Data appended"); sys.stdout.flush()
 
     df = pd.DataFrame({
         'Longitude': all_lons,
@@ -130,19 +147,20 @@ def load_lro_df(data_dict, data_type, debug=False):
         data_type: all_output_vals
     })
 
-    assert not np.any((df['Longitude'] < 0) | (df['Longitude'] > 360)), "Some longitude values are out of bounds."
-    assert not np.any((df['Latitude'] < -90) | (df['Latitude'] > 90)), "Some latitude values are out of bounds."
-    df = df[((df['Latitude'] <= -75) & (df['Latitude'] >= -90)) | ((df['Latitude'] <= 90) & (df['Latitude'] >= 75))]    # Filter out non-polar data
+    print("Dataframe created"); sys.stdout.flush()
 
-    df.loc[(df[data_type] < min_val) | (df[data_type] > max_val), data_type] = np.nan
-    print(f"Number of NaN values after clipping: {df[data_type].isna().sum()}")
-    df = df.dropna(subset=[data_type])
+    assert data_type in df.columns, f"Data type '{data_type}' not found in dataframe columns."
+    # df = df[((df['Latitude'] <= -75) & (df['Latitude'] >= -90)) | ((df['Latitude'] <= 90) & (df['Latitude'] >= 75))]    # Filter out non-polar data
+
+    # df.loc[(df[data_type] < min_val) | (df[data_type] > max_val), data_type] = np.nan
+    # print(f"Number of NaN values after clipping: {df[data_type].isna().sum()}")
+    # df = df[df[data_type].notna()]
 
     if csv_save_path:
         save_by_lon_range(df, csv_save_path)
 
     if plot_save_path:
-        plot_polar_data(df, data_type, frac=0.25, save_path=plot_save_path)
+        plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
 
     if debug:
         print(f"{data_type} df:")
@@ -316,11 +334,10 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     return lons, lats, elev
 
 
-def load_m3_df(data_dict, debug=False):
+def load_m3_df(data_dict, plot_frac=0.25, debug=False):
 
-    csvs_in_dir = [f for f in os.listdir(data_dict['file_path']) if f.endswith('.csv') and 'lon' in f]
-    if len(csvs_in_dir) == 12:
-        print(f"CSVs appear to exist for M3 data. Skipping load_lro_df.")
+    if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
+        print(f"CSVs appear to exist for M3 data. Skipping load_m3_df.")
         return
 
     file_path = data_dict['file_path']
@@ -346,10 +363,21 @@ def load_m3_df(data_dict, debug=False):
         image_data, output_vals = process_M3_image(img_file, address, metadata)
         lons, lats, elev = generate_M3_coords(image_data.shape, metadata, data_dict)
 
-        all_lons.extend(lons.flatten())
-        all_lats.extend(lats.flatten())
-        all_elev.extend(elev.flatten())
-        all_output_vals.extend(output_vals.flatten())
+        lons = lons.flatten()
+        lats = lats.flatten()
+        elev = elev.flatten()
+        output_vals = output_vals.flatten()
+
+        assert np.all((lons >= 0) & (lons <= 360)), "Some longitude values are out of bounds."
+        assert np.all((lats >= -90) & (lats <= 90)), "Some latitude values are out of bounds."
+
+        valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
+        valid_mask &= np.isfinite(output_vals) & np.isfinite(elev)
+
+        all_lons.extend(lons[valid_mask])
+        all_lats.extend(lats[valid_mask])
+        all_elev.extend(elev[valid_mask])
+        all_output_vals.extend(output_vals[valid_mask])
 
     df = pd.DataFrame({
         'Longitude': all_lons,
@@ -358,11 +386,17 @@ def load_m3_df(data_dict, debug=False):
         'M3': all_output_vals
     })
 
+    # assert not np.any((df['Longitude'] < 0) | (df['Longitude'] > 360)), "Some longitude values are out of bounds."
+    # assert not np.any((df['Latitude'] < -90) | (df['Latitude'] > 90)), "Some latitude values are out of bounds."
+    assert 'M3' in df.columns, f"Data type 'M3' not found in dataframe columns."
+    # df = df[((df['Latitude'] <= -75) & (df['Latitude'] >= -90)) | ((df['Latitude'] <= 90) & (df['Latitude'] >= 75))]    # Filter out non-polar data
+    # df = df[df['M3'].notna()]
+
     if csv_save_path:
         save_by_lon_range(df, csv_save_path)
 
     if plot_save_path:
-        plot_polar_data(df, 'M3', frac=0.25, save_path=plot_save_path)
+        plot_polar_data(df, 'M3', frac=plot_frac, save_path=plot_save_path)
 
     if debug:
         print(f"M3 df:")

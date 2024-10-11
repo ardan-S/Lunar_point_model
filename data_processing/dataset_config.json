@@ -1,0 +1,53 @@
+{
+    "Diviner": {
+        "file_path": "{download_dir}/Diviner",
+        "save_path": "{save_dir}/Diviner",
+        "interp_dir": "{interp_dir}/Diviner",
+        "plot_path": "{plot_dir}",
+        "Orbiter": "LRO",
+        "img_ext": ".jp2",
+        "lbl_ext": ".lbl",
+        "address": "UNCOMPRESSED_FILE.IMAGE",
+        "max": 500,
+        "min": 0
+    },
+    "LOLA": {
+        "file_path": "{download_dir}/LOLA",
+        "save_path": "{save_dir}/LOLA",
+        "interp_dir": "{interp_dir}/LOLA",
+        "plot_path": "{plot_dir}",
+        "Orbiter": "LRO",
+        "img_ext": ".jp2",
+        "lbl_ext": "_jp2.lbl",
+        "address": "COMPRESSED_FILE",
+        "max": 2.0,
+        "min": 0.0
+    },
+    "M3": {
+        "file_path": "{download_dir}/M3",
+        "save_path": "{save_dir}/M3",
+        "interp_dir": "{interp_dir}/M3",
+        "plot_path": "{plot_dir}",
+        "Orbiter": "Chandrayaan-1",
+        "img_ext": "_RFL.IMG",
+        "lbl_ext": "_L2.LBL",
+        "loc_img_ext": "_LOC.IMG",
+        "loc_lbl_ext": "_L1B.LBL",
+        "address": "RFL_FILE.RFL_IMAGE",
+        "loc_address": "LOC_FILE.LOC_IMAGE",
+        "max": 1,
+        "min": 0
+    },
+    "MiniRF": {
+        "file_path": "{download_dir}/Mini-RF",
+        "save_path": "{save_dir}/Mini-RF",
+        "interp_dir": "{interp_dir}/Mini-RF",
+        "plot_path": "{plot_dir}",
+        "Orbiter": "LRO",
+        "img_ext": ".img",
+        "lbl_ext": ".lbl",
+        "address": "IMAGE",
+        "max": 1.5,
+        "min": 0
+    }
+}

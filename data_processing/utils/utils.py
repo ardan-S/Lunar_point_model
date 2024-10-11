@@ -11,6 +11,23 @@ from requests.exceptions import ChunkedEncodingError, ConnectionError
 from http.client import IncompleteRead
 from matplotlib import pyplot as plt
 import dask.dataframe as dd
+import json
+
+
+def load_dataset_config(json_file, args):
+    with open(json_file, 'r') as f:
+        dataset_dict = json.load(f)
+    
+    for dataset, config in dataset_dict.items():
+        for key, value in config.items():
+            if isinstance(value, str):
+                config[key] = value.format(
+                    download_dir=args.download_dir,
+                    save_dir=args.save_dir,
+                    interp_dir=args.interp_dir,
+                    plot_dir=args.plot_dir
+                )
+    return dataset_dict
 
 
 def parse_metadata_content(file_path):
@@ -181,7 +198,7 @@ def save_by_lon_range(df, output_dir):
         df_slice.to_csv(file_name, index=False)
 
 
-def plot_polar_data(df, variable, frac=None, random_state=42, save_path=None):
+def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, save_path=None):
     # Check for required columns
     required_columns = {'Latitude', 'Longitude', variable}
     missing_cols = required_columns - set(df.columns)
@@ -245,7 +262,7 @@ def plot_polar_data(df, variable, frac=None, random_state=42, save_path=None):
         fig.delaxes(ax2)
 
     if save_path:
-        plt.savefig(f"{save_path}/{variable}_raw_plot.png")
+        plt.savefig(f"{save_path}/{variable}_{graph_cat}_plot.png")
         print(f"Plot saved to {save_path}")
     else:
         plt.show()
@@ -257,22 +274,20 @@ def generate_mesh(RESOLUTION=0.24):
     # Convert resolution to degrees (approximate, depends on latitude)- 1 degree latitude is roughly MOON_RADIUS * pi / 180 km
     resolution_deg = (RESOLUTION / (MOON_RADIUS * np.pi / 180))
 
-    # Latitude ranges for the two poles
     lat_ranges = [(75, 90), (-90, -75)]
     lon_slices = [(0, 30), (30, 60), (60, 90),
                   (90, 120), (120, 150), (150, 180),
                   (180, 210), (210, 240), (240, 270),
                   (270, 300), (300, 330), (330, 360)]
 
-    # Generate grid points for both regions
     def generate_grid(lat_range, lon_range, resolution_deg):
         lats = np.arange(lat_range[0], lat_range[1] + resolution_deg, resolution_deg)
         lons = np.arange(lon_range[0], lon_range[1] + resolution_deg, resolution_deg)
         lon_grid, lat_grid = np.meshgrid(lons, lats)
         return lon_grid, lat_grid
 
-    # Generate meshes for each longitude slice
     meshes = []
+
     for lon_range in lon_slices:
         lon_grid_north, lat_grid_north = generate_grid(lat_ranges[0], lon_range, resolution_deg)
         lon_grid_south, lat_grid_south = generate_grid(lat_ranges[1], lon_range, resolution_deg)
@@ -280,9 +295,6 @@ def generate_mesh(RESOLUTION=0.24):
         lon_lat_grid_south = np.column_stack((lon_grid_south.ravel(), lat_grid_south.ravel()))
         meshes.append((lon_lat_grid_north, lon_lat_grid_south))
 
-    # print number of points in each mesh
-    for i, (lon_lat_grid_north, lon_lat_grid_south) in enumerate(meshes):
-        print(f"Mesh {i + 1}: {len(lon_lat_grid_north):,} points per pole. Total: {2 * len(lon_lat_grid_north):,} points.")
-    print(f'Total points: {sum(len(lon_lat_grid_north) + len(lon_lat_grid_south) for lon_lat_grid_north, lon_lat_grid_south in meshes):,}')
+    print(f'Meshes created. Total points: {sum(len(lon_lat_grid_north) + len(lon_lat_grid_south) for lon_lat_grid_north, lon_lat_grid_south in meshes):,}')
 
     return meshes

@@ -1,132 +1,22 @@
-Job started on Mon Oct  7 11:16:21 UTC 2024
-Number of NaN values after clipping: 7199510
-No data for South Pole
+Job started on Fri Oct 11 08:26:01 UTC 2024
+CSVs appear to exist for Diviner data. Skipping load_lro_df.
+CSVs appear to exist for LOLA data. Skipping load_lro_df.
+CSVs appear to exist for M3 data. Skipping load_m3_df.
+Processing MiniRF data...
+Metadata parsed
+Image processed
+Coordinates generated
+Data clipped
+Data appended
+Dataframe created
 Plot saved to ../../data/plots
-Diviner df:
-          Longitude      Latitude       Diviner
-count  7.331834e+06  7.331834e+06  7.331834e+06
-mean   1.357759e+02  8.287747e+01  1.456491e+02
-std    8.376987e+01  2.853811e+00  5.561176e+01
-min    1.529111e-02  7.501181e+01  4.196000e+01
-25%    5.531609e+01  8.062694e+01  9.720000e+01
-50%    1.299944e+02  8.286431e+01  1.418600e+02
-75%    2.121543e+02  8.498915e+01  1.901800e+02
-max    3.599843e+02  8.996679e+01  3.193400e+02
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=7.01044e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.26712e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=6.57917e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=3.40349e-22): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=9.06737e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=7.03462e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=8.07327e-22): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=5.38941e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.0941e-22): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=4.23469e-22): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=5.23575e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=7.59672e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.87544e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=6.93703e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.46748e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=4.42219e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.23364e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.56879e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.90292e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.36407e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.84343e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=6.12586e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=4.92999e-22): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=7.41875e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.12642e-17): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=8.54746e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=5.3643e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=3.40303e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.30873e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=4.6367e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.5311e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.91246e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.32463e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.47635e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.19612e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.83988e-23): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=3.34318e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=4.11783e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.39445e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.25271e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.32248e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=4.0854e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.97032e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.73959e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.90294e-20): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=9.5579e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.77434e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=8.59015e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=3.77587e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=3.40802e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=6.67424e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.59202e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=1.8905e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.17798e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=3.43502e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=3.51521e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/scipy/interpolate/_rbf.py:268: LinAlgWarning: Ill-conditioned matrix (rcond=2.79012e-21): result may not be accurate.
-  self.nodes = linalg.solve(self.A, self.di)
-/var/spool/slurmd/job13420/slurm_script: line 25: 4022344 Killed                  python ../process_data.py
-Job finished on Mon Oct  7 13:29:04 UTC 2024
-Total runtime: 132 minutes and 43 seconds
-slurmstepd: error: Detected 1 oom-kill event(s) in StepId=13420.batch. Some of your processes may have been killed by the cgroup out-of-memory handler.
+MiniRF df:
+          Longitude      Latitude        MiniRF
+count  1.664264e+08  1.664264e+08  1.664264e+08
+mean   1.799143e+02  1.576993e+00  4.960570e-01
+std    1.037740e+02  8.237226e+01  3.247090e-01
+min    3.906165e-03 -8.976561e+01  1.186435e-07
+25%    9.056444e+01 -8.203872e+01  3.043864e-01
+50%    1.793281e+02  7.526499e+01  4.387741e-01
+75%    2.697949e+02  8.251530e+01  6.287712e-01
+max    3.599961e+02  9.000000e+01  1.500000e+00
