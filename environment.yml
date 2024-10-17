@@ -21,6 +21,8 @@ dependencies:
  - glymur
  - memory_profiler
  - gdal
+ - shapely
+ - pyproj
  - pip:
    - jupyter-book
    - pybryt

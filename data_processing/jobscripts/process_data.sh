@@ -6,9 +6,9 @@
 #SBATCH --qos=dgxl_irp_high               # QoS, use high priority to access GPU faster
 ##SBATCH --gres=gpu:1                      # Request 1 GPU
 #SBATCH --ntasks=1                        # Run on a single task
-#SBATCH --cpus-per-task=1                 # Number of CPU cores per task
+#SBATCH --cpus-per-task=4                 # Number of CPU cores per task
 #SBATCH --mem=128G                        # Memory limit per node
-#SBATCH --time=08:00:00                   # Time limit
+#SBATCH --time=12:00:00                   # Time limit
 
 source /scratch_dgxl/as5023/conda/miniconda3/etc/profile.d/conda.sh
 conda activate IRP
@@ -16,13 +16,13 @@ conda activate IRP
 export MPLCONFIGDIR=/scratch_dgxl/as5023/.cache/matplotlib
 
 start_time=$(date +%s)
-echo "Job started on $(date)"
+echo "Job started on $(date)\n"
 
 # Navigate to the directory where your script is located
 cd $SLURM_SUBMIT_DIR
 
 # Run the Python script
-python ../process_data.py
+python ../process_data.py --n_workers 4
 
 end_time=$(date +%s)
 

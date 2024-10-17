@@ -49,5 +49,8 @@
         "address": "IMAGE",
         "max": 1.5,
         "min": 0
+    },
+    "Combined": {
+        "combined_save_path": "{combined_dir}"
     }
 }

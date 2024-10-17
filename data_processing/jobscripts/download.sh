@@ -8,7 +8,7 @@
 #SBATCH --ntasks=1                        # Run on a single task
 #SBATCH --cpus-per-task=1                 # Number of CPU cores per task
 #SBATCH --mem=16G                         # Memory limit per node
-#SBATCH --time=04:00:00                   # Time limit
+#SBATCH --time=10:00:00                   # Time limit
 
 source /scratch_dgxl/as5023/conda/miniconda3/etc/profile.d/conda.sh
 conda activate IRP

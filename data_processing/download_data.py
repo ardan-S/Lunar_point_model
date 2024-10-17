@@ -23,23 +23,26 @@ def clear_dir(home_dir):
             shutil.rmtree(full_path)
 
 
-async def download_file(session, url, download_dir):
-    local_filename = os.path.join(download_dir, os.path.basename(url))
-    try:
-        async with session.get(url, timeout=aiohttp.ClientTimeout(total=14400)) as response:
-            response.raise_for_status()
-            with open(local_filename, 'wb') as f:
-                async for chunk in response.content.iter_chunked(4096):
-                    f.write(chunk)
-    except asyncio.TimeoutError:
-        print(f"Timeout downloading {url}")
-    except Exception as e:
-        print(f"Error downloading {url}: {e} ({type(e).__name__})")
+async def download_file(session, url, download_dir, semaphore):
+    async with semaphore:
+        local_filename = os.path.join(download_dir, os.path.basename(url))
+        try:
+            async with session.get(url, timeout=aiohttp.ClientTimeout(total=14400)) as response:
+                response.raise_for_status()
+                with open(local_filename, 'wb') as f:
+                    async for chunk in response.content.iter_chunked(4096):
+                        f.write(chunk)
+        except asyncio.TimeoutError:
+            print(f"Timeout downloading {url}")
+        except Exception as e:
+            print(f"Error downloading {url}: {e} ({type(e).__name__})")
 
 
-async def download_diviner(download_dir, home_url, session, keyword='tbol'):
+async def download_diviner(download_dir, home_url, session, semaphore, keyword='tbol', test=False):
     years = [2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016]
     tasks = []
+    n_files_tot = 0
+    n_files_down = 0
 
     for year in years:
         url = urljoin(home_url, f'{year}/polar/jp2/')
@@ -59,24 +62,26 @@ async def download_diviner(download_dir, home_url, session, keyword='tbol'):
             if link['href'].endswith('.jp2')
             and keyword in link['href']
         ]
+        n_files_tot += len(jp2_urls)
 
         # Download each .jp2 file and its corresponding .lbl file
         for jp2_url in jp2_urls:
             lbl_url = jp2_url.replace('.jp2', '.lbl')
+            tasks.append(download_file(session, jp2_url, download_dir, semaphore))
+            tasks.append(download_file(session, lbl_url, download_dir, semaphore))
+            n_files_down += 1
+            if test:
+                break
 
-            print(jp2_url)
-            print(lbl_url)
-
-            tasks.append(download_file(session, jp2_url, download_dir))
-            tasks.append(download_file(session, lbl_url, download_dir))
-            break
-
-        break
 
     await asyncio.gather(*tasks)
+    if test:
+        print(f"Test: Downloaded {n_files_down} Diviner file out of {n_files_tot} files")
+    else:
+        print(f"Downloaded {n_files_down} Diviner files")
 
 
-async def download_lola(download_dir, home_url, session, keyword='ldam'):
+async def download_lola(download_dir, home_url, session, semaphore, keyword='ldam', test=False):
     tasks = []
     try:
         async with session.get(home_url) as response:
@@ -96,19 +101,19 @@ async def download_lola(download_dir, home_url, session, keyword='ldam'):
 
     for jp2_url in jp2_urls:
         lbl_url = jp2_url.replace('.jp2', '_jp2.lbl')
-
-        print(jp2_url)
-        print(lbl_url)
-
-        tasks.append(download_file(session, jp2_url, download_dir))
-        tasks.append(download_file(session, lbl_url, download_dir))
-
-        break
+        tasks.append(download_file(session, jp2_url, download_dir, semaphore))
+        tasks.append(download_file(session, lbl_url, download_dir, semaphore))
+        if test:
+            break
 
     await asyncio.gather(*tasks)
+    if test:
+        print(f"Test: Downloaded 1 LOLA file out of {len(jp2_urls)} files")
+    else:
+        print(f"Downloaded {len(jp2_urls)} LOLA files")
 
 
-async def download_m3(download_dir, home_url, img_extension, lbl_extension, session, keyword='DATA'):
+async def download_m3(download_dir, home_url, img_extension, lbl_extension, session, semaphore, keyword='DATA', test=False):
     base_url = home_url.rsplit('/', 1)[0] + '/'
     tasks = []
     try:
@@ -130,19 +135,19 @@ async def download_m3(download_dir, home_url, img_extension, lbl_extension, sess
 
     for img_url in img_urls:
         lbl_url = img_url.replace(img_extension, lbl_extension)
-
-        print(img_url)
-        print(lbl_url)
-
-        tasks.append(download_file(session, img_url, download_dir))
-        tasks.append(download_file(session, lbl_url, download_dir))
-
-        break
+        tasks.append(download_file(session, img_url, download_dir, semaphore))
+        tasks.append(download_file(session, lbl_url, download_dir, semaphore))
+        if test:
+            break
 
     await asyncio.gather(*tasks)
+    if test: 
+        print(f"Test: Downloaded 1 M3 file out of {len(img_urls)} files")
+    else:
+        print(f"Downloaded {len(img_urls)} M3 files")
 
 
-async def download_mini_rf(download_dir, home_url, session, keyword='cpr'):
+async def download_mini_rf(download_dir, home_url, session, semaphore, keyword='cpr', test=False):
     start_time = time.time()
     tasks = []
     try:
@@ -163,16 +168,16 @@ async def download_mini_rf(download_dir, home_url, session, keyword='cpr'):
 
     for img_url in img_urls:
         lbl_url = img_url.replace('.img', '.lbl')
-
-        print(img_url)
-        print(lbl_url)
-
-        tasks.append(download_file(session, img_url, download_dir))
-        tasks.append(download_file(session, lbl_url, download_dir))
-        break
+        tasks.append(download_file(session, img_url, download_dir, semaphore))
+        tasks.append(download_file(session, lbl_url, download_dir, semaphore))
+        if test:
+            break
 
     await asyncio.gather(*tasks)
-    print(f"Time taken to download Mini-RF: {time.time() - start_time:.2f} seconds")
+    if test:
+        print(f"Test: Downloaded 1 Mini-RF file out of {len(img_urls)} files")
+    else:
+        print(f"Downloaded {len(img_urls)} Mini-RF files")
 
 
 async def main(args):
@@ -208,7 +213,10 @@ async def main(args):
     if args.existing_dirs == "Replace":             # Clear the download directory if the user specifies 'Replace'
         clear_dir(args.download_dir)
 
+    semaphore = asyncio.Semaphore(10)   # Limit the number of concurrent downloads to 10 to prevent overloading the server
+
     async with aiohttp.ClientSession() as session:
+        tasks = []
         for dataset, info in dataset_dict.items():  # Loop through each dataset in dataset_dict and execute the download process
             url = info['url']
             download_path = info['path']
@@ -223,23 +231,21 @@ async def main(args):
             os.makedirs(download_path, exist_ok=True)
             print(f"Downloading {dataset} to {download_path}")
 
-            try:
-                if dataset == 'M3':
-                    await download_func(download_path, url, '_RFL.IMG', '_L2.LBL', session)
-                elif dataset == 'M3_loc':
-                    await download_func(download_path, url, '_LOC.IMG', '_L1B.LBL', session)
-                else:
-                    await download_func(download_path, url, session)
-                num_files = sum(1 for entry in os.scandir(download_path) if entry.is_file())
-                print(f"Downloaded {num_files} {dataset} files from web to {download_path}\n")
-            except Exception as e:
-                print(f"Failed to download {dataset} from {url}. Error: {e}\n")
+            if dataset == 'M3':
+                task = download_func(download_path, url, '_RFL.IMG', '_L2.LBL', session, semaphore, test=True)
+            elif dataset == 'M3_loc':
+                task = download_func(download_path, url, '_LOC.IMG', '_L1B.LBL', session, semaphore, test=True)
+            else:
+                task = download_func(download_path, url, session, semaphore, test=True)
+            tasks.append(task)
+
+        await asyncio.gather(*tasks)
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--download_dir", type=str, default="../../data/raw")
-    parser.add_argument("--existing_dirs", type=str, default="Replace", help="Replace or Skip")
+    parser.add_argument("--download_dir", type=str, default="../../data/raw", help="Directory to download data to")
+    parser.add_argument("--existing_dirs", type=str, default="Replace", help="Replace or Skip existing directories")
     return parser.parse_args()
 
 

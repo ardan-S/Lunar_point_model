@@ -3,13 +3,13 @@ import requests
 from collections import defaultdict
 import glymur
 import numpy as np
-import pandas as pd
+import pandas as pd # type: ignore
 import os
 from urllib.parse import urljoin
 import io
 from requests.exceptions import ChunkedEncodingError, ConnectionError
 from http.client import IncompleteRead
-from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt    # type: ignore
 import dask.dataframe as dd
 import json
 
@@ -25,7 +25,8 @@ def load_dataset_config(json_file, args):
                     download_dir=args.download_dir,
                     save_dir=args.save_dir,
                     interp_dir=args.interp_dir,
-                    plot_dir=args.plot_dir
+                    plot_dir=args.plot_dir,
+                    combined_dir=args.combined_dir
                 )
     return dataset_dict
 
