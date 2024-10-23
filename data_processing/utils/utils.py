@@ -1,17 +1,39 @@
+# type: ignore[reportPrivateImportUsage]
 import re
 import requests
 from collections import defaultdict
 import glymur
 import numpy as np
-import pandas as pd # type: ignore
+import pandas as pd
 import os
 from urllib.parse import urljoin
 import io
 from requests.exceptions import ChunkedEncodingError, ConnectionError
 from http.client import IncompleteRead
-from matplotlib import pyplot as plt    # type: ignore
+from matplotlib import pyplot as plt
 import dask.dataframe as dd
 import json
+
+
+
+def load_csv(directory, csv_file):
+    df = pd.read_csv(os.path.join(directory, csv_file))
+    return df if not df.isna().all().all() else None
+
+
+def load_csvs_parallel(directory, n_workers):
+    csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
+    
+    dfs = []
+    with ProcessPoolExecutor(max_workers=n_workers) as executor:
+        future_to_csv = {executor.submit(load_csv, directory, csv_file): csv_file for csv_file in csv_files}
+        
+        for future in as_completed(future_to_csv):
+            df = future.result()
+            if df is not None:
+                dfs.append(df)
+    
+    return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
 
 
 def load_dataset_config(json_file, args):
@@ -265,6 +287,94 @@ def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, s
     if save_path:
         plt.savefig(f"{save_path}/{variable}_{graph_cat}_plot.png")
         print(f"Plot saved to {save_path}")
+    else:
+        plt.show()
+
+
+def plot_labeled_polar_data(df, variable, label_column, save_path=None):
+    # Filter the DataFrame to include only rows where label_column > 0
+    df_filtered = df[df[label_column] > 0].copy()
+
+    # Check if there is data to plot
+    if df_filtered.empty:
+        print(f"No data to plot for {variable}.")
+        return
+
+    # Split into north and south poles
+    north_pole_df = df_filtered[df_filtered['Latitude'] >= 0]
+    south_pole_df = df_filtered[df_filtered['Latitude'] < 0]
+
+    def prepare_polar_data(df, pole):
+        if df.empty:
+            return df
+        df = df.copy()
+        if pole == 'north':
+            df['r'] = 90 - df['Latitude']
+        else:
+            df['r'] = 90 + df['Latitude']
+        df['theta'] = np.deg2rad(df['Longitude'])
+        return df
+
+    north_pole_df = prepare_polar_data(north_pole_df, 'north')
+    south_pole_df = prepare_polar_data(south_pole_df, 'south')
+
+    # Create subplots for north and south poles
+    num_plots = (not north_pole_df.empty) + (not south_pole_df.empty)
+    fig, axes = plt.subplots(1, num_plots, subplot_kw={'projection': 'polar'}, figsize=(10 * num_plots, 10))
+
+    # Ensure axes is a list even if there's only one plot
+    if num_plots == 1:
+        axes = [axes]
+
+    def plot_pole_data(ax, df, pole):
+        if df.empty:
+            return
+
+        # Map labels to colors directly
+        label_values = df[label_column].unique()
+        colour_map = {}
+        if np.array_equal(label_values, [1]):
+            colour_map = {1: 'blue'}
+        elif np.array_equal(label_values, [2]):
+            colour_map = {2: 'red'}
+        elif np.array_equal(np.sort(label_values), [1, 2]):
+            colour_map = {1: 'blue', 2: 'red'}
+        else:
+            raise ValueError(f"Unsupported label values: {label_values.unique()}. Expected [1], [2] or [1, 2]")
+
+        # # Map label values to colors
+        # colours = df[label_column].map(color_map)
+
+        # ax.scatter(df['theta'], df['r'], c=colours, s=10)
+
+        # Plot data points with labels
+        for label, colour in colour_map.items():
+            df_subset = df[df[label_column] == label]
+            ax.scatter(df_subset['theta'], df_subset['r'], c=colour, s=10, label=f'Label {label}')
+
+
+        ax.set_ylim(0, 15)
+        ax.set_yticks(range(0, 16, 5))
+        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 16, 5)]
+        ax.set_yticklabels(labels)
+        ax.set_theta_zero_location('N')
+        ax.set_theta_direction(-1)
+        ax.set_title(f'{variable} Labels - {pole.capitalize()} Pole')
+
+    plot_idx = 0
+    # Plot for North Pole
+    if not north_pole_df.empty:
+        plot_pole_data(axes[plot_idx], north_pole_df, 'north')
+        plot_idx += 1
+
+    # Plot for South Pole
+    if not south_pole_df.empty:
+        plot_pole_data(axes[plot_idx], south_pole_df, 'south')
+
+    if save_path:
+        plt.savefig(save_path)
+        print(f"Label plot saved to {save_path} for {variable}")
+        plt.close(fig)  # Close the figure to free memory
     else:
         plt.show()
 

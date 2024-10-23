@@ -52,10 +52,10 @@ def main(args):
                   dataset_dict['MiniRF']['interp_dir'], 
                   n_workers=args.n_workers
                   ),
-            dataset_dict['Combined']['combined_save_path']
+            dataset_dict, args.plot_dir
             )
 
-    print("Dataframes combined and labeled\n")
+    print("Dataframes labeled\n")
 
 
 def parse_args():
