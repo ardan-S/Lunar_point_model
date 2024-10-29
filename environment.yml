@@ -23,6 +23,8 @@ dependencies:
  - gdal
  - shapely
  - pyproj
+ - astropy
+ - h5py
  - pip:
    - jupyter-book
    - pybryt

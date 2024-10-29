@@ -1,0 +1,15 @@
+Job started on Tue Oct 29 17:56:26 UTC 2024
+Computing horizon elevation for 17263 points (0.01% of the data)
+Number of points: 7778 (North), 9485 (South), 17263 (Total)
+Number of x, y points: 7778 (North), 9485 (South), 17263 (Total)
+Number of points after projection: 17263
+Removed 4 rows with NaN or Inf in 'x' or 'y' (0.02%)
+Number of idx points: 17259 (x), 17259 (y)
+Max x index: 1906, Max y index: 1
+Initialised grid shape: (2, 1907)
+Grid shape: (2, 1907)
+Grid size: 3814
+Number of non-nans in elev_grid: 0 (0.00%)
+Number of nans in elev_grid: 3814 (100.00%)
+Job finished on Tue Oct 29 17:57:09 UTC 2024
+Total runtime: 0 minutes and 43 seconds
