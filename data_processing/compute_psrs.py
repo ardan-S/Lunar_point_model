@@ -33,7 +33,7 @@ def elevation_grid_to_df(elevation_grid, min_x, min_y, grid_res):
 
 def main(args):
 
-    elev_grid, min_x, min_y = load_and_prepare_data(args, sample=0.0001)
+    elev_grid = load_and_prepare_data(args, sample=1)
 
     # df = elevation_grid_to_df(elev_grid, min_x, min_y, 240)
     # print(f"Converted back to df shape: {df.shape}")

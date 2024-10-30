@@ -14,67 +14,54 @@ from utils.utils import load_csvs_parallel
 
 MOON_RADIUS = 1737.4 * 1000  # Convert to meters
 GRID_RES = 240  # Resolution of the grid in meters
+RES_DEG = (GRID_RES / MOON_RADIUS) * (180 / np.pi)  # Resolution in degrees
 
 
 def load_and_prepare_data(args, sample=1.0):
     df = load_csvs_parallel(args.upload_dir, args.n_workers)
-    df.filter(items=['Longitude', 'Latitude', 'Elevation'])
-    df = df.iloc[:int(sample * len(df))]
-    print(f"Computing horizon elevation for {len(df)} points ({sample*100}% of the data)")
+    print(f"Loaded {len(df)} points")
+    df = df[['Longitude', 'Latitude', 'Elevation']]
     df['PSR'] = 1  # Assume all points are permanently shadowed regions (PSRs)
 
-    # Define polar stereographic projections for north and south poles
-    proj_north = Proj(proj='stere', lat_0=90, lon_0=0, lat_ts=90, a=MOON_RADIUS, b=MOON_RADIUS, units='m')
-    proj_south = Proj(proj='stere', lat_0=-90, lon_0=0, lat_ts=-90, a=MOON_RADIUS, b=MOON_RADIUS, units='m')
+    df = df.dropna(subset=['Longitude', 'Latitude', 'Elevation'])
+    df = df[np.isfinite(df['Longitude']) & np.isfinite(df['Latitude']) & np.isfinite(df['Elevation'])]
 
-    # Convert latitude and longitude to x and y coordinates
-    df_north = df[df['Latitude'] >= 0].copy()
-    df_south = df[df['Latitude'] < 0].copy()
+    pts_to_take = int(sample * len(df))
+    df = df.iloc[:pts_to_take] if len(df) > pts_to_take else df
+    print(f"Computing horizon elevation for {len(df)} points ({sample*100}% of the data)")
+    print(df.head())
 
-    print(f"Number of points: {len(df_north)} (North), {len(df_south)} (South), {len(df_north) + len(df_south)} (Total)")
+    # min_lon, min_lat = df['Longitude'].min(), df['Latitude'].min()
 
-    df_north['x'], df_north['y'] = proj_north(df_north['Longitude'].values, df_north['Latitude'].values)
-    df_south['x'], df_south['y'] = proj_south(df_south['Longitude'].values, df_south['Latitude'].values)
+    # df['lon_idx'] = ((df['Longitude'] - min_lon) / RES_DEG).round().astype(int)
+    # df['lat_idx'] = ((df['Latitude'] - min_lat) / RES_DEG).round().astype(int)
+    # print(f"Number of idx points: {len(df['lon_idx'])} (lon), {len(df['lat_idx'])} (lat)")
+    # print(f"Number of unique lon idcs: {df['lon_idx'].nunique()}, Number of unique lat idcs: {df['lat_idx'].nunique()}")
 
-    print(f"Number of x, y points: {len(df_north['x'])} (North), {len(df_south['x'])} (South), {len(df_north['x']) + len(df_south['x'])} (Total)")
+    # max_lon_idx, max_lat_idx = df['lon_idx'].max(), df['lat_idx'].max()
+    # print(f"Max lon index: {max_lon_idx}, Max lat index: {max_lat_idx}")
 
-    df = pd.concat([df_north, df_south], ignore_index=True)
+    # df_grouped = df.groupby(['lon_idx', 'lat_idx'], as_index=False).mean()
+    df_grouped = df.groupby(['Longitude', 'Latitude'], as_index=False).mean()
+    df_grouped = df_grouped.sort_values(by=['Latitude', 'Longitude']).reset_index(drop=True)
+    df_grouped['Longitude'] = df_grouped['Longitude'].round(6)
+    df_grouped['Latitude'] = df_grouped['Latitude'].round(6)
 
-    print(f"Number of points after projection: {len(df)}")
+    unique_lats = np.sort(df_grouped['Latitude'].unique())
+    unique_lons = np.sort(df_grouped['Longitude'].unique())
+    n_lats = len(unique_lats)
+    n_lons = len(unique_lons)
 
-    initial_row_count = df.shape[0]
-    df = df[np.isfinite(df['x']) & np.isfinite(df['y'])]
-    final_row_count = df.shape[0]
-    rows_removed = initial_row_count - final_row_count
-    print(f"Removed {rows_removed} rows with NaN or Inf in 'x' or 'y' ({rows_removed/initial_row_count:.2%})")
+    elevation_grid = df_grouped['Elevation'].to_numpy()
+    elevation_grid = elevation_grid.reshape((n_lats, n_lons))
 
-    # Determine min_x and min_y to offset indices to start from zero
-    min_x = df['x'].min()
-    min_y = df['y'].min()
-    grid_res = args.grid_resolution
-
-    df['x_index'] = ((df['x'] - min_x) / grid_res).astype(int)
-    df['y_index'] = ((df['y'] - min_y) / grid_res).astype(int)
-
-    print(f"Number of idx points: {len(df['x_index'])} (x), {len(df['y_index'])} (y)")
-    print(f"Number of unique x indices: {df['x_index'].nunique()}, Number of unique y indices: {df['y_index'].nunique()}")
-
-    max_x_idx, max_y_idx = df['x_index'].max(), df['y_index'].max()
-
-    print(f"Max x index: {max_x_idx}, Max y index: {max_y_idx}")
-
-    elevation_grid = np.full((max_y_idx + 1, max_x_idx + 1), np.nan)
-    print(f"Initialised grid shape: {elevation_grid.shape}")
-
-    for _, row in df.iterrows():
-        elevation_grid[row['y_index'].astype(int), row['x_index'].astype(int)] = row['Elevation']
-
+    print(f"Number of unique latitudes: {n_lats}, Number of unique longitudes: {n_lons}")
     print(f"Grid shape: {elevation_grid.shape}")
     print(f"Grid size: {elevation_grid.size}")
     print(f"Number of non-nans in elev_grid: {np.count_nonzero(~np.isnan(elevation_grid))} ({np.count_nonzero(~np.isnan(elevation_grid)) / elevation_grid.size:.2%})")
     print(f"Number of nans in elev_grid: {np.isnan(elevation_grid).sum()} ({np.isnan(elevation_grid).sum() / elevation_grid.size:.2%})")
 
-    return elevation_grid, min_x, min_y
+    return elevation_grid
 
 
 def compute_horizon_for_point(args):
