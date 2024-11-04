@@ -14,6 +14,7 @@ import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
 import time
+from pathlib import Path
 
 
 def clear_dir(home_dir):
@@ -232,11 +233,11 @@ async def main(args):
             print(f"Downloading {dataset} to {download_path}")
 
             if dataset == 'M3':
-                task = download_func(download_path, url, '_RFL.IMG', '_L2.LBL', session, semaphore, test=True)
+                task = download_func(download_path, url, '_RFL.IMG', '_L2.LBL', session, semaphore, test=False)
             elif dataset == 'M3_loc':
-                task = download_func(download_path, url, '_LOC.IMG', '_L1B.LBL', session, semaphore, test=True)
+                task = download_func(download_path, url, '_LOC.IMG', '_L1B.LBL', session, semaphore, test=False)
             else:
-                task = download_func(download_path, url, session, semaphore, test=True)
+                task = download_func(download_path, url, session, semaphore, test=False)
             tasks.append(task)
 
         await asyncio.gather(*tasks)

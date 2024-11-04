@@ -1,0 +1,58 @@
+Downloading Diviner to /rds/general/user/as5023/ephemeral/data/raw/Diviner
+Downloading LOLA to /rds/general/user/as5023/ephemeral/data/raw/LOLA
+Downloading M3 to /rds/general/user/as5023/ephemeral/data/raw/M3
+Downloading M3_loc to /rds/general/user/as5023/ephemeral/data/raw/M3
+Downloading Mini-RF to /rds/general/user/as5023/ephemeral/data/raw/Mini-RF
+Downloaded 4 LOLA files
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20081118_20090214/200811/L2/M3G20081119T021733_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20081118_20090214/200812/L2/M3G20081224T140005_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20081118_20090214/200901/L2/M3G20090103T143945_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20081118_20090214/200902/L2/M3G20090204T192552_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Downloaded 1 Mini-RF files
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200904/L2/M3G20090417T193504_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200904/L2/M3G20090425T064315_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200904/L2/M3G20090426T061945_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200904/L2/M3G20090426T041030_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200904/L2/M3G20090426T120245_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200904/L2/M3G20090426T235045_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200904/L2/M3T20090420T071014_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200905/L2/M3G20090530T030925_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200906/L2/M3G20090601T064032_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200906/L2/M3G20090603T010112_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200908/L2/M3G20090812T071513_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200908/L2/M3G20090812T154723_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0004/DATA/20090415_20090816/200908/L2/M3G20090812T195416_V01_RFL.IMG: Response payload is not completed: <ContentLengthError: 400, message='Not enough data for satisfy content length header.'> (ClientPayloadError)
+Downloaded 887 M3 files
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200904/L1B/M3G20090417T142240_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200904/L1B/M3G20090417T142240_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200904/L1B/M3G20090417T143216_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200904/L1B/M3G20090417T143216_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200904/L1B/M3G20090514T032823_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200904/L1B/M3G20090514T032823_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200904/L1B/M3G20090515T043534_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200904/L1B/M3G20090515T043534_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200905/L1B/M3G20090514T032823_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200905/L1B/M3G20090514T032823_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200905/L1B/M3G20090515T043534_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200905/L1B/M3G20090515T043534_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200906/L1B/M3G20090610T032955_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200906/L1B/M3G20090610T032955_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200906/L1B/M3G20090612T013733_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200906/L1B/M3G20090612T013733_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3G20090712T093118_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3G20090712T093118_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3G20090717T093140_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3G20090717T093140_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3G20090730T122100_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3G20090730T122100_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T134120_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T134120_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T134408_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T134408_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T154858_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T154858_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T155036_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T155036_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T175645_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T175645_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T175725_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T175725_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T175924_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200907/L1B/M3T20090709T175924_V03_L1B.LBL' (ClientResponseError)
+Error downloading https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200908/L1B/M3G20090815T084100_V03_L1B.LBL: 404, message='Not Found', url='https://planetarydata.jpl.nasa.gov/img/data/m3/CH1M3_0003/DATA/20090415_20090816/200908/L1B/M3G20090815T084100_V03_L1B.LBL' (ClientResponseError)
+Downloaded 941 M3 files
+Downloaded 420 Diviner files
+
+Job finished on Thu 31 Oct 01:22:33 GMT 2024
+Total runtime: 143 minutes and 15 seconds
+
+====================================
+CPU Time used: 01:26:35
+CPU Percent: 68%
+Memory usage: 165800kb
+Approx Power usage: 0.0172
+Walltime usage: 02:23:30
+
+====================================

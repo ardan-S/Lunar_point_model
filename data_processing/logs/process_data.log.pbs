@@ -1,0 +1,60 @@
+Raw CSVs appear to exist for LOLA data. Skipping load df.
+Raw CSVs appear to exist for Diviner data. Skipping load df.
+Raw CSVs appear to exist for M3 data. Skipping load df.
+Raw CSVs appear to exist for MiniRF data. Skipping load df.
+Loading stage complete after 0.00 mins
+
+Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
+Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
+Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
+Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
+Interpolation stage complete after 0.00 mins
+
+Dataframes combined. Shape: (172638382, 7)
+
+LOLA - Clusters at 1: 785, Clusters at 2: 516, Total clusters: 1301
+Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/LOLA_label_plot.png for LOLA
+
+Invalid projected coordinates for cluster 8. Skipping...
+Skipping cluster 2242 with less than 3 points
+Polygon area is zero for cluster 2507. Skipping...
+Skipping cluster 2599 with less than 3 points
+Skipping cluster 6473 with less than 3 points
+Polygon area is zero for cluster 6989. Skipping...
+Skipping cluster 7657 with less than 3 points
+Skipping cluster 10259 with less than 3 points
+Skipping cluster 10711 with less than 3 points
+Skipping cluster 16463 with less than 3 points
+Skipping cluster 17785 with less than 3 points
+Skipping cluster 19040 with less than 3 points
+M3 - Clusters at 1: 18531, Clusters at 2: 2426, Total clusters: 20969
+Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/M3_label_plot.png for M3
+
+Label counts:
+Diviner label - 0: 50.54%
+Diviner label - 1: 0.00%
+Diviner label - 2: 49.46%
+LOLA label - 0: 97.78%
+LOLA label - 1: 0.03%
+LOLA label - 2: 2.19%
+M3 label - 0: 99.49%
+M3 label - 1: 0.28%
+M3 label - 2: 0.23%
+MiniRF label - 0: 95.20%
+MiniRF label - 1: 4.80%
+MiniRF label - 2: 0.00%
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
+Dataframes labeled
+
+
+Job finished on Mon  4 Nov 15:56:42 GMT 2024
+Total runtime: 119 minutes and 26 seconds
+
+====================================
+CPU Time used: 02:01:16
+CPU Percent: 242%
+Memory usage: 110449380kb
+Approx Power usage: 0.0242
+Walltime usage: 01:59:37
+
+====================================

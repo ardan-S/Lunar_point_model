@@ -10,7 +10,7 @@ from functools import partial
 from pyproj import CRS, Transformer
 import sys
 
-from data_processing.utils.utils import save_by_lon_range, plot_labeled_polar_data, load_csvs_parallel
+from data_processing.utils.utils import save_by_lon_range, plot_labeled_polar_data, load_csvs_parallel, plot_polar_data
 
 
 def combine(*dirs, n_workers=None):
@@ -87,6 +87,8 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
 
     save_by_lon_range(df, combined_save_path)
 
+    plot_polar_data(df, 'Label', graph_cat='labeled', save_path=plot_save_path)
+                    
 
 def apply_area_label(df, data_type, threshold, area_thresh, direction):
     df = df.copy()
@@ -166,28 +168,27 @@ def apply_area_label(df, data_type, threshold, area_thresh, direction):
         # Project the coordinates
         x_proj, y_proj = transformer.transform(cluster_coords_lon, cluster_coords_lat)
         cluster_coords_proj = np.column_stack((x_proj, y_proj))
-        if not np.isfinite(cluster_coords_proj).all():
-            print(f"Invalid projected coordinates for cluster {cluster_label}. Skipping...")
-            continue
 
-        unique_coords_proj = np.unique(cluster_coords_proj, axis=0)
-        if len(unique_coords_proj) < 3:
-            print(f"Skipping cluster {cluster_label} with less than 3 unique points")
+        if not np.isfinite(cluster_coords_proj).all():
+            # print(f"Invalid projected coordinates for cluster {cluster_label}. Skipping...")
             continue
 
         # Create a Polygon from the projected cluster points
+        unique_coords_proj = np.unique(cluster_coords_proj, axis=0)
         multipoint = MultiPoint(unique_coords_proj)
         polygon = multipoint.convex_hull
-        # polygon = Polygon(cluster_coords_proj)
 
+        if len(unique_coords_proj) < 3:
+            # print(f"Skipping cluster {cluster_label} with less than 3 unique points")
+            continue
         if not polygon.is_valid:
-            print(f"Invalid polygon for cluster {cluster_label}. Skipping...")
+            # print(f"Invalid polygon for cluster {cluster_label}. Skipping...")
             continue
         if polygon.area == 0 or polygon.is_empty:
-            print(f"Polygon area is zero for cluster {cluster_label}. Skipping...")
+            # print(f"Polygon area is zero for cluster {cluster_label}. Skipping...")
             continue
         if polygon.geom_type != 'Polygon':
-            print(f"Invalid geometry type for cluster {cluster_label}. Skipping...")
+            # print(f"Invalid geometry type for cluster {cluster_label}. Skipping...")
             continue
 
         # Calculate the area
@@ -205,7 +206,6 @@ def apply_area_label(df, data_type, threshold, area_thresh, direction):
         # Update labels for points in this cluster
         df_filtered.loc[cluster_points.index, 'Label'] += label_increment - 1
         df_filtered.loc[cluster_points.index, f'{data_type} label'] += label_increment - 1
-        # print(f"Cluster {cluster_label:03d} - Area: {area_km2:.2f} km^2, Label increment: {label_increment}, Points: {len(cluster_points):03d}")
 
     # Update the original DataFrame with the new labels
     df.update(df_filtered[['Label', f'{data_type} label']])

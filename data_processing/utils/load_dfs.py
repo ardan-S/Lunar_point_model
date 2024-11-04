@@ -6,8 +6,9 @@ import requests
 import matplotlib.pyplot as plt # type: ignore
 import sys
 
-from utils.utils import get_metadata_value, clean_metadata_value, parse_metadata_content
+from utils.utils import get_metadata_value, clean_metadata_value, parse_metadata_content, load_every_nth_line
 from utils.utils import decode_image_file, get_closest_channels, plot_polar_data, save_by_lon_range
+from download_data import clear_dir
 
 
 def process_LRO_image(image_file, address, metadata, data_type, max_val=1.0, min_val=0.0):
@@ -88,7 +89,12 @@ def generate_LRO_coords(image_shape, metadata):
 
 
 def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
-    
+
+    os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
+    os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
+
+    clear_dir(data_dict['save_path'])
+
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"Raw CSVs appear to exist for {data_type} data. Skipping load df.")
         return
@@ -102,14 +108,15 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
     max_val = data_dict['max']
     min_val = data_dict['min']
 
+
     assert csv_save_path or plot_save_path, "At least one of 'save_path' or 'plot_path' must be provided."
     assert isinstance(data_type, str), "data_type must be a string."
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
 
-    all_lons = []
-    all_lats = []
-    all_output_vals = []
+    # all_lons = []
+    # all_lats = []
+    # all_output_vals = []
 
     for lbl_file in lbl_files:
         lbl_path = f"{file_path}/{lbl_file}"
@@ -132,19 +139,27 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
         valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
         valid_mask &= np.isfinite(output_vals)
 
-        all_lons.extend(lons[valid_mask])
-        all_lats.extend(lats[valid_mask])
-        all_output_vals.extend(output_vals[valid_mask])
+        df = pd.DataFrame({
+            'Longitude': lons[valid_mask],
+            'Latitude': lats[valid_mask],
+            data_type: output_vals[valid_mask]
+        })
 
-    df = pd.DataFrame({
-        'Longitude': all_lons,
-        'Latitude': all_lats,
-        data_type: all_output_vals
-    })
-    assert data_type in df.columns, f"Data type '{data_type}' not found in dataframe columns."
+        assert data_type in df.columns, f"Data type '{data_type}' not found in dataframe columns."
 
-    if csv_save_path:
-        save_by_lon_range(df, csv_save_path)
+        if csv_save_path:
+            save_by_lon_range(df, csv_save_path)
+
+        del df, image_data, output_vals, lons, lats
+
+    df_list = []
+
+    for file in os.listdir(data_dict['save_path']):
+        if file.endswith('.csv') and 'lon' in file:
+            df_temp = load_every_nth_line(os.path.join(data_dict['save_path'], file), 10)
+            df_list.append(df_temp)
+
+    df = pd.concat(df_list, ignore_index=True)
 
     if plot_save_path:
         plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
@@ -153,6 +168,8 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
         print(f"{data_type} df:")
         print(df.describe())
         create_hist(df, data_type)
+
+    del df, df_list
 
 
 def process_M3_image(image_file, address, metadata):
@@ -179,7 +196,11 @@ def process_M3_image(image_file, address, metadata):
     with open(image_file, 'rb') as f:
         image_data = np.fromfile(f, dtype=dtype)
 
-    assert (lines * line_samples * bands) == image_data.size, f"Mismatch in data size: expected {lines * line_samples * bands}, got {image_data.size}"
+    if lines * line_samples * bands != image_data.size: # Handle cases where the image data is not the expected size
+        extracted_bands = np.empty((lines, line_samples, len(test_channels)))
+        output_vals = np.full((lines, line_samples), np.nan)
+        return extracted_bands, output_vals
+
 
     extracted_bands = np.empty((lines, line_samples, len(test_channels)))
     reference_band_up = np.full((lines, line_samples, len(test_channels)), np.nan)
@@ -322,6 +343,10 @@ def generate_M3_coords(image_shape, metadata, data_dict):
 
 
 def load_m3_df(data_dict, plot_frac=0.25, debug=False):
+    os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
+    os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
+
+    clear_dir(data_dict['save_path'])
 
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"Raw CSVs appear to exist for M3 data. Skipping load df.")
@@ -336,11 +361,6 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
     assert plot_save_path or csv_save_path, "At least one of 'plot_path' or 'save_path' must be provided."
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
-
-    all_lons = []
-    all_lats = []
-    all_elev = []
-    all_output_vals = []
 
     for lbl_file in lbl_files:
         lbl_path = f"{file_path}/{lbl_file}"
@@ -361,26 +381,28 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
         valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
         valid_mask &= np.isfinite(output_vals) & np.isfinite(elev)
 
-        all_lons.extend(lons[valid_mask])
-        all_lats.extend(lats[valid_mask])
-        all_elev.extend(elev[valid_mask])
-        all_output_vals.extend(output_vals[valid_mask])
+        df = pd.DataFrame({
+            'Longitude': lons[valid_mask],
+            'Latitude': lats[valid_mask],
+            'Elevation': elev[valid_mask],
+            'M3': output_vals[valid_mask]
+        })
 
-    df = pd.DataFrame({
-        'Longitude': all_lons,
-        'Latitude': all_lats,
-        'Elevation': all_elev,
-        'M3': all_output_vals
-    })
+        assert 'M3' in df.columns, f"Data type 'M3' not found in dataframe columns."
 
-    # assert not np.any((df['Longitude'] < 0) | (df['Longitude'] > 360)), "Some longitude values are out of bounds."
-    # assert not np.any((df['Latitude'] < -90) | (df['Latitude'] > 90)), "Some latitude values are out of bounds."
-    assert 'M3' in df.columns, f"Data type 'M3' not found in dataframe columns."
-    # df = df[((df['Latitude'] <= -75) & (df['Latitude'] >= -90)) | ((df['Latitude'] <= 90) & (df['Latitude'] >= 75))]    # Filter out non-polar data
-    # df = df[df['M3'].notna()]
+        if csv_save_path:
+            save_by_lon_range(df, csv_save_path)
 
-    if csv_save_path:
-        save_by_lon_range(df, csv_save_path)
+        del df, image_data, output_vals, lons, lats, elev
+
+    df_list = []
+
+    for file in os.listdir(data_dict['save_path']):
+        if file.endswith('.csv') and 'lon' in file:
+            df_temp = load_every_nth_line(os.path.join(data_dict['save_path'], file), 10)
+            df_list.append(df_temp)
+
+    df = pd.concat(df_list, ignore_index=True)
 
     if plot_save_path:
         plot_polar_data(df, 'M3', frac=plot_frac, save_path=plot_save_path)
@@ -389,6 +411,8 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
         print(f"M3 df:")
         print(df.describe())
         create_hist(df, 'M3')
+
+    del df, df_list
 
 
 def create_hist(df, name):

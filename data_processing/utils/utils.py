@@ -16,7 +16,6 @@ import json
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 
-
 def load_csv(directory, csv_file):
     df = pd.read_csv(os.path.join(directory, csv_file))
     return df if not df.isna().all().all() else None
@@ -194,6 +193,21 @@ def get_closest_channels(metadata, address, target_wavelengths):
     return test_channels
 
 
+def load_every_nth_line(file_path, n):
+    def should_skip(row_idx):
+        # Skip the row if it's not a multiple of n (excluding header)
+        if row_idx == 0:
+            return False
+        else:
+            return (row_idx-1) % n != 0
+
+    df = pd.read_csv(
+        file_path,
+        skiprows=lambda x: should_skip(x)
+    )
+    return df
+
+
 def save_by_lon_range(df, output_dir):
     os.makedirs(output_dir, exist_ok=True)
 
@@ -219,7 +233,11 @@ def save_by_lon_range(df, output_dir):
     for lon_range, file_name in zip(lon_ranges, file_names):
         lon_min, lon_max = lon_range
         df_slice = df[(df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max)]
-        df_slice.to_csv(file_name, index=False)
+        if not df_slice.empty:
+            if os.path.exists(file_name):
+                df_slice.to_csv(file_name, mode='a', header=False, index=False)
+            else:
+                df_slice.to_csv(file_name, index=False)
 
 
 def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, save_path=None):

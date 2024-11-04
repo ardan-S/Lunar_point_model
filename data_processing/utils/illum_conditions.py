@@ -23,6 +23,7 @@ def load_and_prepare_data(args, sample=1.0):
     df = df[['Longitude', 'Latitude', 'Elevation']]
     df['PSR'] = 1  # Assume all points are permanently shadowed regions (PSRs)
 
+    print(f"Number of nans in df: {df.isnull().sum().sum()}")
     df = df.dropna(subset=['Longitude', 'Latitude', 'Elevation'])
     df = df[np.isfinite(df['Longitude']) & np.isfinite(df['Latitude']) & np.isfinite(df['Elevation'])]
 
@@ -31,17 +32,6 @@ def load_and_prepare_data(args, sample=1.0):
     print(f"Computing horizon elevation for {len(df)} points ({sample*100}% of the data)")
     print(df.head())
 
-    # min_lon, min_lat = df['Longitude'].min(), df['Latitude'].min()
-
-    # df['lon_idx'] = ((df['Longitude'] - min_lon) / RES_DEG).round().astype(int)
-    # df['lat_idx'] = ((df['Latitude'] - min_lat) / RES_DEG).round().astype(int)
-    # print(f"Number of idx points: {len(df['lon_idx'])} (lon), {len(df['lat_idx'])} (lat)")
-    # print(f"Number of unique lon idcs: {df['lon_idx'].nunique()}, Number of unique lat idcs: {df['lat_idx'].nunique()}")
-
-    # max_lon_idx, max_lat_idx = df['lon_idx'].max(), df['lat_idx'].max()
-    # print(f"Max lon index: {max_lon_idx}, Max lat index: {max_lat_idx}")
-
-    # df_grouped = df.groupby(['lon_idx', 'lat_idx'], as_index=False).mean()
     df_grouped = df.groupby(['Longitude', 'Latitude'], as_index=False).mean()
     df_grouped = df_grouped.sort_values(by=['Latitude', 'Longitude']).reset_index(drop=True)
     df_grouped['Longitude'] = df_grouped['Longitude'].round(6)
@@ -83,7 +73,7 @@ def compute_horizon_for_point(args):
             x = int(j + distance * cos_theta)
             y = int(i + distance * sin_theta)
             if 0 <= x < width and 0 <= y < height:
-                target_elevation = elevation_grid[y, x]
+                target_elevation = elevation_grid[y, x] # Elevation of the target point - ENSURE THIS IS ALWAYS FOUND.
                 elevation_angle = np.arctan2(target_elevation - current_elevation, distance * GRID_RES)
                 if elevation_angle > max_angle:
                     max_angle = elevation_angle

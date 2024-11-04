@@ -1,0 +1,28 @@
+#!/bin/bash
+#PBS -N download_data
+#PBS -l select=1:ncpus=64:mem=64gb
+#PBS -l walltime=10:00:00
+
+#PBS -j oe
+#PBS -o /rds/general/user/as5023/home/Lunar_point_model/data_processing/logs/download_data.log.pbs
+
+eval "$(~/miniforge3/bin/conda shell.bash hook)"    # Load conda
+conda activate IRP
+
+start_time=$(date +%s)
+
+# Navigate to the directory where the job was submitted
+cd $PBS_O_WORKDIR
+
+# Run the Python script
+python ../download_data.py --download_dir /rds/general/user/as5023/ephemeral/data/raw
+
+end_time=$(date +%s)
+
+echo -e "\nJob finished on $(date)"
+
+total_seconds=$((end_time - start_time))
+total_minutes=$((total_seconds / 60))
+remaining_seconds=$((total_seconds % 60))
+
+echo "Total runtime: ${total_minutes} minutes and ${remaining_seconds} seconds"

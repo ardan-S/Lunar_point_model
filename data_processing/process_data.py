@@ -2,6 +2,8 @@ import argparse
 import sys
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
+import traceback
+import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -12,6 +14,7 @@ from data_processing.utils.utils import load_dataset_config
 
 
 def main(args):
+    start_time = time.time()
     dataset_dict = load_dataset_config('../dataset_config.json', args)
 
     with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
@@ -26,9 +29,11 @@ def main(args):
             try:
                 future.result()
             except Exception as e:
-                print(f"Error: {e}")
+                # print(f"Error: {e}")
+                # traceback.print_exc()
+                raise e
 
-    print("Loading stage complete\n"); sys.stdout.flush()
+    print(f"Loading stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
 
     with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
         interp_futures = [
@@ -42,9 +47,11 @@ def main(args):
             try:
                 future.result()
             except Exception as e:
-                print(f"Error: {e}")
+                # print(f"Error: {e}")
+                # traceback.print_exc()
+                raise e
 
-    print("Interpolation stage complete\n"); sys.stdout.flush()
+    print(f"Interpolation stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
 
     label(combine(dataset_dict['Diviner']['interp_dir'],
                   dataset_dict['LOLA']['interp_dir'],

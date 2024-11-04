@@ -2,31 +2,42 @@ import numpy as np
 import pandas as pd # type: ignore
 from scipy.interpolate import Rbf, griddata
 import os
+import sys
 
-from data_processing.utils.utils import generate_mesh, save_by_lon_range, plot_polar_data
+from data_processing.utils.utils import generate_mesh, save_by_lon_range, plot_polar_data, load_every_nth_line
 
 def interpolate(data_dict, data_type, plot_save_path=None, method='linear', debug=False):
+    if not os.path.exists(data_dict['interp_dir']):
+        print(f"Creating interp dir for {data_type}")
+        os.mkdir(data_dict['interp_dir'])
+
     if len([f for f in os.listdir(data_dict['interp_dir']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"Interpolated CSVs appear to exist for {data_type} data. Skipping interpolation.")
         return
 
+    sys.stdout.flush()
     csvs = sorted(os.listdir(data_dict['save_path']))
     meshes = generate_mesh()
     save_path = data_dict['interp_dir']
 
-    interp_lons = []
-    interp_lats = []
-    interp_values = []
-    interp_elev = []
+    # interp_lons = []
+    # interp_lats = []
+    # interp_values = []
+    # interp_elev = []
 
     for (csv, (lon_lat_grid_north, lon_lat_grid_south)) in zip(csvs, meshes):
         df = pd.read_csv(f"{data_dict['save_path']}/{csv}")
+
+        if data_type == 'Diviner':
+            frac = 0.25
+            print(f"Resampling Diviner for {frac*100}% of data in range: {csv}"); sys.stdout.flush()
+            df = df.sample(frac=frac, random_state=42)   
 
         lons = df['Longitude'].values
         lats = df['Latitude'].values
         values = df[data_type].values
 
-        if data_type == 'M3':
+        if data_type == 'M3':   
             elev = df['Elevation'].values
             assert len(elev) == len(values)
         else:
@@ -41,11 +52,11 @@ def interpolate(data_dict, data_type, plot_save_path=None, method='linear', debu
             print(f"WARNING: Infs present in {data_type}: {csv}")
 
         assert len(lons) == len(lats) == len(values)
-        assert np.all(np.isfinite(lons)), "Longitude contains NaN or inf"
-        assert np.all(np.isfinite(lats)), "Latitude contains NaN or inf"
-        assert np.all(np.isfinite(values)), f"{data_type} contains NaN or inf"
+        assert np.all(np.isfinite(np.asarray(lons))), "Longitude contains NaN or inf"
+        assert np.all(np.isfinite(np.asarray(lats))), "Latitude contains NaN or inf"
+        assert np.all(np.isfinite(np.asarray(values))), f"{data_type} contains NaN or inf"
 
-        points = np.column_stack((lons, lats))
+        points = np.column_stack((np.asanyarray(lons), np.asanyarray(lats)))
 
         # Interpolation on northern mesh grid
         lon_grid_north, lat_grid_north = lon_lat_grid_north[:, 0], lon_lat_grid_north[:, 1]
@@ -68,7 +79,7 @@ def interpolate(data_dict, data_type, plot_save_path=None, method='linear', debu
             interpolated_elev_north[nan_indices_elev_north] = griddata(points, elev, grid_north[nan_indices_elev_north], method='nearest')
             interpolated_elev_south[nan_indices_elev_south] = griddata(points, elev, grid_south[nan_indices_elev_south], method='nearest')
 
-            interp_elev.extend(np.concatenate([interpolated_elev_north, interpolated_elev_south]))            
+            # interp_elev.extend(np.concatenate([interpolated_elev_north, interpolated_elev_south]))            
 
         # Find indices of NaNs and conduct a second pass with 'nearest' method
         nan_indices_north = np.isnan(interpolated_north)
@@ -77,20 +88,31 @@ def interpolate(data_dict, data_type, plot_save_path=None, method='linear', debu
         interpolated_north[nan_indices_north] = griddata(points, values, grid_north[nan_indices_north], method='nearest')
         interpolated_south[nan_indices_south] = griddata(points, values, grid_south[nan_indices_south], method='nearest')
 
-        interp_lons.extend(np.concatenate([lon_grid_north, lon_grid_south]))
-        interp_lats.extend(np.concatenate([lat_grid_north, lat_grid_south]))
-        interp_values.extend(np.concatenate([interpolated_north, interpolated_south]))
+        # interp_lons.extend(np.concatenate([lon_grid_north, lon_grid_south]))
+        # interp_lats.extend(np.concatenate([lat_grid_north, lat_grid_south]))
+        # interp_values.extend(np.concatenate([interpolated_north, interpolated_south]))
 
-    interpolated_df = pd.DataFrame({
-        'Longitude': interp_lons,
-        'Latitude': interp_lats,
-        data_type: interp_values
-    })
+        interpolated_df = pd.DataFrame({
+            'Longitude': np.concatenate([lon_grid_north, lon_grid_south]),
+            'Latitude': np.concatenate([lat_grid_north, lat_grid_south]),
+            data_type: np.concatenate([interpolated_north, interpolated_south])
+        })
 
-    if data_type == 'M3':
-        interpolated_df['Elevation'] = interp_elev
+        if data_type == 'M3':
+            interpolated_df['Elevation'] = np.concatenate([interpolated_elev_north, interpolated_elev_south]) # type: ignore (possible unbound warning)
 
-    save_by_lon_range(interpolated_df, save_path)
+        save_by_lon_range(interpolated_df, save_path)
+
+        del interpolated_df, df, points, lons, lats, values
+
+    df_list = []
+
+    for file in os.listdir(save_path):
+        if file.endswith('.csv'):
+            df = load_every_nth_line(f"{save_path}/{file}", n=1)
+            df_list.append(df)
+
+    interpolated_df = pd.concat(df_list, ignore_index=True)
 
     if plot_save_path:
         plot_polar_data(interpolated_df, data_type, graph_cat='interp', frac=0.25, save_path=plot_save_path)
@@ -99,3 +121,5 @@ def interpolate(data_dict, data_type, plot_save_path=None, method='linear', debu
         print(f"\nInterpolated {data_type} df:")
         print(interpolated_df.describe())
         print(interpolated_df.head())
+
+    del interpolated_df, df_list
