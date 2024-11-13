@@ -1,16 +1,59 @@
-Job started on Wed Oct 30 17:36:07 UTC 2024
-Loaded 172638382 points
-Computing horizon elevation for 100704142 points (100% of the data)
-          Longitude   Latitude   Elevation
-14390642   150.0046 -90.000000 -985.368845
-14390643   150.0046 -89.992085 -985.368845
-14390644   150.0046 -89.984171 -985.368845
-14390645   150.0046 -89.976256 -985.368845
-14390646   150.0046 -89.968341 -985.368845
-Number of unique latitudes: 3794, Number of unique longitudes: 26543
-Grid shape: (3794, 26543)
-Grid size: 100704142
-Number of non-nans in elev_grid: 100704142 (100.00%)
-Number of nans in elev_grid: 0 (0.00%)
-Job finished on Wed Oct 30 17:37:17 UTC 2024
-Total runtime: 1 minutes and 10 seconds
+Job started on Fri Nov  8 16:01:51 UTC 2024
+Found 12 CSV files in ../../data/CSVs/combined
+Loaded 690553528 points
+Unique longitudes for north Pole: 720
+Longitude_rounded
+180.0    123305
+330.0    123305
+90.0     123305
+120.0    123305
+150.0    123305
+          ...  
+159.0    119511
+159.5    119511
+160.5    119511
+161.0    119511
+359.5    119511
+Name: count, Length: 720, dtype: int64
+Unique longitudes for south Pole: 720
+Longitude_rounded
+180.0    123305
+330.0    123305
+90.0     123305
+120.0    123305
+150.0    123305
+          ...  
+159.0    119511
+159.5    119511
+160.5    119511
+161.0    119511
+359.5    119511
+Name: count, Length: 720, dtype: int64
+Number of unique latitudes: 1897, Number of unique longitudes: 45503
+Grid shape: (1897, 45503, 2)
+Grid size: 172638382
+NP df length: 86319191, SP df length: 86319191
+Dask df with 12 partitions created
+Traceback (most recent call last):
+  File "/scratch_dgxl/as5023/ardan-S/Lunar_point_model/data_processing/jobscripts/../compute_psrs.py", line 105, in <module>
+    main(args)
+  File "/scratch_dgxl/as5023/ardan-S/Lunar_point_model/data_processing/jobscripts/../compute_psrs.py", line 66, in main
+    compute_horizons_chunks(df_north, 'North', args, n_splits = args.n_workers*3)
+  File "/scratch_dgxl/as5023/ardan-S/Lunar_point_model/data_processing/utils/illum_conditions.py", line 146, in compute_horizons_chunks
+    ).compute()
+      ^^^^^^^^^
+  File "/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/dask_expr/_collection.py", line 481, in compute
+    return DaskMethodsMixin.compute(out, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/dask/base.py", line 372, in compute
+    (result,) = compute(self, traverse=False, **kwargs)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/dask/base.py", line 660, in compute
+    results = schedule(dsk, keys, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/site-packages/dask/dataframe/core.py", line 7175, in apply_and_enforce
+    df = func(*args, **kwargs)
+         ^^^^^^^^^^^^^^^^^^^^^
+TypeError: compute_horizons_chunks.<locals>.process_partition() got an unexpected keyword argument 'include_partition_info'
+Job finished on Fri Nov  8 16:06:42 UTC 2024
+Total runtime: 4 minutes and 51 seconds

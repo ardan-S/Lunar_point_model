@@ -23,6 +23,7 @@ def load_csv(directory, csv_file):
 
 def load_csvs_parallel(directory, n_workers):
     csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
+    print(f"Found {len(csv_files)} CSV files in {directory}")
     
     dfs = []
     with ProcessPoolExecutor(max_workers=n_workers) as executor:
@@ -32,7 +33,7 @@ def load_csvs_parallel(directory, n_workers):
             df = future.result()
             if df is not None:
                 dfs.append(df)
-    
+
     return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
 
 

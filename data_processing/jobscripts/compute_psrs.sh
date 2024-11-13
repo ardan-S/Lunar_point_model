@@ -1,14 +1,15 @@
 #!/bin/bash
 
-#SBATCH --job-name=compute_psrs          # Job name
+#SBATCH --job-name=compute_psrs
 #SBATCH --output=/scratch_dgxl/as5023/ardan-S/Lunar_point_model/data_processing/logs/compute_psrs.log
-#SBATCH --partition=dgxl_irp              # Partition name (dedicated partition)
-#SBATCH --qos=dgxl_irp_high               # QoS, use high priority to access GPU faster
-##SBATCH --gres=gpu:1                      # Request 1 GPU
-#SBATCH --ntasks=1                        # Run on a single task
-#SBATCH --cpus-per-task=4                 # Number of CPU cores per task
-#SBATCH --mem=128G                        # Memory limit per node
-#SBATCH --time=12:00:00                   # Time limit
+
+#SBATCH --partition=dgxl_irp
+#SBATCH --qos=dgxl_irp_high
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+
+#SBATCH --mem=128G
+#SBATCH --time=03:00:00
 
 source /scratch_dgxl/as5023/conda/miniconda3/etc/profile.d/conda.sh
 conda activate IRP

@@ -1,39 +1,30 @@
-Job started on Mon Oct 21 11:11:57 UTC 2024\n
-Raw CSVs appear to exist for M3 data. Skipping load df.
-Raw CSVs appear to exist for MiniRF data. Skipping load df.
-Raw CSVs appear to exist for LOLA data. Skipping load df.
-Raw CSVs appear to exist for Diviner data. Skipping load df.
-Loading stage complete
+Job started on Thu Nov  7 11:10:29 UTC 2024\n
+concurrent.futures.process._RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/concurrent/futures/process.py", line 261, in _process_worker
+    r = call_item.fn(*call_item.args, **call_item.kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch_dgxl/as5023/ardan-S/Lunar_point_model/data_processing/utils/load_dfs.py", line 93, in load_lro_df
+    os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '../../data/CSVs/raw/Diviner'
+"""
 
-Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
-Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
-Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
-Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
-Interpolation stage complete
+The above exception was the direct cause of the following exception:
 
-Dataframes combined. Shape: (172638382, 7)
-
-LOLA - Clusters at 1: 350, Clusters at 2: 195, Total clusters: 545
-Label plot saved to ../../data/plots/LOLA_label_plot.png for LOLA
-
-Invalid projected coordinates for cluster 8. Skipping...
-M3 - Clusters at 1: 103, Clusters at 2: 36, Total clusters: 140
-Label plot saved to ../../data/plots/M3_label_plot.png for M3
-
-Label counts:
-Diviner label - 0: 46.08%
-Diviner label - 1: 0.00%
-Diviner label - 2: 53.92%
-LOLA label - 0: 98.75%
-LOLA label - 1: 0.02%
-LOLA label - 2: 1.23%
-M3 label - 0: 99.46%
-M3 label - 1: 0.01%
-M3 label - 2: 0.53%
-MiniRF label - 0: 95.20%
-MiniRF label - 1: 4.80%
-MiniRF label - 2: 0.00%
-Dataframes labeled
-
-Job finished on Mon Oct 21 11:35:19 UTC 2024
-Total runtime: 23 minutes and 22 seconds
+Traceback (most recent call last):
+  File "/scratch_dgxl/as5023/ardan-S/Lunar_point_model/data_processing/jobscripts/../process_data.py", line 81, in <module>
+    main(args)
+  File "/scratch_dgxl/as5023/ardan-S/Lunar_point_model/data_processing/jobscripts/../process_data.py", line 34, in main
+    raise e
+  File "/scratch_dgxl/as5023/ardan-S/Lunar_point_model/data_processing/jobscripts/../process_data.py", line 30, in main
+    future.result()
+  File "/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/scratch_dgxl/as5023/conda/miniconda3/envs/IRP/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+FileNotFoundError: [Errno 2] No such file or directory: '../../data/CSVs/raw/Diviner'
+Job finished on Thu Nov  7 11:10:31 UTC 2024
+Total runtime: 0 minutes and 2 seconds
