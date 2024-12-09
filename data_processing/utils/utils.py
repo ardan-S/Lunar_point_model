@@ -241,7 +241,7 @@ def save_by_lon_range(df, output_dir):
                 df_slice.to_csv(file_name, index=False)
 
 
-def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, save_path=None):
+def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, save_path=None, dpi=100):
     # Check for required columns
     required_columns = {'Latitude', 'Longitude', variable}
     missing_cols = required_columns - set(df.columns)
@@ -305,7 +305,7 @@ def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, s
         fig.delaxes(ax2)
 
     if save_path:
-        plt.savefig(f"{save_path}/{variable}_{graph_cat}_plot.png")
+        plt.savefig(f"{save_path}/{variable}_{graph_cat}_plot.png", dpi=dpi)
         print(f"Plot saved to {save_path}")
     else:
         plt.show()
