@@ -34,6 +34,7 @@ def main(args):
                 raise e
 
     print(f"Loading stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
+    return 
 
     with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
         interp_futures = [

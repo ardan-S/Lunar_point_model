@@ -43,36 +43,52 @@ def process_LRO_image(image_file, address, metadata, data_type, max_val=1.0, min
 
 def generate_LRO_coords(image_shape, metadata):
     lines, samples = image_shape
-    projection_keys = ['LINE_PROJECTION_OFFSET', 'SAMPLE_PROJECTION_OFFSET', 'CENTER_LATITUDE',
-                       'CENTER_LONGITUDE', 'MAP_RESOLUTION', 'MINIMUM_LATITUDE', 'MAXIMUM_LATITUDE']
-    line_proj_offset, sample_proj_offset, center_lat, center_lon, map_res, min_lat, max_lat = \
-        (float(get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', key)) for key in projection_keys)
-    proj_type = get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'MAP_PROJECTION_TYPE', string=True)
-    a = get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'A_AXIS_RADIUS') if center_lat == 0.0 else 1737.4   # Moon's radius in km
 
-    # Generate pixel coordinates
-    x = (np.arange(samples) - sample_proj_offset) / map_res
-    y = (np.arange(lines) - line_proj_offset) / map_res
-    x, y = np.meshgrid(x, y)
+    projection_keys = ['LINE_PROJECTION_OFFSET', 'SAMPLE_PROJECTION_OFFSET', 'CENTER_LATITUDE',
+                       'CENTER_LONGITUDE', 'MAP_RESOLUTION', 'MINIMUM_LATITUDE', 'MAXIMUM_LATITUDE', 'MAP_SCALE']
+    line_proj_offset, sample_proj_offset, center_lat, center_lon, map_res, min_lat, max_lat, map_scale = \
+        (float(get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', key)) for key in projection_keys)
+
+    proj_type = get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'MAP_PROJECTION_TYPE', string=True)
+
+    # a_km = float(get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'A_AXIS_RADIUS')) if center_lat == 0.0 else 1737.4   # Moon's radius in km
+    a_km = float(get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'A_AXIS_RADIUS'))  # Moon's radius in km
+    a_km = 1737.4 if a_km is None else a_km  # Default to Moon's radius if not found in metadata
+    a = a_km * 1e3  # Convert to meters as map_scale is m/pixel
 
     if center_lat == 0.0:  # Equatorial (Mini-RF) - Simple Cylindrical
         assert proj_type == 'SIMPLE CYLINDRICAL', f"Unsupported projection type: {proj_type}"
         assert center_lat == 0.0 and center_lon == 0.0, "Center latitude and longitude must be 0.0 for Simple Cylindrical"
-        lons = np.degrees(x / a)
-        lon_scale = 360 / (2 * np.max(np.abs(lons)))  # Scale factor for longitudes
-        lons = (lons * lon_scale + 360) % 360  # Apply scaling and wrap to [0, 360)
+        # lons = np.degrees(x / a)
+        # lon_scale = 360 / (2 * np.max(np.abs(lons)))  # Scale factor for longitudes
+        # lons = (lons * lon_scale + 360) % 360  # Apply scaling and wrap to [0, 360]
 
-        # Map y directly to latitude range [-90, 90]
-        lats = y * (max_lat - min_lat) / np.max(np.abs(y))  # Scale y to latitude range
+        # # Map y directly to latitude range [-90, 90]
+        # lats = y * (max_lat - min_lat) / np.max(np.abs(y))  # Scale y to latitude range
+
+        line_idxs = np.arange(lines)
+        sample_idxs = np.arange(samples)
+
+        sample_grid, line_grid = np.meshgrid(sample_idxs, line_idxs)
+
+        lats = (line_grid - line_proj_offset) / map_res
+        lons = (sample_grid - sample_proj_offset) / map_res
+        lons = lons % 360
 
     else:   # Polar Stereographic (LOLA, Diviner)
         assert proj_type == 'POLAR STEREOGRAPHIC', f"Unsupported projection type: {proj_type}"
+
+        # Generate pixel coordinates
+        x = (np.arange(samples) - sample_proj_offset) * map_scale   
+        y = (np.arange(lines) - line_proj_offset) * map_scale
+        x, y = np.meshgrid(x, y)
+
         t = np.sqrt(x**2 + y**2)
         c = 2 * np.arctan(t / (2 * a))
 
         # lons = center_lon + np.degrees(np.arctan2(y, x))
         lons = center_lon + np.degrees(np.arctan2(x, -y))
-        lons = (center_lon + lons) % 360
+        lons = lons % 360
 
         if center_lat == 90.0:  # North Pole
             lats = center_lat - np.degrees(c)
@@ -82,9 +98,9 @@ def generate_LRO_coords(image_shape, metadata):
             raise ValueError(f"Center latitude is not supported: {center_lat}")
 
     # Adjust latitude range to min_lat to max_lat
-    lat_scale = (max_lat - min_lat) / (np.max(lats) - np.min(lats))
-    lats = min_lat + (lats - np.min(lats)) * lat_scale
-    lats = np.clip(lats, min_lat, max_lat)
+    # lat_scale = (max_lat - min_lat) / (np.max(lats) - np.min(lats))
+    # lats = min_lat + (lats - np.min(lats)) * lat_scale
+    # lats = np.clip(lats, min_lat, max_lat)
 
     return lons, lats
 
