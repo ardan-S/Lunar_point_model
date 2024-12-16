@@ -284,6 +284,9 @@ def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, s
     north_pole_ddf = (ave_ddf[ave_ddf['Latitude'] >= 0]).copy()
     south_pole_ddf = (ave_ddf[ave_ddf['Latitude'] < 0]).copy()
 
+    vmin = ave_ddf[variable].min()  # Minimum value for color mapping (to capture across both poles)
+    vmax = ave_ddf[variable].max()  # Maximum value for color mapping (to capture across both poles)
+
     def prepare_polar_data(ddf, pole):
         if len(ddf.index) == 0:
             return ddf
@@ -301,15 +304,15 @@ def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, s
     fig, (ax1, ax2) = plt.subplots(1, 2, subplot_kw={'projection': 'polar'}, figsize=(20, 10))
 
     def set_latitude_labels(ax, pole):
-        ax.set_ylim(0, 10)
-        ax.set_yticks(range(0, 11, 5))
-        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 11, 5)]
+        ax.set_ylim(0, 15)
+        ax.set_yticks(range(0, 16, 5))
+        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 16, 5)]
         ax.set_yticklabels(labels)
 
     def plot_pole_data(ax, df, pole):
         if len(df.index) == 0:
             return
-        sc = ax.scatter(df['theta'], df['r'], c=df[variable], cmap='Greys_r', s=50)
+        sc = ax.scatter(df['theta'], df['r'], c=df[variable], cmap='Greys_r', s=50, vmin=vmin, vmax=vmax)  
         fig.colorbar(sc, ax=ax, label=variable)
         set_latitude_labels(ax, pole)
         ax.set_theta_zero_location('N')
@@ -343,6 +346,9 @@ def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, s
 def plot_labeled_polar_data(df, variable, label_column, save_path=None):
     # Filter the DataFrame to include only rows where label_column > 0
     df_filtered = df[df[label_column] > 0].copy()
+
+    vmin = df_filtered[variable].min()
+    vmax = df_filtered[variable].max()
 
     # Check if there is data to plot
     if df_filtered.empty:
@@ -394,7 +400,7 @@ def plot_labeled_polar_data(df, variable, label_column, save_path=None):
         # Plot data points with labels
         for label, colour in colour_map.items():
             df_subset = df[df[label_column] == label]
-            ax.scatter(df_subset['theta'], df_subset['r'], c=colour, s=10, label=f'Label {label}')
+            ax.scatter(df_subset['theta'], df_subset['r'], c=colour, s=10, label=f'Label {label}', vmax=vmax, vmin=vmin)
 
         ax.set_ylim(0, 10)
         ax.set_yticks(range(0, 11, 5))
@@ -439,6 +445,9 @@ def plot_psr_data(df, variable, graph_cat='raw', frac=None, random_state=42, sav
     north_pole_ddf = (ave_ddf[ave_ddf['Latitude'] >= 0]).copy()
     south_pole_ddf = (ave_ddf[ave_ddf['Latitude'] < 0]).copy()
 
+    vmin = ave_ddf[variable].min()
+    vmax = ave_ddf[variable].max()
+
     def prepare_polar_data(ddf, pole):
         if len(ddf.index) == 0:
             return ddf
@@ -471,7 +480,7 @@ def plot_psr_data(df, variable, graph_cat='raw', frac=None, random_state=42, sav
         for category in categories:
             subset = df[df[variable] == category]
             if not subset.empty:
-                ax.scatter(subset['theta'], subset['r'], label=f'Category {category}', color=category_colors[category], s=50)
+                ax.scatter(subset['theta'], subset['r'], label=f'Category {category}', color=category_colors[category], s=50, vmin=vmin, vmax=vmax)
         set_latitude_labels(ax, pole)
         ax.set_theta_zero_location('N')
         ax.set_theta_direction(-1)
@@ -515,6 +524,8 @@ def generate_mesh(RESOLUTION=0.24):
         lats = np.arange(lat_range[0], lat_range[1] + resolution_deg, resolution_deg)
         lons = np.arange(lon_range[0], lon_range[1] + resolution_deg, resolution_deg)
         lon_grid, lat_grid = np.meshgrid(lons, lats)
+        lon_grid = lon_grid.astype(np.float32)
+        lat_grid = lat_grid.astype(np.float32)
         return lon_grid, lat_grid
 
     meshes = []

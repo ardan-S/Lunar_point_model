@@ -51,20 +51,12 @@ def generate_LRO_coords(image_shape, metadata):
 
     proj_type = get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'MAP_PROJECTION_TYPE', string=True)
 
-    # a_km = float(get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'A_AXIS_RADIUS')) if center_lat == 0.0 else 1737.4   # Moon's radius in km
     a_km = float(get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'A_AXIS_RADIUS'))  # Moon's radius in km
-    a_km = 1737.4 if a_km is None else a_km  # Default to Moon's radius if not found in metadata
-    a = a_km * 1e3  # Convert to meters as map_scale is m/pixel
+    a = 1737.4 * 1e3 if a_km is None else a_km * 1e3  # Default to Moon's radius if not found in metadata and convert to meters as map_scale is m/pixel
 
     if center_lat == 0.0:  # Equatorial (Mini-RF) - Simple Cylindrical
         assert proj_type == 'SIMPLE CYLINDRICAL', f"Unsupported projection type: {proj_type}"
         assert center_lat == 0.0 and center_lon == 0.0, "Center latitude and longitude must be 0.0 for Simple Cylindrical"
-        # lons = np.degrees(x / a)
-        # lon_scale = 360 / (2 * np.max(np.abs(lons)))  # Scale factor for longitudes
-        # lons = (lons * lon_scale + 360) % 360  # Apply scaling and wrap to [0, 360]
-
-        # # Map y directly to latitude range [-90, 90]
-        # lats = y * (max_lat - min_lat) / np.max(np.abs(y))  # Scale y to latitude range
 
         line_idxs = np.arange(lines)
         sample_idxs = np.arange(samples)
@@ -72,8 +64,11 @@ def generate_LRO_coords(image_shape, metadata):
         sample_grid, line_grid = np.meshgrid(sample_idxs, line_idxs)
 
         lats = (line_grid - line_proj_offset) / map_res
+        if lats.max() > 91 or lats.min() < -91:
+            raise ValueError(f"WARNING: Latitude values exceed bounds for Simple Cylindrical projection: {lats.min()} - {lats.max()}")
+
+        lats = np.clip(lats, -90, 90)   # due to line projection offset, lats can reach +- 90.31 so clip is applied
         lons = (sample_grid - sample_proj_offset) / map_res
-        lons = lons % 360
 
     else:   # Polar Stereographic (LOLA, Diviner)
         assert proj_type == 'POLAR STEREOGRAPHIC', f"Unsupported projection type: {proj_type}"
@@ -88,7 +83,6 @@ def generate_LRO_coords(image_shape, metadata):
 
         # lons = center_lon + np.degrees(np.arctan2(y, x))
         lons = center_lon + np.degrees(np.arctan2(x, -y))
-        lons = lons % 360
 
         if center_lat == 90.0:  # North Pole
             lats = center_lat - np.degrees(c)
@@ -97,10 +91,7 @@ def generate_LRO_coords(image_shape, metadata):
         else:
             raise ValueError(f"Center latitude is not supported: {center_lat}")
 
-    # Adjust latitude range to min_lat to max_lat
-    # lat_scale = (max_lat - min_lat) / (np.max(lats) - np.min(lats))
-    # lats = min_lat + (lats - np.min(lats)) * lat_scale
-    # lats = np.clip(lats, min_lat, max_lat)
+    lons = lons % 360   # Convert to 0-360 range
 
     return lons, lats
 
@@ -148,13 +139,13 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
         lons = lons.flatten()
         lats = lats.flatten()
 
-        assert np.all((lons >= 0) & (lons <= 360)), "Some longitude values are out of bounds."
-        assert np.all((lats >= -90) & (lats <= 90)), "Some latitude values are out of bounds."
-
         output_vals[(output_vals < min_val) | (output_vals > max_val)] = np.nan
 
-        valid_mask = ((lats <= -80) & (lats >= -90)) | ((lats <= 90) & (lats >= 80))
-        valid_mask &= np.isfinite(output_vals)
+        valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
+        valid_mask &= np.isfinite(output_vals)  # Remove non-finite vals from output_vals and clip coords to poles
+
+        assert np.all((lons >= 0) & (lons <= 360)), f"Some longitude values are out of bounds for {data_type}: \n{lons<0} \n{lons>360}"
+        assert np.all((lats >= -90) & (lats <= 90)), f"Some latitude values are out of bounds for {data_type}: \n{lats<-90} \n{lats>90}"
 
         df = pd.DataFrame({
             'Longitude': lons[valid_mask],
@@ -177,6 +168,11 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
             df_list.append(df_temp)
 
     df = pd.concat(df_list, ignore_index=True)
+
+    # Cast lon and lat to float32 to save memory
+    # For lunar coordinates, this moves from sub-micrometer accuracy to sub-centimeter accuracy
+    df['Longitude'] = df['Longitude'].astype(np.float32)
+    df['Latitude'] = df['Latitude'].astype(np.float32)
 
     if plot_save_path:
         plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
@@ -337,6 +333,7 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"Raw CSVs for M3 found at: {data_dict['save_path']}. Skipping load df...")
         return
+    print(f"Processing M3 data..."); sys.stdout.flush()
 
     file_path = data_dict['file_path']
     address = data_dict['address']
@@ -366,7 +363,7 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
         assert np.all((lons >= 0) & (lons <= 360)), "Some longitude values are out of bounds."
         assert np.all((lats >= -90) & (lats <= 90)), "Some latitude values are out of bounds."
 
-        valid_mask = ((lats <= -80) & (lats >= -90)) | ((lats <= 90) & (lats >= 80))
+        valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
         valid_mask &= np.isfinite(output_vals) & np.isfinite(elev)
 
         df = pd.DataFrame({
@@ -391,6 +388,11 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
             df_list.append(df_temp)
 
     df = pd.concat(df_list, ignore_index=True)
+
+    # Cast lon and lat to float32 to save memory
+    # For lunar coordinates, this moves from sub-micrometer accuracy to sub-centimeter accuracy
+    df['Longitude'] = df['Longitude'].astype(np.float32)
+    df['Latitude'] = df['Latitude'].astype(np.float32)
 
     if plot_save_path:
         plot_polar_data(df, 'M3', frac=plot_frac, save_path=plot_save_path)

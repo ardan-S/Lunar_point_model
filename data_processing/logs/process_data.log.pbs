@@ -1,18 +1,62 @@
-Raw CSVs for MiniRF found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/Mini-RF. Skipping load df...
-Raw CSVs appear to exist for M3 data. Skipping load df.
-Raw CSVs for Diviner found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/Diviner. Skipping load df...
-Raw CSVs for LOLA found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/LOLA. Skipping load df...
-Loading stage complete after 0.00 mins
+Processing MiniRF data...
+Processing LOLA data...
+Processing Diviner data...
+Processing M3 data...
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
+LOLA df:
+           Longitude       Latitude           LOLA
+count  163952.000000  163952.000000  163952.000000
+mean      180.004639      -0.001989       0.321093
+std       102.976357      80.055283       0.021699
+min         0.062755     -89.976685       0.199200
+25%        90.500824     -79.361771       0.307000
+50%       180.066704     -75.000309       0.320100
+75%       269.492981      79.362206       0.334000
+max       359.937103      89.947861       0.494900
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
+MiniRF df:
+          Longitude      Latitude        MiniRF
+count  1.868597e+07  1.868597e+07  1.868597e+07
+mean   1.799197e+02  1.528795e+00  4.959611e-01
+std    9.971652e+01  8.576243e+01  2.638795e-01
+min    3.906250e-03 -8.976953e+01  1.186435e-07
+25%    9.081641e+01 -8.205078e+01  3.043348e-01
+50%    1.796055e+02  7.525391e+01  4.386642e-01
+75%    2.693789e+02  8.250391e+01  6.286474e-01
+max    3.599961e+02  8.998828e+01  1.499999e+00
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
+M3 df:
+          Longitude      Latitude     Elevation            M3
+count  3.121971e+07  3.121971e+07  3.121971e+07  3.121971e+07
+mean   2.095729e+02  9.244722e+00 -1.018553e+03  8.854922e-01
+std    1.021365e+02  7.651534e+01  1.593101e+03  2.001534e-01
+min    7.324561e-06 -8.999841e+01 -7.668998e+03  1.852575e-05
+25%    1.220331e+02 -7.996292e+01 -1.876026e+03  8.742261e-01
+50%    2.411776e+02  7.618940e+01 -9.335406e+02  9.571293e-01
+75%    2.987210e+02  8.166766e+01 -2.055766e+02  9.887859e-01
+max    3.600000e+02  8.999720e+01  7.019622e+03  1.750000e+00
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
+Diviner df:
+          Longitude      Latitude       Diviner
+count  3.223909e+08  3.223909e+08  3.223909e+08
+mean   1.806377e+02  1.518337e+01  1.282403e+02
+std    8.258926e+01  2.919971e+01  7.496133e+01
+min    1.503432e-02 -8.998321e+01  0.000000e+00
+25%    9.154632e+01 -7.970287e+01  7.094000e+01
+50%    1.805535e+02  7.638869e+01  8.506000e+01
+75%    2.693850e+02  8.066980e+01  2.029600e+02
+max    3.599850e+02  8.997982e+01  4.378200e+02
+Loading stage complete after 199.08 mins
 
 
-Job finished on Mon 16 Dec 13:18:29 GMT 2024
-Total runtime: 0 minutes and 48 seconds
+Job finished on Mon 16 Dec 19:01:57 GMT 2024
+Total runtime: 200 minutes and 0 seconds
 
 ====================================
-CPU Time used: 00:00:00
-CPU Percent: 0%
-Memory usage: 0b
-Approx Power usage: 0.0
-Walltime usage: 00:00:58
+CPU Time used: 04:09:06
+CPU Percent: 244%
+Memory usage: 52781336kb
+Approx Power usage: 0.049800000000000004
+Walltime usage: 03:20:11
 
 ====================================

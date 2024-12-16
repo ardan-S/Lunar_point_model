@@ -22,7 +22,7 @@ def main(args):
     with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
         load_futures = [
             executor.submit(load_lro_df, dataset_dict['Diviner'], 'Diviner', debug=True),
-            executor.submit(load_lro_df, dataset_dict['LOLA'], 'LOLA', debug=True),
+            executor.submit(load_lro_df, dataset_dict['LOLA'], 'LOLA', debug=True, plot_frac=0.5),
             executor.submit(load_m3_df, dataset_dict['M3'], debug=True),
             executor.submit(load_lro_df, dataset_dict['MiniRF'], 'MiniRF', debug=True)
         ]
@@ -34,7 +34,6 @@ def main(args):
                 raise e
 
     print(f"Loading stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
-    return 
 
     with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
         interp_futures = [
