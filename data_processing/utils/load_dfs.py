@@ -335,7 +335,7 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
     clear_dir(data_dict['save_path'])
 
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
-        print(f"Raw CSVs appear to exist for M3 data. Skipping load df.")
+        print(f"Raw CSVs for M3 found at: {data_dict['save_path']}. Skipping load df...")
         return
 
     file_path = data_dict['file_path']
