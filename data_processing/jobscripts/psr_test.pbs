@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N psr_test
-#PBS -l select=1:ncpus=1:mem=256gb
+#PBS -l select=1:ncpus=1:mem=512gb
 #PBS -l walltime=06:00:00
 
 #PBS -j oe

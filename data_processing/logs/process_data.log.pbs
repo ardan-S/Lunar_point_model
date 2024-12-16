@@ -1,60 +1,158 @@
-Raw CSVs appear to exist for LOLA data. Skipping load df.
-Raw CSVs appear to exist for Diviner data. Skipping load df.
-Raw CSVs appear to exist for M3 data. Skipping load df.
 Raw CSVs appear to exist for MiniRF data. Skipping load df.
+Raw CSVs can be found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/Mini-RF
+Raw CSVs appear to exist for Diviner data. Skipping load df.
+Raw CSVs can be found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/Diviner
+Raw CSVs appear to exist for LOLA data. Skipping load df.
+Raw CSVs can be found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/LOLA
+Raw CSVs appear to exist for M3 data. Skipping load df.
 Loading stage complete after 0.00 mins
 
-Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
-Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
-Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
-Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
-Interpolation stage complete after 0.00 mins
+Meshes created. Total points: 115,125,120
+Resampling Diviner for 25.0% of data in range: lon_000_030.csv
+Resampling Diviner for 25.0% of data in range: lon_030_060.csv
+Resampling Diviner for 25.0% of data in range: lon_060_090.csv
+Resampling Diviner for 25.0% of data in range: lon_090_120.csv
+Resampling Diviner for 25.0% of data in range: lon_120_150.csv
+Resampling Diviner for 25.0% of data in range: lon_150_180.csv
+Resampling Diviner for 25.0% of data in range: lon_180_210.csv
+Resampling Diviner for 25.0% of data in range: lon_210_240.csv
+Resampling Diviner for 25.0% of data in range: lon_240_270.csv
+Resampling Diviner for 25.0% of data in range: lon_270_300.csv
+Resampling Diviner for 25.0% of data in range: lon_300_330.csv
+Resampling Diviner for 25.0% of data in range: lon_330_360.csv
+Meshes created. Total points: 115,125,120
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
 
-Dataframes combined. Shape: (172638382, 7)
+Interpolated LOLA df:
+          Longitude      Latitude          LOLA
+count  1.292349e+08  1.292349e+08  1.292349e+08
+mean   1.800019e+02  2.085781e-03  3.270598e-01
+std    1.029742e+02  8.504912e+01  2.305160e-02
+min    0.000000e+00 -9.000000e+01  1.967951e-01
+25%    9.049863e+01 -8.499791e+01  3.122137e-01
+50%    1.800000e+02  2.085781e-03  3.255727e-01
+75%    2.695060e+02  8.500209e+01  3.392749e-01
+max    3.600046e+02  9.000417e+01  5.143005e-01
+   Longitude  Latitude      LOLA
+0  28.002183      80.0  0.319090
+1  28.010097      80.0  0.318974
+2  28.018012      80.0  0.318859
+3  28.025927      80.0  0.318743
+4  28.033842      80.0  0.318628
+Meshes created. Total points: 115,125,120
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
 
-LOLA - Clusters at 1: 785, Clusters at 2: 516, Total clusters: 1301
+Interpolated M3 df:
+          Longitude      Latitude            M3     Elevation
+count  1.292349e+08  1.292349e+08  1.292349e+08  1.292349e+08
+mean   1.800019e+02  2.085781e-03  8.097657e-01 -1.082973e+03
+std    1.029742e+02  8.504912e+01  2.197436e-01  1.453238e+03
+min    0.000000e+00 -9.000000e+01  4.045417e-04 -6.661482e+03
+25%    9.049863e+01 -8.499791e+01  6.959638e-01 -1.967852e+03
+50%    1.800000e+02  2.085781e-03  8.941345e-01 -1.015425e+03
+75%    2.695060e+02  8.500209e+01  9.648449e-01 -2.815270e+02
+max    3.600046e+02  9.000417e+01  1.750000e+00  7.013785e+03
+   Longitude  Latitude        M3    Elevation
+0  28.002183      80.0  0.739835 -1769.145066
+1  28.010097      80.0  0.741161 -1764.964517
+2  28.018012      80.0  0.742487 -1760.783968
+3  28.025927      80.0  0.743813 -1756.603419
+4  28.033842      80.0  0.745462 -1749.964557
+Meshes created. Total points: 115,125,120
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
+
+Interpolated MiniRF df:
+          Longitude      Latitude        MiniRF
+count  1.292349e+08  1.292349e+08  1.292349e+08
+mean   1.800019e+02  2.085781e-03  4.968578e-01
+std    1.029742e+02  8.504912e+01  2.314813e-01
+min    0.000000e+00 -9.000000e+01  1.056399e-03
+25%    9.049863e+01 -8.499791e+01  3.277124e-01
+50%    1.800000e+02  2.085781e-03  4.512771e-01
+75%    2.695060e+02  8.500209e+01  6.203770e-01
+max    3.600046e+02  9.000417e+01  1.499682e+00
+   Longitude  Latitude    MiniRF
+0  28.002183      80.0  0.729938
+1  28.010097      80.0  0.504617
+2  28.018012      80.0  0.346973
+3  28.025927      80.0  0.527696
+4  28.033842      80.0  0.623593
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
+
+Interpolated Diviner df:
+          Longitude      Latitude       Diviner
+count  1.292349e+08  1.292349e+08  1.292349e+08
+mean   1.800019e+02  2.085781e-03  1.164048e+02
+std    1.029742e+02  8.504912e+01  5.548816e+01
+min    0.000000e+00 -9.000000e+01  1.346183e+00
+25%    9.049863e+01 -8.499791e+01  7.250289e+01
+50%    1.800000e+02  2.085781e-03  1.006698e+02
+75%    2.695060e+02  8.500209e+01  1.542547e+02
+max    3.600046e+02  9.000417e+01  3.925820e+02
+   Longitude  Latitude     Diviner
+0  28.002183      80.0  207.438495
+1  28.010097      80.0  205.192693
+2  28.018012      80.0  202.946891
+3  28.025927      80.0  200.701089
+4  28.033842      80.0  198.455287
+Interpolation stage complete after 229.20 mins
+
+Found 12 CSV files in /rds/general/user/as5023/home/Lunar_point_model/data/CSVs/interpolated/Diviner
+Found 12 CSV files in /rds/general/user/as5023/home/Lunar_point_model/data/CSVs/interpolated/Mini-RF
+Found 12 CSV files in /rds/general/user/as5023/home/Lunar_point_model/data/CSVs/interpolated/LOLA
+Found 12 CSV files in /rds/general/user/as5023/home/Lunar_point_model/data/CSVs/interpolated/M3
+Dataframes combined. Shape: (115125120, 7)
+
+LOLA - Clusters at 1: 566, Clusters at 2: 256, Total clusters: 823
 Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/LOLA_label_plot.png for LOLA
 
-Invalid projected coordinates for cluster 8. Skipping...
-Skipping cluster 2242 with less than 3 points
-Polygon area is zero for cluster 2507. Skipping...
-Skipping cluster 2599 with less than 3 points
-Skipping cluster 6473 with less than 3 points
-Polygon area is zero for cluster 6989. Skipping...
-Skipping cluster 7657 with less than 3 points
-Skipping cluster 10259 with less than 3 points
-Skipping cluster 10711 with less than 3 points
-Skipping cluster 16463 with less than 3 points
-Skipping cluster 17785 with less than 3 points
-Skipping cluster 19040 with less than 3 points
-M3 - Clusters at 1: 18531, Clusters at 2: 2426, Total clusters: 20969
+Skipping cluster 78 with less than 3 points
+Skipping cluster 742 with less than 3 points
+Skipping cluster 2018 with less than 3 points
+Skipping cluster 2406 with less than 3 points
+Skipping cluster 6057 with less than 3 points
+Skipping cluster 6694 with less than 3 points
+Skipping cluster 13852 with less than 3 points
+M3 - Clusters at 1: 14263, Clusters at 2: 2120, Total clusters: 16391
 Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/M3_label_plot.png for M3
 
 Label counts:
-Diviner label - 0: 50.54%
+Diviner label - 0: 44.74%
 Diviner label - 1: 0.00%
-Diviner label - 2: 49.46%
-LOLA label - 0: 97.78%
-LOLA label - 1: 0.03%
-LOLA label - 2: 2.19%
-M3 label - 0: 99.49%
-M3 label - 1: 0.28%
-M3 label - 2: 0.23%
-MiniRF label - 0: 95.20%
-MiniRF label - 1: 4.80%
+Diviner label - 2: 55.26%
+LOLA label - 0: 98.77%
+LOLA label - 1: 0.04%
+LOLA label - 2: 1.18%
+M3 label - 0: 99.34%
+M3 label - 1: 0.33%
+M3 label - 2: 0.33%
+MiniRF label - 0: 95.13%
+MiniRF label - 1: 4.87%
 MiniRF label - 2: 0.00%
+
+Label counts after combining:
+Label
+2    52.484657
+0    41.635830
+3     2.898326
+1     2.276316
+4     0.674682
+5     0.029848
+6     0.000328
+7     0.000014
+Name: proportion, dtype: float64
 Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
-Dataframes labeled
+Dataframes labeled after 311.58 mins
 
 
-Job finished on Mon  4 Nov 15:56:42 GMT 2024
-Total runtime: 119 minutes and 26 seconds
+Job finished on Fri 13 Dec 13:20:55 GMT 2024
+Total runtime: 312 minutes and 27 seconds
 
 ====================================
-CPU Time used: 02:01:16
-CPU Percent: 242%
-Memory usage: 110449380kb
-Approx Power usage: 0.0242
-Walltime usage: 01:59:37
+CPU Time used: 10:35:28
+CPU Percent: 398%
+Memory usage: 73110052kb
+Approx Power usage: 0.127
+Walltime usage: 05:12:37
 
 ====================================

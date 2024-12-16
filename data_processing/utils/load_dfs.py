@@ -70,7 +70,8 @@ def generate_LRO_coords(image_shape, metadata):
         t = np.sqrt(x**2 + y**2)
         c = 2 * np.arctan(t / (2 * a))
 
-        lons = center_lon + np.degrees(np.arctan2(y, x))
+        # lons = center_lon + np.degrees(np.arctan2(y, x))
+        lons = center_lon + np.degrees(np.arctan2(x, -y))
         lons = (center_lon + lons) % 360
 
         if center_lat == 90.0:  # North Pole
@@ -92,11 +93,12 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
 
     os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
     os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
+    os.mkdir(data_dict['file_path']) if not os.path.exists(data_dict['file_path']) else None
 
     clear_dir(data_dict['save_path'])
 
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
-        print(f"Raw CSVs appear to exist for {data_type} data. Skipping load df.")
+        print(f"Raw CSVs for {data_type} found at: {data_dict['save_path']}. Skipping load df...")
         return
     print(f"Processing {data_type} data..."); sys.stdout.flush()
 
@@ -114,9 +116,8 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
 
-    # all_lons = []
-    # all_lats = []
-    # all_output_vals = []
+    if lbl_files == []:
+        raise ValueError(f"No files found with extension '{lbl_ext}' in directory: {file_path}\nHave you downloaded the data?")
 
     for lbl_file in lbl_files:
         lbl_path = f"{file_path}/{lbl_file}"
@@ -136,7 +137,7 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
 
         output_vals[(output_vals < min_val) | (output_vals > max_val)] = np.nan
 
-        valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
+        valid_mask = ((lats <= -80) & (lats >= -90)) | ((lats <= 90) & (lats >= 80))
         valid_mask &= np.isfinite(output_vals)
 
         df = pd.DataFrame({
@@ -173,7 +174,6 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
 
 
 def process_M3_image(image_file, address, metadata):
-
     lines = int(get_metadata_value(metadata, address, 'LINES'))
     line_samples = int(get_metadata_value(metadata, address, 'LINE_SAMPLES'))
     bands = int(get_metadata_value(metadata, address, 'BANDS'))
@@ -260,30 +260,6 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     assert os.path.isfile(loc_img_path), f"Location image file not found: {loc_img_path}"
     assert os.path.isfile(loc_lbl_path), f"Location label file not found: {loc_lbl_path}"
 
-    # loc_lbl_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_lbl_ext'])]
-    # loc_img_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_img_ext'])]
-
-
-    # loc_lbl_file = None
-    # loc_img_file = None
-
-    # # Loop through the lines and find the one that contains the loc_file_name
-    # for loc_lbl_url in loc_lbl_urls:
-    #     if loc_lbl_name in loc_lbl_url:
-    #         loc_lbl_file = loc_lbl_url
-    #         break
-
-    # # Loop through lines in the text file and find the one that contains the loc_img_name
-    # for loc_img_url in loc_img_urls:
-    #     if loc_img_name in loc_img_url:
-    #         loc_img_file = loc_img_url
-    #         break
-
-    # if not loc_lbl_file or not loc_img_file:
-    #     raise ValueError(f"Location file not found for {loc_lbl_name} or {loc_img_name}")
-
-    # with open(loc_lbl_path, 'rb') as f:
-    #     loc_metadata = parse_metadata_content(f.read())
     loc_metadata = parse_metadata_content(loc_lbl_path)
     
     loc_address = data_dict['loc_address']
@@ -314,13 +290,6 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     if loc_data.size != lines * line_samples * bands:
         raise ValueError(f"Mismatch in data size: expected {lines * line_samples * bands}, got {loc_data.size}")
     
-    # METHOD 1
-    # loc_data = loc_data.reshape((bands, lines, line_samples))
-    # lons = loc_data[0]
-    # lats = loc_data[1]
-    # radii = loc_data[2]
-
-    # METHOD 2
     lons = np.empty((lines, line_samples))
     lats = np.empty((lines, line_samples))
     radii = np.empty((lines, line_samples))
@@ -345,6 +314,7 @@ def generate_M3_coords(image_shape, metadata, data_dict):
 def load_m3_df(data_dict, plot_frac=0.25, debug=False):
     os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
     os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
+    os.mkdir(data_dict['file_path']) if not os.path.exists(data_dict['file_path']) else None
 
     clear_dir(data_dict['save_path'])
 
@@ -361,6 +331,8 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
     assert plot_save_path or csv_save_path, "At least one of 'plot_path' or 'save_path' must be provided."
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
+    if lbl_files == []:
+        raise ValueError(f"No files found with extension '{lbl_ext}' in directory: {file_path}\nHave you downloaded the data?")
 
     for lbl_file in lbl_files:
         lbl_path = f"{file_path}/{lbl_file}"
@@ -378,7 +350,7 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
         assert np.all((lons >= 0) & (lons <= 360)), "Some longitude values are out of bounds."
         assert np.all((lats >= -90) & (lats <= 90)), "Some latitude values are out of bounds."
 
-        valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
+        valid_mask = ((lats <= -80) & (lats >= -90)) | ((lats <= 90) & (lats >= 80))
         valid_mask &= np.isfinite(output_vals) & np.isfinite(elev)
 
         df = pd.DataFrame({

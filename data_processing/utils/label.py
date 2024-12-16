@@ -35,6 +35,11 @@ def combine(*dirs, n_workers=None):
 
 def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)):
     combined_save_path = dataset_dict['Combined']['combined_save_path']
+
+    if len([f for f in os.listdir(combined_save_path) if f.endswith('.csv') and 'lon' in f]) == 12:
+        print(f"Combined CSVs appear to exist. Skipping label stage.")
+        return
+
     plot_save_path = plot_dir
     df[['Label', 'Diviner label', 'LOLA label', 'M3 label', 'MiniRF label']] = 0
 
@@ -82,6 +87,9 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
     print_label_counts(df, 'LOLA label')
     print_label_counts(df, 'M3 label')
     print_label_counts(df, 'MiniRF label')
+    print()
+    print("Label counts after combining:")
+    print(df.value_counts('Label', normalize=True) * 100)
 
     df.drop(columns=['Diviner label', 'LOLA label', 'M3 label', 'MiniRF label'], inplace=True)
 

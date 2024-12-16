@@ -14,6 +14,9 @@ from matplotlib import pyplot as plt
 import dask.dataframe as dd
 import json
 from concurrent.futures import ProcessPoolExecutor, as_completed
+import seaborn as sns
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, balanced_accuracy_score
 
 
 def load_csv(directory, csv_file):
@@ -34,7 +37,13 @@ def load_csvs_parallel(directory, n_workers):
             if df is not None:
                 dfs.append(df)
 
-    return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
+    if dfs:
+        combined_df = pd.concat(dfs, ignore_index=True)
+        # Drop duplicates to handle overlap
+        combined_df.drop_duplicates(inplace=True)
+        return combined_df
+    else:
+        return pd.DataFrame()
 
 
 def load_dataset_config(json_file, args):
@@ -212,10 +221,17 @@ def load_every_nth_line(file_path, n):
 def save_by_lon_range(df, output_dir):
     os.makedirs(output_dir, exist_ok=True)
 
-    lon_ranges = [(0, 30), (30, 60), (60, 90),
-                  (90, 120), (120, 150), (150, 180),
-                  (180, 210), (210, 240), (240, 270),
-                  (270, 300), (300, 330), (330, 360)]
+    """"
+    IMPORTANT NOTE: THIS FUNCTION SAVES AN OVERLAP OF 2 DEGREES BETWEEN FILES
+    """
+    # Define longitude ranges with 2-degree overlaps
+    lon_ranges = [
+        (0, 32), (28, 62), (58, 92),
+        (88, 122), (118, 152), (148, 182),
+        (178, 212), (208, 242), (238, 272),
+        (268, 302), (298, 332), (328, 360)
+    ]
+
     file_names = [
         os.path.join(output_dir, 'lon_000_030.csv'),
         os.path.join(output_dir, 'lon_030_060.csv'),
@@ -233,7 +249,17 @@ def save_by_lon_range(df, output_dir):
 
     for lon_range, file_name in zip(lon_ranges, file_names):
         lon_min, lon_max = lon_range
-        df_slice = df[(df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max)]
+
+        # Adjust slicing to include the overlap and handle wrap-around
+        if lon_min == 0:  # Handle 0 boundary wrap-around
+            df_slice = df[(df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max) |
+                          (df['Longitude'] >= 360 - (32 - lon_max))]
+        elif lon_max == 360:  # Handle 360 boundary wrap-around
+            df_slice = df[(df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max) |
+                          (df['Longitude'] < (lon_min - 360) + 2)]
+        else:
+            df_slice = df[(df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max)]
+
         if not df_slice.empty:
             if os.path.exists(file_name):
                 df_slice.to_csv(file_name, mode='a', header=False, index=False)
@@ -275,16 +301,16 @@ def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, s
     fig, (ax1, ax2) = plt.subplots(1, 2, subplot_kw={'projection': 'polar'}, figsize=(20, 10))
 
     def set_latitude_labels(ax, pole):
-        ax.set_ylim(0, 15)
-        ax.set_yticks(range(0, 16, 5))
-        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 16, 5)]
+        ax.set_ylim(0, 10)
+        ax.set_yticks(range(0, 11, 5))
+        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 11, 5)]
         ax.set_yticklabels(labels)
 
     def plot_pole_data(ax, df, pole):
         if len(df.index) == 0:
             return
         sc = ax.scatter(df['theta'], df['r'], c=df[variable], cmap='Greys_r', s=50)
-        plt.colorbar(sc, ax=ax, label=variable)
+        fig.colorbar(sc, ax=ax, label=variable)
         set_latitude_labels(ax, pole)
         ax.set_theta_zero_location('N')
         ax.set_theta_direction(-1)
@@ -362,20 +388,14 @@ def plot_labeled_polar_data(df, variable, label_column, save_path=None):
         else:
             raise ValueError(f"Unsupported label values: {label_values.unique()}. Expected [1], [2] or [1, 2]")
 
-        # # Map label values to colors
-        # colours = df[label_column].map(color_map)
-
-        # ax.scatter(df['theta'], df['r'], c=colours, s=10)
-
         # Plot data points with labels
         for label, colour in colour_map.items():
             df_subset = df[df[label_column] == label]
             ax.scatter(df_subset['theta'], df_subset['r'], c=colour, s=10, label=f'Label {label}')
 
-
-        ax.set_ylim(0, 15)
-        ax.set_yticks(range(0, 16, 5))
-        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 16, 5)]
+        ax.set_ylim(0, 10)
+        ax.set_yticks(range(0, 11, 5))
+        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 11, 5)]
         ax.set_yticklabels(labels)
         ax.set_theta_zero_location('N')
         ax.set_theta_direction(-1)
@@ -399,13 +419,90 @@ def plot_labeled_polar_data(df, variable, label_column, save_path=None):
         plt.show()
 
 
+def plot_psr_data(df, variable, graph_cat='raw', frac=None, random_state=42, save_path=None, dpi=100):
+    # Check for required columns
+    required_columns = {'Latitude', 'Longitude', variable}
+    missing_cols = required_columns - set(df.columns)
+    assert not missing_cols, f"Missing columns in DataFrame: {', '.join(missing_cols)}"
+
+    # Convert to Dask DataFrame and drop missing values
+    ddf = dd.from_pandas(df.dropna(subset=required_columns), npartitions=4) if isinstance(df, pd.DataFrame) else df.dropna(subset=required_columns)
+    assert isinstance(ddf, dd.DataFrame), "Input 'df' must be a Dask DataFrame"
+
+    if frac:
+        ddf = ddf.sample(frac=frac, random_state=random_state)
+
+    ave_ddf = ddf.groupby(['Longitude', 'Latitude']).mean().reset_index().compute()
+    north_pole_ddf = (ave_ddf[ave_ddf['Latitude'] >= 0]).copy()
+    south_pole_ddf = (ave_ddf[ave_ddf['Latitude'] < 0]).copy()
+
+    def prepare_polar_data(ddf, pole):
+        if len(ddf.index) == 0:
+            return ddf
+        ddf = ddf.copy()
+        ddf['r'] = 90 - ddf['Latitude'] if (pole == 'north') else 90 + ddf['Latitude']
+        ddf['theta'] = np.deg2rad(ddf['Longitude'])
+        return ddf
+
+    north_pole_ddf = prepare_polar_data(north_pole_ddf, 'north')
+    south_pole_ddf = prepare_polar_data(south_pole_ddf, 'south')
+
+    north_pole_df = north_pole_ddf.compute() if isinstance(north_pole_ddf, dd.DataFrame) else north_pole_ddf
+    south_pole_df = south_pole_ddf.compute() if isinstance(south_pole_ddf, dd.DataFrame) else south_pole_ddf
+
+    # Define custom colors for categories
+    category_colors = {0: 'black', 1: 'blue', 2: 'green', 3: 'red'}
+    categories = [0, 1, 2, 3]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, subplot_kw={'projection': 'polar'}, figsize=(20, 10))
+
+    def set_latitude_labels(ax, pole):
+        ax.set_ylim(0, 10)
+        ax.set_yticks(range(0, 11, 5))
+        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 11, 5)]
+        ax.set_yticklabels(labels)
+
+    def plot_pole_data(ax, df, pole):
+        if len(df.index) == 0:
+            return
+        for category in categories:
+            subset = df[df[variable] == category]
+            if not subset.empty:
+                ax.scatter(subset['theta'], subset['r'], label=f'Category {category}', color=category_colors[category], s=50)
+        set_latitude_labels(ax, pole)
+        ax.set_theta_zero_location('N')
+        ax.set_theta_direction(-1)
+        ax.set_title(f'{variable} values - {pole.capitalize()} Pole')
+        ax.legend(loc='upper right', title='Categories')
+
+    # Plot for North Pole
+    if len(north_pole_df.index) != 0:
+        plot_pole_data(ax1, north_pole_df, 'north')
+    else:
+        print('No data for North Pole')
+        fig.delaxes(ax1)
+
+    # Plot for South Pole
+    if len(south_pole_df.index) != 0:
+        plot_pole_data(ax2, south_pole_df, 'south')
+    else:
+        print('No data for South Pole')
+        fig.delaxes(ax2)
+
+    if save_path:
+        plt.savefig(f"{save_path}/{variable}_{graph_cat}_plot.png", dpi=dpi)
+        print(f"Plot saved to {save_path}")
+    else:
+        plt.show()
+
+
 def generate_mesh(RESOLUTION=0.24):
     MOON_RADIUS = 1737.4  # Radius of the Moon in kilometers
 
     # Convert resolution to degrees (approximate, depends on latitude)- 1 degree latitude is roughly MOON_RADIUS * pi / 180 km
     resolution_deg = (RESOLUTION / (MOON_RADIUS * np.pi / 180))
 
-    lat_ranges = [(75, 90), (-90, -75)]
+    lat_ranges = [(80, 90), (-90, -80)]
     lon_slices = [(0, 30), (30, 60), (60, 90),
                   (90, 120), (120, 150), (150, 180),
                   (180, 210), (210, 240), (240, 270),
@@ -429,3 +526,50 @@ def generate_mesh(RESOLUTION=0.24):
     print(f'Meshes created. Total points: {sum(len(lon_lat_grid_north) + len(lon_lat_grid_south) for lon_lat_grid_north, lon_lat_grid_south in meshes):,}')
 
     return meshes
+
+
+def psr_eda(data, save_dir, lbl_thresh=3):
+    assert 'Label' in data.columns, "Missing 'label' column in DataFrame"
+    assert 'psr' in data.columns, "Missing 'psr' column in DataFrame"
+
+    # Plot the distribution of `psr` within each `label`
+    plt.figure(figsize=(8, 5))
+    sns.countplot(x='Label', hue='psr', data=data)
+    plt.title("Distribution of PSR within Each Label")
+    plt.xlabel("Label")
+    plt.ylabel("Count")
+    plt.legend(title='PSR', labels=['0', '1'])
+    plt.savefig(f"{save_dir}/psr_distribution.png")
+
+    # Plot the confusion matrix
+    y_true = data['psr']  # 'True' is psr values
+    y_pred = (data['Label'] >= lbl_thresh).astype(int)  # 'Predicted' is label values
+    cm = confusion_matrix(y_true, y_pred)
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp.plot(cmap='Blues')
+    plt.title("Confusion Matrix")
+    plt.xlabel(f"Predicted Label - label >= {lbl_thresh}")
+    plt.ylabel("True label - psr value")
+    plt.savefig(f"{save_dir}/confusion_matrix.png")
+
+    # Compute performance metrics
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred, average='macro')
+    recall = recall_score(y_true, y_pred, average='macro')
+    f1 = f1_score(y_true, y_pred, average='macro')
+    acc_balanced = balanced_accuracy_score(y_true, y_pred)
+    prec_weighted = precision_score(y_true, y_pred, average='weighted')
+    rec_weighted = recall_score(y_true, y_pred, average='weighted')
+    f1_weighted = f1_score(y_true, y_pred, average='weighted')
+
+    print()
+    print(f"Accuracy: {accuracy:.4f}")
+    print(f"Precision: {precision:.4f}")
+    print(f"Recall: {recall:.4f}")
+    print(f"F1 Score: {f1:.4f}")
+    print()
+    print(f"Balanced Accuracy: {acc_balanced:.4f}")
+    print()
+    print(f"Weighted Precision: {prec_weighted:.4f}")
+    print(f"Weighted Recall: {rec_weighted:.4f}")
+    print(f"Weighted F1 Score: {f1_weighted:.4f}")

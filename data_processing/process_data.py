@@ -2,7 +2,6 @@ import argparse
 import sys
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
-import traceback
 import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -17,6 +16,9 @@ def main(args):
     start_time = time.time()
     dataset_dict = load_dataset_config('../dataset_config.json', args)
 
+    os.makedirs(args.save_dir, exist_ok=True)
+    os.makedirs(args.download_dir, exist_ok=True)
+
     with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
         load_futures = [
             executor.submit(load_lro_df, dataset_dict['Diviner'], 'Diviner', debug=True),
@@ -29,8 +31,6 @@ def main(args):
             try:
                 future.result()
             except Exception as e:
-                # print(f"Error: {e}")
-                # traceback.print_exc()
                 raise e
 
     print(f"Loading stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
@@ -47,8 +47,6 @@ def main(args):
             try:
                 future.result()
             except Exception as e:
-                # print(f"Error: {e}")
-                # traceback.print_exc()
                 raise e
 
     print(f"Interpolation stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
@@ -62,7 +60,7 @@ def main(args):
             dataset_dict, args.plot_dir
             )
 
-    print("Dataframes labeled\n")
+    print(f"Dataframes labeled after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
 
 
 def parse_args():

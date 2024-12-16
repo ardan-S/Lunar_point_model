@@ -21,7 +21,7 @@ def clear_dir(home_dir):
     for file in os.listdir(home_dir):
         full_path = os.path.join(home_dir, file)
         if os.path.isdir(full_path):
-            shutil.rmtree(full_path)
+            shutil.rmtree(full_path)    # Remove directories and their contents
 
 
 async def download_file(session, url, download_dir, semaphore):
