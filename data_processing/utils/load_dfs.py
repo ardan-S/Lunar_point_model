@@ -81,7 +81,6 @@ def generate_LRO_coords(image_shape, metadata):
         t = np.sqrt(x**2 + y**2)
         c = 2 * np.arctan(t / (2 * a))
 
-        # lons = center_lon + np.degrees(np.arctan2(y, x))
         lons = center_lon + np.degrees(np.arctan2(x, -y))
 
         if center_lat == 90.0:  # North Pole
@@ -117,7 +116,6 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
     max_val = data_dict['max']
     min_val = data_dict['min']
 
-
     assert csv_save_path or plot_save_path, "At least one of 'save_path' or 'plot_path' must be provided."
     assert isinstance(data_type, str), "data_type must be a string."
 
@@ -138,6 +136,10 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
         lons, lats = generate_LRO_coords(image_data.shape, metadata)
         lons = lons.flatten()
         lats = lats.flatten()
+
+        if data_type == 'LOLA':
+            perc_remvd = np.sum((output_vals < min_val) | (output_vals > max_val)) / output_vals.size
+            print(f"Percentage of values removed for LOLA (out of bounds): {perc_remvd:.2%}")
 
         output_vals[(output_vals < min_val) | (output_vals > max_val)] = np.nan
 
@@ -178,7 +180,7 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
         plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
 
     if debug:
-        print(f"{data_type} df:")
+        print(f"\n{data_type} df:")
         print(df.describe())
         create_hist(df, data_type)
 

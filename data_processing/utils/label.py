@@ -25,11 +25,11 @@ def combine(*dirs, n_workers=None):
 
     combined_df = reduce(lambda left, right: pd.merge(left, right, on=['Longitude', 'Latitude'], how='outer'), all_dfs)
 
-    print(f"Dataframes combined. Shape: {combined_df.shape}\n")
     if combined_df.shape[1] != 7:
         print(f"ERROR - Combined dataframe columns: {combined_df.columns}")
         raise ValueError("Combined dataframe does not have the expected number of columns")
 
+    print("Dataframes combined.")
     return combined_df
 
 
@@ -43,13 +43,27 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
     plot_save_path = plot_dir
     df[['Label', 'Diviner label', 'LOLA label', 'M3 label', 'MiniRF label']] = 0
 
-    # DIVINER
-    df.loc[df['Diviner'] <=110, 'Label'] += 2
+    # -------------------- DIVINER --------------------
+    df.loc[df['Diviner'] <= 110, 'Label'] += 2
     df.loc[df['Diviner'] <= 110, 'Diviner label'] += 2
 
-    # LOLA
-    lola_thresh = df['LOLA'].mean() - 2 * df['LOLA'].std()
-    df = apply_area_label(df, 'LOLA', lola_thresh, lola_area_thresh, 'below')
+    # -------------------- LOLA --------------------    
+    lola_thresh = df['LOLA'].mean() + 2 * df['LOLA'].std()      # z-score method
+    # lola_thresh = df['LOLA'].quantile(0.05)                    # quantile method
+    # lola_thresh = df['LOLA'].quantile(0.25) - 1.5 * (df['LOLA'].quantile(0.75) - df['LOLA'].quantile(0.25)) # IQR method
+
+    # Calculate tail lengths
+    # lower_tail_length = df['LOLA'].quantile(0.25) - df['LOLA'].min()    # Q1 to min dist
+    # upper_tail_length = df['LOLA'].max() - df['LOLA'].quantile(0.75)    # max to Q3 dist
+
+    # if lower_tail_length < upper_tail_length:   # If the upper tail is longer
+    #     lola_thresh = df['LOLA'].max() - upper_tail_length
+    # else:
+    #     lola_thresh = df['LOLA'].quantile(0.25) - 1.5 * (df['LOLA'].quantile(0.75) - df['LOLA'].quantile(0.25))
+
+    print(f"Taking the upper {df[df['LOLA'] >= lola_thresh].shape[0] / df.shape[0] :.2%} of points from LOLA. Threshold = {lola_thresh:.2f}"); sys.stdout.flush()
+
+    df = apply_area_label(df, 'LOLA', lola_thresh, lola_area_thresh, 'above', eps=1.5)
 
     plot_labeled_polar_data(
         df=df,
@@ -59,9 +73,25 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
     )
     print()
 
-    # M3
+    # -------------------- M3 --------------------
     m3_thresh = df['M3'].mean() + 2 * df['M3'].std()
-    df = apply_area_label(df, 'M3', m3_thresh, m3_area_thresh, 'above')
+    # m3_thresh = df['M3'].quantile(0.95)
+    # m3_thresh = df['M3'].quantile(0.75) + 1.5 * (df['M3'].quantile(0.75) - df['M3'].quantile(0.25))
+
+
+    # Calculate tail lengths
+    # lower_tail_length = df['LOLA'].quantile(0.25) - df['LOLA'].min()
+    # upper_tail_length = df['LOLA'].max() - df['LOLA'].quantile(0.75)
+
+    # if upper_tail_length > lower_tail_length:
+    #     m3_thresh = df['LOLA'].max() - lower_tail_length
+    # else:
+    #     m3_thresh = df['LOLA'].quantile(0.25) + 1.5 * (df['LOLA'].quantile(0.75) - df['LOLA'].quantile(0.25))
+
+    # m3_thresh = 1.25
+    print(f"Taking the top {df[df['M3'] >= m3_thresh].shape[0] / df.shape[0] :.2%} of points from M3. Threshold = {m3_thresh:.2f}"); sys.stdout.flush()
+
+    df = apply_area_label(df, 'M3', m3_thresh, m3_area_thresh, 'above', eps=2.5)
 
     plot_labeled_polar_data(
         df=df,
@@ -71,7 +101,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
     )
     print()
 
-    # MiniRF
+    # -------------------- MiniRF --------------------
     MRF_thresh = df['MiniRF'].mean() + 2 * df['MiniRF'].std()
     df.loc[df['MiniRF'] > MRF_thresh, 'Label'] += 1
     df.loc[df['MiniRF'] > MRF_thresh, 'MiniRF label'] += 1
@@ -79,7 +109,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
     def print_label_counts(df, label_name):
         counts = df[label_name].value_counts(normalize=True) * 100
         for label in [0, 1, 2]:  # Ensure that we always include 0, 1, and 2 even if they are missing
-            percentage = counts.get(label, 0.0)  # Use .get() to handle cases where a label is missing
+            percentage = counts.get(label, 0.0)
             print(f"{label_name} - {label}: {percentage:.2f}%")
 
     print("Label counts:")
@@ -88,7 +118,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
     print_label_counts(df, 'M3 label')
     print_label_counts(df, 'MiniRF label')
     print()
-    print("Label counts after combining:")
+    print("Label proportions after combining:")
     print(df.value_counts('Label', normalize=True) * 100)
 
     df.drop(columns=['Diviner label', 'LOLA label', 'M3 label', 'MiniRF label'], inplace=True)
@@ -98,7 +128,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
     plot_polar_data(df, 'Label', graph_cat='labeled', save_path=plot_save_path)
                     
 
-def apply_area_label(df, data_type, threshold, area_thresh, direction):
+def apply_area_label(df, data_type, threshold, area_thresh, direction, eps):
     df = df.copy()
     
     assert 'Label' in df.columns, "Label column not found in dataframe"
@@ -126,14 +156,12 @@ def apply_area_label(df, data_type, threshold, area_thresh, direction):
     coords_rad = df_filtered[['latitude_rad', 'longitude_rad']].values
 
     # Step 3: Perform clustering using DBSCAN with Haversine metric
-    # The Moon's mean radius in kilometers
-    moon_radius_km = 1737.4
+    moon_radius_km = 1737.4 # km
 
-    # The 'eps' parameter in radians (e.g., 0.5 km radius)
-    eps_km = 0.75    # ADJUST
+
+    eps_km = eps     # The 'eps' parameter in radians (e.g., 0.75 km radius)
     eps_rad = eps_km / moon_radius_km
 
-    # Perform clustering
     clustering = DBSCAN(eps=eps_rad, min_samples=5, metric='haversine').fit(coords_rad)
     df_filtered['cluster_label'] = clustering.labels_
 
@@ -154,7 +182,7 @@ def apply_area_label(df, data_type, threshold, area_thresh, direction):
         sys.stdout.flush()
         cluster_points = df_filtered[df_filtered['cluster_label'] == cluster_label]
         if len(cluster_points) < 3:
-            print(f"Skipping cluster {cluster_label} with less than 3 points")
+            # print(f"Skipping cluster {cluster_label} with less than 3 points")
             continue
 
         # Extract longitude and latitude values

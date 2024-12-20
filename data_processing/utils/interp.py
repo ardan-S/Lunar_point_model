@@ -20,18 +20,14 @@ def interpolate(data_dict, data_type, plot_save_path=None, method='linear', debu
     meshes = generate_mesh()
     save_path = data_dict['interp_dir']
 
-    # interp_lons = []
-    # interp_lats = []
-    # interp_values = []
-    # interp_elev = []
+    div_frac = 0.25
+    print(f"NOTE: Diviner resampled for {div_frac*100}% of data across all csvs due to abundance of data"); sys.stdout.flush()
 
     for (csv, (lon_lat_grid_north, lon_lat_grid_south)) in zip(csvs, meshes):
         df = pd.read_csv(f"{data_dict['save_path']}/{csv}")
 
         if data_type == 'Diviner':
-            frac = 0.25
-            print(f"Resampling Diviner for {frac*100}% of data in range: {csv}"); sys.stdout.flush()
-            df = df.sample(frac=frac, random_state=42)   
+            df = df.sample(frac=div_frac, random_state=42)   
 
         lons = df['Longitude'].values
         lats = df['Latitude'].values

@@ -1,51 +1,58 @@
-Files found, loading psr data from CSVs
-Found 12 CSV files in ../../data/CSVs/PSRs
-Percentage of points which are PSRs:            3.47%
+Region  Number of points Non psr (%) psr (%) Lon min Lon max Lat min Lat max
+ South          11414184      96.28%   3.72%   0.015 359.985 -89.994 -75.000
+ North          11414184      96.77%   3.23%   0.015 359.985  75.000  89.994
+ Total          22828368      96.53%   3.47%   0.015 359.985 -89.994  89.994
 
-Percentage of points labelled >=2:              45.13%
-Percentage of points labelled >=3:              3.77%
-Percentage of points labelled >=4:              1.37%
-
-Percentage of labels >=2 labeled as PSR:        3.83%
-Percentage of labels >=3 labeled as PSR:        3.25%
-Percentage of labels >=4 labeled as PSR:        2.66%
-
-Percentage of each label which is a PSR:
-Label = 0, 1037588 points out of 32526415 are PSR (3.19%)
-Label = 1, 56574 points out of 1921571 are PSR (2.94%)
-Label = 2, 1009306 points out of 25964648 are PSR (3.89%)
-Label = 3, 53967 points out of 1507118 are PSR (3.58%)
-Label = 4, 22024 points out of 825133 are PSR (2.67%)
-Label = 5, 827 points out of 34184 are PSR (2.42%)
-Label = 6, 5 points out of 111 are PSR (4.50%)
-Label = 7, 0 points out of 2 are PSR (0.00%)
-
-Percentage of points with cat 0: 92.88%
-Percentage of points with cat 1: 3.35%
-Percentage of points with cat 2: 3.65%
-Percentage of points with cat 3: 0.12%
 Plot saved to ../../data/plots
 
-Accuracy: 0.9300
-Precision: 0.4988
-Recall: 0.4987
-F1 Score: 0.4987
+Percentage of points which are PSRs:            3.47%
+Percentage of psrs at NP:                       46.42%
+Percentage of psrs at SP:                       53.58%
 
-Balanced Accuracy: 0.4987
+Percentage of points labelled >=2:              55.00%
+Percentage of points labelled >=3:              3.65%
+Percentage of points labelled >=4:              0.99%
 
-Weighted Precision: 0.9328
-Weighted Recall: 0.9300
-Weighted F1 Score: 0.9314     
-    
+Percentage of labels >=2 labeled as PSR:        4.86%
+Percentage of labels >=3 labeled as PSR:        10.24%
+Percentage of labels >=4 labeled as PSR:        25.16%
 
-Job finished on Fri 13 Dec 17:05:10 GMT 2024
-Total runtime: 6 minutes and 53 seconds
+Percentage of each label which is a PSR:
+Label = 0,  172514  points out of  9767995  are PSR  (1.77%)
+Label = 1,   10162  points out of   504966  are PSR  (2.01%)
+Label = 2,  525089  points out of 11722600  are PSR  (4.48%)
+Label = 3,   28606  points out of   607438  are PSR  (4.71%)
+Label = 4,   54473  points out of   215682  are PSR  (25.26%)
+Label = 5,    1665  points out of     8631  are PSR  (19.29%)
+Label = 6,     547  points out of     1024  are PSR  (53.42%)
+Label = 7,      17  points out of       32  are PSR  (53.12%)
+
+Plot saved to ../../data/plots
+Percentage of points with cat 0: 93.25%
+Percentage of points with cat 1: 3.10%
+Percentage of points with cat 2: 3.27%
+Percentage of points with cat 3: 0.37%
+Plot saved to ../../data/plots
+
+Accuracy: 0.9363
+Precision: 0.5351
+Recall: 0.5368
+F1 Score: 0.5359
+
+Balanced Accuracy: 0.5368
+
+Weighted Precision: 0.9378
+Weighted Recall: 0.9363
+Weighted F1 Score: 0.9370
+
+Job finished on Fri 20 Dec 18:03:43 GMT 2024
+Total runtime: 14 minutes and 16 seconds
 
 ====================================
-CPU Time used: 00:05:32
-CPU Percent: 98%
-Memory usage: 23788204kb
-Approx Power usage: 0.001
-Walltime usage: 00:07:05
+CPU Time used: 00:14:22
+CPU Percent: 189%
+Memory usage: 52917576kb
+Approx Power usage: 0.0028
+Walltime usage: 00:14:29
 
 ====================================

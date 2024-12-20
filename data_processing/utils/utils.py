@@ -26,7 +26,6 @@ def load_csv(directory, csv_file):
 
 def load_csvs_parallel(directory, n_workers):
     csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
-    print(f"Found {len(csv_files)} CSV files in {directory}")
     
     dfs = []
     with ProcessPoolExecutor(max_workers=n_workers) as executor:
@@ -347,9 +346,6 @@ def plot_labeled_polar_data(df, variable, label_column, save_path=None):
     # Filter the DataFrame to include only rows where label_column > 0
     df_filtered = df[df[label_column] > 0].copy()
 
-    vmin = df_filtered[variable].min()
-    vmax = df_filtered[variable].max()
-
     # Check if there is data to plot
     if df_filtered.empty:
         print(f"No data to plot for {variable}.")
@@ -400,11 +396,11 @@ def plot_labeled_polar_data(df, variable, label_column, save_path=None):
         # Plot data points with labels
         for label, colour in colour_map.items():
             df_subset = df[df[label_column] == label]
-            ax.scatter(df_subset['theta'], df_subset['r'], c=colour, s=10, label=f'Label {label}', vmax=vmax, vmin=vmin)
+            ax.scatter(df_subset['theta'], df_subset['r'], c=colour, s=10, label=f'Label {label}')
 
-        ax.set_ylim(0, 10)
-        ax.set_yticks(range(0, 11, 5))
-        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 11, 5)]
+        ax.set_ylim(0, 15)
+        ax.set_yticks(range(0, 16, 5))
+        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 16, 5)]
         ax.set_yticklabels(labels)
         ax.set_theta_zero_location('N')
         ax.set_theta_direction(-1)
@@ -445,9 +441,6 @@ def plot_psr_data(df, variable, graph_cat='raw', frac=None, random_state=42, sav
     north_pole_ddf = (ave_ddf[ave_ddf['Latitude'] >= 0]).copy()
     south_pole_ddf = (ave_ddf[ave_ddf['Latitude'] < 0]).copy()
 
-    vmin = ave_ddf[variable].min()
-    vmax = ave_ddf[variable].max()
-
     def prepare_polar_data(ddf, pole):
         if len(ddf.index) == 0:
             return ddf
@@ -469,9 +462,9 @@ def plot_psr_data(df, variable, graph_cat='raw', frac=None, random_state=42, sav
     fig, (ax1, ax2) = plt.subplots(1, 2, subplot_kw={'projection': 'polar'}, figsize=(20, 10))
 
     def set_latitude_labels(ax, pole):
-        ax.set_ylim(0, 10)
-        ax.set_yticks(range(0, 11, 5))
-        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 11, 5)]
+        ax.set_ylim(0, 15)
+        ax.set_yticks(range(0, 16, 5))
+        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 16, 5)]
         ax.set_yticklabels(labels)
 
     def plot_pole_data(ax, df, pole):
@@ -480,7 +473,7 @@ def plot_psr_data(df, variable, graph_cat='raw', frac=None, random_state=42, sav
         for category in categories:
             subset = df[df[variable] == category]
             if not subset.empty:
-                ax.scatter(subset['theta'], subset['r'], label=f'Category {category}', color=category_colors[category], s=50, vmin=vmin, vmax=vmax)
+                ax.scatter(subset['theta'], subset['r'], label=f'Category {category}', color=category_colors[category], s=50)
         set_latitude_labels(ax, pole)
         ax.set_theta_zero_location('N')
         ax.set_theta_direction(-1)
@@ -514,7 +507,7 @@ def generate_mesh(RESOLUTION=0.24):
     # Convert resolution to degrees (approximate, depends on latitude)- 1 degree latitude is roughly MOON_RADIUS * pi / 180 km
     resolution_deg = (RESOLUTION / (MOON_RADIUS * np.pi / 180))
 
-    lat_ranges = [(80, 90), (-90, -80)]
+    lat_ranges = [(75, 90), (-90, -75)]
     lon_slices = [(0, 30), (30, 60), (60, 90),
                   (90, 120), (120, 150), (150, 180),
                   (180, 210), (210, 240), (240, 270),
@@ -546,25 +539,8 @@ def psr_eda(data, save_dir, lbl_thresh=3):
     assert 'Label' in data.columns, "Missing 'label' column in DataFrame"
     assert 'psr' in data.columns, "Missing 'psr' column in DataFrame"
 
-    # Plot the distribution of `psr` within each `label`
-    plt.figure(figsize=(8, 5))
-    sns.countplot(x='Label', hue='psr', data=data)
-    plt.title("Distribution of PSR within Each Label")
-    plt.xlabel("Label")
-    plt.ylabel("Count")
-    plt.legend(title='PSR', labels=['0', '1'])
-    plt.savefig(f"{save_dir}/psr_distribution.png")
-
-    # Plot the confusion matrix
     y_true = data['psr']  # 'True' is psr values
     y_pred = (data['Label'] >= lbl_thresh).astype(int)  # 'Predicted' is label values
-    cm = confusion_matrix(y_true, y_pred)
-    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-    disp.plot(cmap='Blues')
-    plt.title("Confusion Matrix")
-    plt.xlabel(f"Predicted Label - label >= {lbl_thresh}")
-    plt.ylabel("True label - psr value")
-    plt.savefig(f"{save_dir}/confusion_matrix.png")
 
     # Compute performance metrics
     accuracy = accuracy_score(y_true, y_pred)

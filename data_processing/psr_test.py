@@ -7,8 +7,9 @@ import argparse
 from scipy.spatial import cKDTree
 from sklearn.cluster import DBSCAN
 import gc
-import os
+from concurrent.futures import ThreadPoolExecutor
 import sys
+import matplotlib.pyplot as plt 
 
 from utils.utils import plot_polar_data, load_csvs_parallel, save_by_lon_range
 from utils.utils import plot_psr_data, psr_eda
@@ -16,7 +17,7 @@ from utils.utils import plot_psr_data, psr_eda
 
 def compute_psrs(jp2_url, lbl_url, pole):
     pole = pole.lower()
-    assert pole in ['north', 'south'], "Invalid pole"
+    assert pole in ['north', 'south'], f"Invalid pole: {pole}"
 
     jp2_response = requests.get(jp2_url)
     jp2_response.raise_for_status()
@@ -72,19 +73,20 @@ def compute_psrs(jp2_url, lbl_url, pole):
     rows, cols = np.indices(shape)
     x = (cols - sample_offset) * map_scale
     y = (line_offset - rows) * map_scale  # Note inverted y-axis for image coordinates
+    
     r = np.sqrt(x**2 + y**2)
     c = 2 * np.arctan(r/(2 * radius))
 
     if pole == 'south':
         lat = -90 + np.degrees(c)
-        lon = center_lon + np.degrees(np.arctan2(y, x))
-        # lon = center_lon + np.degrees(np.arctan2(x, -y))
-        lon = (lon + 180) % 360
+        # lon = center_lon + np.degrees(np.arctan2(x, y)) 
+        lon = center_lon + np.degrees(np.arctan2(x, y)) + 180
+
     else:
         lat = 90 - np.degrees(c)
         lon = center_lon + np.degrees(np.arctan2(x, -y))
-        # lon = center_lon + np.degrees(np.arctan2(y, x))
-        lon = lon % 360
+    
+    lon = lon % 360
 
     binary_psr = np.array(img_data == 20000, dtype=int)  # 1 for PSR, 0 otherwise
 
@@ -97,38 +99,42 @@ def compute_psrs(jp2_url, lbl_url, pole):
         'psr': binary_psr.ravel()
     })
 
-    return data, binary_psr
+    return data, binary_psr     # Return the DataFrame and the binary PSR mask
 
 
 def gen_psr_df(args):
     jp2_url_s = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65s_240m_201608.jp2"
     lbl_url_s = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65s_240m_201608_jp2.lbl"
 
-    data_s, binary_psr_s = compute_psrs(jp2_url_s, lbl_url_s, 'south')
+    psr_df_s, _ = compute_psrs(jp2_url_s, lbl_url_s, 'south')
 
     jp2_url_n = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65n_240m_201608.jp2"
     lbl_url_n = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65n_240m_201608_jp2.lbl"
 
-    data_n, binary_psr_n = compute_psrs(jp2_url_n, lbl_url_n, 'north')
+    psr_df_n, _ = compute_psrs(jp2_url_n, lbl_url_n, 'north')
 
-    psr_df = pd.concat([data_s, data_n], ignore_index=True)
-    binary_psr = np.concatenate([binary_psr_s, binary_psr_n])
+    psr_df = pd.concat([psr_df_s, psr_df_n], ignore_index=True)
 
-    def compute_stats(name, df, binary_arr):
+    # Remove values not between latitudes [-75, -90] and [75, 90]
+    psr_df = psr_df[(psr_df['Latitude'] <= -75) | (psr_df['Latitude'] >= 75)]
+    psr_df_n = psr_df[(psr_df['Latitude'] >= 75)]
+    psr_df_s = psr_df[(psr_df['Latitude'] <= -75)]
+
+    def compute_stats(name, df):
         return {
             'Region': name,
             'Number of points': len(df),
-            'Non psr (%)': f"{np.sum(binary_arr == 0) / binary_arr.size:.2%}",
-            'psr (%)': f"{np.sum(binary_arr == 1) / binary_arr.size:.2%}",
+            'Non psr (%)': f"{np.sum(df['psr'] == 0) / len(df):.2%}",
+            'psr (%)': f"{np.sum(df['psr'] == 1) / len(df):.2%}",
             'Lon min': f"{df['Longitude'].min():.3f}",
             'Lon max': f"{df['Longitude'].max():.3f}",
             'Lat min': f"{df['Latitude'].min():.3f}",
             'Lat max': f"{df['Latitude'].max():.3f}"
         }
 
-    stats_s = compute_stats('South', data_s, binary_psr_s)
-    stats_n = compute_stats('North', data_n, binary_psr_n)
-    stats_tot = compute_stats('Total', psr_df, binary_psr)
+    stats_s = compute_stats('South', psr_df_s)
+    stats_n = compute_stats('North', psr_df_n)
+    stats_tot = compute_stats('Total', psr_df)
 
     stats_df = pd.DataFrame([stats_s, stats_n, stats_tot])
     print(stats_df.to_string(index=False))
@@ -136,40 +142,71 @@ def gen_psr_df(args):
 
     plot_polar_data(psr_df, 'psr', frac=0.01, save_path=args.plot_dir, dpi=400)
 
-    combined_df = load_csvs_parallel('../../data/CSVs/combined', n_workers=4)
+    n_workers = args.n_workers
 
-    coords_1 = np.column_stack((combined_df['Latitude'].to_numpy(float), combined_df['Longitude'].to_numpy(float)))
-    coords_2 = np.column_stack((psr_df['Latitude'].to_numpy(float), psr_df['Longitude'].to_numpy(float)))
+    combined_df = load_csvs_parallel('../../data/CSVs/combined', n_workers=n_workers)
 
-    tree = cKDTree(coords_1)
-    _, idxs = tree.query(coords_2, k=1)
+    # ----------------------------------------------------
+    combined_df_n = combined_df[(combined_df['Latitude'] >= 75)]
+    combined_df_s = combined_df[(combined_df['Latitude'] <= -75)]
 
-    df_merged = psr_df.copy()
-    desired_cols = [c for c in combined_df.columns if c not in ['Latitude', 'Longitude']]
-    for col in desired_cols:
-        df_merged[col] = combined_df.iloc[idxs][col].values
+    coords_n = np.column_stack((combined_df_n['Latitude'].to_numpy(float), combined_df_n['Longitude'].to_numpy(float)))
+    coords_s = np.column_stack((combined_df_s['Latitude'].to_numpy(float), combined_df_s['Longitude'].to_numpy(float)))
 
-    # Remove values not between latitudes [-80, -90] and [80, 90]
-    df_merged = df_merged[(df_merged['Latitude'] <= -80) | (df_merged['Latitude'] >= 80)]
+    psr_df_n = psr_df[(psr_df['Latitude'] >= 75)]
+    psr_df_s = psr_df[(psr_df['Latitude'] <= -75)]
+
+    coords_2_n = np.column_stack((psr_df_n['Latitude'].to_numpy(float), psr_df_n['Longitude'].to_numpy(float)))
+    coords_2_s = np.column_stack((psr_df_s['Latitude'].to_numpy(float), psr_df_s['Longitude'].to_numpy(float)))
+
+    tree_n = cKDTree(coords_n)
+    tree_s = cKDTree(coords_s)
+
+    def query_tree(tree, coords):
+        dist, idxs = tree.query(coords, k=1)
+        return dist, idxs
+    
+    with ThreadPoolExecutor(max_workers=n_workers) as executor:
+        future_n = executor.submit(query_tree, tree_n, coords_2_n)
+        future_s = executor.submit(query_tree, tree_s, coords_2_s)
+        _, idxs_n = future_n.result()
+        _, idxs_s = future_s.result()
+
+    df_merged_n = psr_df_n.copy()
+    desired_cols = [c for c in combined_df_n.columns if c not in ['Latitude', 'Longitude']]
+    df_merged_n[desired_cols] = combined_df_n.iloc[idxs_n][desired_cols].values
+
+    df_merged_s = psr_df_s.copy()
+    desired_cols = [c for c in combined_df_s.columns if c not in ['Latitude', 'Longitude']]
+    df_merged_s[desired_cols] = combined_df_s.iloc[idxs_s][desired_cols].values
+
+    df_merged = pd.concat([df_merged_n, df_merged_s], ignore_index=True)
+
+    # Assert values are only between latitudes [-75, -90] and [75, 90]
+    valid_mask = ((df_merged['Latitude'] >= -90) & (df_merged['Latitude'] <= -75)) | \
+                ((df_merged['Latitude'] >= 75) & (df_merged['Latitude'] <= 90))
+
+    assert np.all(valid_mask), "Latitude values out of the allowed range"
 
     save_by_lon_range(df_merged, args.psr_save_dir)
 
-    del tree, idxs, psr_df, data_s, data_n, combined_df; gc.collect()
+    # del tree, idxs, psr_df, psr_df_s, psr_df_n, combined_df; gc.collect()
+    del tree_n, tree_s, idxs_n, idxs_s, psr_df, psr_df_s, psr_df_n, combined_df, combined_df_n, combined_df_s; gc.collect()
 
     return df_merged
 
 def main(args):
     save_dir = args.psr_save_dir
 
-    if len([file for file in os.listdir(save_dir) if file.endswith('.csv')]) == 12:
-        print("Files found, loading psr data from CSVs")
-        df_merged = load_csvs_parallel(save_dir, n_workers=args.n_workers)
-        valid_mask = ((df_merged['Latitude'] <= -80) & (df_merged['Latitude'] >= -90)) | ((df_merged['Latitude'] <= 90) & (df_merged['Latitude'] >= 80))
-        valid_mask &= np.isfinite(df_merged['psr'])
-    else:
-        print("No files found, generating psr data")
-        df_merged = gen_psr_df(args)
-    # df_merged = gen_psr_df(args)
+    # if len([file for file in os.listdir(save_dir) if file.endswith('.csv')]) == 12:
+    #     print("Files found, loading psr data from CSVs")
+    #     df_merged = load_csvs_parallel(save_dir, n_workers=args.n_workers)
+    #     valid_mask = ((df_merged['Latitude'] <= -80) & (df_merged['Latitude'] >= -90)) | ((df_merged['Latitude'] <= 90) & (df_merged['Latitude'] >= 80))
+    #     valid_mask &= np.isfinite(df_merged['psr'])
+    # else:
+    #     print("No files found, generating psr data")
+    #     df_merged = gen_psr_df(args)
+    df_merged = gen_psr_df(args)
     
     # Check cols
     expected_columns = ['Latitude', 'Longitude', 'psr', 'Diviner', 'MiniRF', 'LOLA', 'M3', 'Elevation', 'Label']
@@ -186,9 +223,12 @@ def main(args):
     assert round(df_merged['psr'].min()) == 0, f"Expected PSR min to be 0, but got {df_merged['psr'].min()}"
     assert round(df_merged['psr'].max()) == 1, f"Expected PSR max to be 1, but got {df_merged['psr'].max()}"
     assert round(df_merged['Label'].min()) == 0, f"Expected Label min to be 0, but got {df_merged['Label'].min()}"
-    assert round(df_merged['Label'].max()) == 7, f"Expected Label max to be 7, but got {df_merged['Label'].max()}"
+    assert round(df_merged['Label'].max()) <= 7, f"Expected Label max to be 7, but got {df_merged['Label'].max()}"
 
+    print()
     print(f"Percentage of points which are PSRs:            {np.sum(df_merged['psr'] == 1) / df_merged.shape[0]:.2%}")
+    print(f"Percentage of psrs at NP:                       {np.sum((df_merged['Latitude'] >= 75) & (df_merged['psr'] == 1)) / np.sum(df_merged['psr'] == 1):.2%}")
+    print(f"Percentage of psrs at SP:                       {np.sum((df_merged['Latitude'] <= -75) & (df_merged['psr'] == 1)) / np.sum(df_merged['psr'] == 1):.2%}")
     print()
     print(f"Percentage of points labelled >=2:              {np.sum(df_merged['Label'] >= 2) / df_merged.shape[0]:.2%}")
     print(f"Percentage of points labelled >=3:              {np.sum(df_merged['Label'] >= 3) / df_merged.shape[0]:.2%}")
@@ -203,10 +243,36 @@ def main(args):
         num_psrs = np.sum((df_merged['psr'] == 1) & (df_merged['Label'] == label))
         total_label = np.sum(df_merged['Label'] == label)
         percentage = (num_psrs / total_label * 100) if total_label > 0 else 0
-        print(f"Label = {label}, {num_psrs} points out of {total_label} are PSR ({percentage:.2f}%)")
+        print(f"Label = {label}, {num_psrs:7d}  points out of {total_label:8d}  are PSR  ({percentage:.2f}%)")
     print()
 
     lbl = 3
+
+    lbl_bin_df = df_merged.copy()
+    lbl_bin_df['Label'] = (lbl_bin_df['Label'] >= lbl).astype(int)
+
+    plot_polar_data(lbl_bin_df, 'Label', frac=0.01, save_path=args.plot_dir, dpi=400, graph_cat='binary')
+
+
+    # Create a boxplot
+    plt.figure(figsize=(8, 6))
+    plt.boxplot(df_merged['LOLA'], vert=False, patch_artist=True, notch=True, showmeans=True)
+    plt.title('Boxplot of LOLA with Outliers', fontsize=14)
+    plt.xlabel('LOLA Values', fontsize=12)
+
+    plt.grid(axis='x', linestyle='--', alpha=0.7)
+    plt.savefig(f'{args.plot_dir}/boxplot_LOLA.png')
+
+    # Create a boxplot
+    plt.figure(figsize=(8, 6))
+    plt.boxplot(df_merged['M3'], vert=False, patch_artist=True, notch=True, showmeans=True)
+    plt.title('Boxplot of M3 with Outliers', fontsize=14)
+    plt.xlabel('M3 Values', fontsize=12)
+
+    plt.grid(axis='x', linestyle='--', alpha=0.7)
+    plt.savefig(f'{args.plot_dir}/boxplot_M3.png')
+
+
     # Define conditions
     condition1 = (df_merged['Label'] < lbl) & (df_merged['psr'] == 1)   # psr           but NOT high label  - True -> 1
     condition2 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 0)  # high label    but NOT psr         - True -> 2

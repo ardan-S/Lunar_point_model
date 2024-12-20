@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N psr_test
-#PBS -l select=1:ncpus=1:mem=512gb
+#PBS -l select=1:ncpus=4:mem=512gb
 #PBS -l walltime=06:00:00
 
 #PBS -j oe
@@ -15,7 +15,7 @@ start_time=$(date +%s)
 cd $PBS_O_WORKDIR
 
 # Run the Python script
-python ../psr_test.py
+python ../psr_test.py --n_workers 4
 
 end_time=$(date +%s)
 
