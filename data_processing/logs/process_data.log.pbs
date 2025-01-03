@@ -4,58 +4,84 @@ Raw CSVs for M3 found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/M3. S
 Raw CSVs for Diviner found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/Diviner. Skipping load df...
 Loading stage complete after 0.00 mins
 
-Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
-Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
-Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
 Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
+Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
+Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
+Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
 Interpolation stage complete after 0.00 mins
 
 Dataframes combined.
-Taking the upper 3.37% of points from LOLA. Threshold = 0.37
-LOLA - Clusters at 1: 442, Clusters at 2: 480, Total clusters: 923
+
+Taking the top 1.49% of points from LOLA. Threshold = 0.39
+Clustering LOLA pole with eps=1.25 and min_cluster=85
+LOLA - Clusters at 1: 37, Clusters at 2: 154, Total clusters: 191
+Clustering LOLA pole with eps=1.25 and min_cluster=85
+LOLA - Clusters at 1: 13, Clusters at 2: 77, Total clusters: 90
 Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/LOLA_label_plot.png for LOLA
 
-Taking the top 0.51% of points from M3. Threshold = 1.25
-M3 - Clusters at 1: 18608, Clusters at 2: 2439, Total clusters: 21087
+Taking the bottom 3.49% of points from M3. Threshold = 0.34
+Clustering M3 pole with eps=1.25 and min_cluster=85
+M3 - Clusters at 1: 4, Clusters at 2: 541, Total clusters: 545
+Clustering M3 pole with eps=1.25 and min_cluster=85
+M3 - Clusters at 1: 2, Clusters at 2: 423, Total clusters: 426
 Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/M3_label_plot.png for M3
 
+Taking the top 2.54% of points from MiniRF. Threshold = 1.23
+Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/MiniRF_label_plot.png for MiniRF
+
 Label counts:
-Diviner label - 0: 45.84%
+Diviner label - 0: 45.83%
 Diviner label - 1: 0.00%
-Diviner label - 2: 54.16%
-LOLA label - 0: 96.63%
-LOLA label - 1: 0.03%
-LOLA label - 2: 3.35%
-M3 label - 0: 99.49%
-M3 label - 1: 0.28%
-M3 label - 2: 0.23%
-MiniRF label - 0: 95.21%
-MiniRF label - 1: 4.79%
+Diviner label - 2: 54.17%
+LOLA label - 0: 98.51%
+LOLA label - 1: 0.01%
+LOLA label - 2: 1.47%
+M3 label - 0: 96.51%
+M3 label - 1: 1.38%
+M3 label - 2: 2.11%
+MiniRF label - 0: 97.46%
+MiniRF label - 1: 2.54%
 MiniRF label - 2: 0.00%
 
 Label proportions after combining:
 Label
-2    50.058603
-0    42.496258
-3     2.706545
-4     2.363357
-1     2.254655
-5     0.095338
-6     0.024415
-7     0.000829
+2    49.914706
+0    43.520376
+4     2.549694
+3     2.186892
+1     1.614641
+6     0.158045
+5     0.053493
+7     0.002154
 Name: proportion, dtype: float64
+
+Total number of points: 110534688
+
 Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
-Dataframes labeled after 215.00 mins
+Len of df: 110534688, dtype of label: int8
+Len of df_bin: 110534688, dtype of label: int64
+Percentage of labels >= 3: 4.95%
+
+Binary label proportions (label=3):
+Label
+0    95.049723
+1     4.950277
+Name: proportion, dtype: float64
+
+Total number of points: 110534688
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
+Proportion of binary labels indicating psr: 4.9644%
+Dataframes labeled after 128.41 mins
 
 
-Job finished on Fri 20 Dec 17:46:31 GMT 2024
-Total runtime: 216 minutes and 30 seconds
+Job finished on Fri  3 Jan 12:09:50 GMT 2025
+Total runtime: 129 minutes and 13 seconds
 
 ====================================
-CPU Time used: 03:42:12
-CPU Percent: 398%
-Memory usage: 386917304kb
-Approx Power usage: 0.04440000000000001
-Walltime usage: 03:36:40
+CPU Time used: 02:14:23
+CPU Percent: 312%
+Memory usage: 211873152kb
+Approx Power usage: 0.0268
+Walltime usage: 02:10:31
 
 ====================================

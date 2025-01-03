@@ -266,7 +266,8 @@ def save_by_lon_range(df, output_dir):
                 df_slice.to_csv(file_name, index=False)
 
 
-def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, save_path=None, dpi=None):
+def plot_polar_data(df_in, variable, graph_cat='raw', frac=None, random_state=42, save_path=None, dpi=None):
+    df = df_in.copy()
     # Check for required columns
     required_columns = {'Latitude', 'Longitude', variable}
     missing_cols = required_columns - set(df.columns)
@@ -340,6 +341,12 @@ def plot_polar_data(df, variable, graph_cat='raw', frac=None, random_state=42, s
         print(f"Plot saved to {save_path}")
     else:
         plt.show()
+
+    if 'binary' in graph_cat.lower():
+        df = pd.concat([north_pole_df, south_pole_df])
+        assert df['Label'].nunique() == 2, "Binary plot requires exactly 2 unique labels"
+        assert set(df['Label']).issubset({0, 1}), "Binary plot requires labels to be 0 or 1"
+        print(f"Proportion of binary labels indicating psr: {df['Label'].sum() / len(df):.4%}") # Proportion of 1s
 
 
 def plot_labeled_polar_data(df, variable, label_column, save_path=None):
@@ -473,7 +480,7 @@ def plot_psr_data(df, variable, graph_cat='raw', frac=None, random_state=42, sav
         for category in categories:
             subset = df[df[variable] == category]
             if not subset.empty:
-                ax.scatter(subset['theta'], subset['r'], label=f'Category {category}', color=category_colors[category], s=50)
+                ax.scatter(subset['theta'], subset['r'], label=f'Category {category}', color=category_colors[category], s=5)
         set_latitude_labels(ax, pole)
         ax.set_theta_zero_location('N')
         ax.set_theta_direction(-1)
@@ -501,7 +508,7 @@ def plot_psr_data(df, variable, graph_cat='raw', frac=None, random_state=42, sav
         plt.show()
 
 
-def generate_mesh(RESOLUTION=0.24):
+def generate_mesh(RESOLUTION=0.3):
     MOON_RADIUS = 1737.4  # Radius of the Moon in kilometers
 
     # Convert resolution to degrees (approximate, depends on latitude)- 1 degree latitude is roughly MOON_RADIUS * pi / 180 km

@@ -2,7 +2,7 @@ import requests
 import glymur
 import tempfile
 import numpy as np
-import pandas as pd
+import pandas as pd # type: ignore
 import argparse
 from scipy.spatial import cKDTree
 from sklearn.cluster import DBSCAN
@@ -90,28 +90,28 @@ def compute_psrs(jp2_url, lbl_url, pole):
 
     binary_psr = np.array(img_data == 20000, dtype=int)  # 1 for PSR, 0 otherwise
 
-    valid_mask = ((lat <= -80) & (lat >= -90)) | ((lat <= 90) & (lat >= 80))
-    valid_mask &= np.isfinite(binary_psr)
+    # valid_mask = ((lat <= -80) & (lat >= -90)) | ((lat <= 90) & (lat >= 80))
+    # valid_mask &= np.isfinite(binary_psr)
 
-    data = pd.DataFrame({
+    df = pd.DataFrame({
         'Latitude': lat.ravel(),
         'Longitude': lon.ravel(),
         'psr': binary_psr.ravel()
     })
 
-    return data, binary_psr     # Return the DataFrame and the binary PSR mask
+    return df
 
 
 def gen_psr_df(args):
     jp2_url_s = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65s_240m_201608.jp2"
     lbl_url_s = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65s_240m_201608_jp2.lbl"
 
-    psr_df_s, _ = compute_psrs(jp2_url_s, lbl_url_s, 'south')
+    psr_df_s = compute_psrs(jp2_url_s, lbl_url_s, 'south')
 
     jp2_url_n = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65n_240m_201608.jp2"
     lbl_url_n = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65n_240m_201608_jp2.lbl"
 
-    psr_df_n, _ = compute_psrs(jp2_url_n, lbl_url_n, 'north')
+    psr_df_n = compute_psrs(jp2_url_n, lbl_url_n, 'north')
 
     psr_df = pd.concat([psr_df_s, psr_df_n], ignore_index=True)
 
@@ -119,6 +119,8 @@ def gen_psr_df(args):
     psr_df = psr_df[(psr_df['Latitude'] <= -75) | (psr_df['Latitude'] >= 75)]
     psr_df_n = psr_df[(psr_df['Latitude'] >= 75)]
     psr_df_s = psr_df[(psr_df['Latitude'] <= -75)]
+
+    assert np.all(psr_df['Latitude'] <= 90) and np.all(psr_df['Latitude'] >= -90), "Latitude values out of the allowed range"
 
     def compute_stats(name, df):
         return {
@@ -146,6 +148,13 @@ def gen_psr_df(args):
 
     combined_df = load_csvs_parallel('../../data/CSVs/combined', n_workers=n_workers)
 
+    print()
+    print("Label proportions after combining 1:")
+    print(combined_df.value_counts('Label', normalize=True) * 100) # type: ignore
+    print()
+    print(f"Total number of points: {combined_df.shape[0]}")
+
+
     # ----------------------------------------------------
     combined_df_n = combined_df[(combined_df['Latitude'] >= 75)]
     combined_df_s = combined_df[(combined_df['Latitude'] <= -75)]
@@ -156,31 +165,129 @@ def gen_psr_df(args):
     psr_df_n = psr_df[(psr_df['Latitude'] >= 75)]
     psr_df_s = psr_df[(psr_df['Latitude'] <= -75)]
 
-    coords_2_n = np.column_stack((psr_df_n['Latitude'].to_numpy(float), psr_df_n['Longitude'].to_numpy(float)))
-    coords_2_s = np.column_stack((psr_df_s['Latitude'].to_numpy(float), psr_df_s['Longitude'].to_numpy(float)))
+    coords_psr_n = np.column_stack((psr_df_n['Latitude'].to_numpy(float), psr_df_n['Longitude'].to_numpy(float)))
+    coords_psr_s = np.column_stack((psr_df_s['Latitude'].to_numpy(float), psr_df_s['Longitude'].to_numpy(float)))
 
     tree_n = cKDTree(coords_n)
     tree_s = cKDTree(coords_s)
 
-    def query_tree(tree, coords):
-        dist, idxs = tree.query(coords, k=1)
+    def query_tree(tree, coords, k=1):
+        dist, idxs = tree.query(coords, k=k)
         return dist, idxs
     
+    def query_tree_using_rad(tree, coords, df, r=0.01):
+
+        # Step A: Query the tree for all points within a radius r
+        neighbour_idx_lst = tree.query_ball_point(coords, r)
+
+        # Step B: Analyze the neighbors
+        neighbor_counts = [len(indices) for indices in neighbour_idx_lst]
+        mean_neighbors = np.mean(neighbor_counts)
+        max_neighbors  = np.max(neighbor_counts)
+        min_neighbors  = np.min(neighbor_counts)
+        no_neighbours = np.sum(np.array(neighbor_counts) == 0)
+
+        print()
+        print(f"Mean number of neighbors: {mean_neighbors}")
+        print(f"Max number of neighbors: {max_neighbors}")
+        print(f"Min number of neighbors: {min_neighbors}")
+        print(f"Number of points with no neighbors: {no_neighbours}")
+
+
+        # Step C: pick exactly one best match (highest label, then closest)
+        chosen_idx_list = np.full(len(coords), -1, dtype=int)  # default -1 for no neighbors
+        
+        for i, neighbor_indices in enumerate(neighbour_idx_lst):
+            if len(neighbor_indices) == 0:
+                continue  # remain -1 if no neighbors
+
+            # 1) Extract labels for these neighbors
+            local_labels = df.iloc[neighbor_indices]['Label'].values
+            
+            # 2) Find the maximum label among them
+            max_label = local_labels.max()
+            
+            # 3) Identify the subset of neighbors that share this max label
+            positions_of_max = np.where(local_labels == max_label)[0]
+            max_label_indices = [neighbor_indices[j] for j in positions_of_max]
+            
+            # 4) Among those max-label neighbors, pick the one closest to coords[i]
+            #    We'll do naive Euclidean distance in (Lat, Lon) space
+            #    If you want geodesic/haversine, you need a different formula.
+            query_latlon = coords[i]  # e.g. [Lat, Lon]
+            neighbors_coord = df.iloc[max_label_indices][['Latitude','Longitude']].values
+            dist = np.linalg.norm(neighbors_coord - query_latlon, axis=1)
+
+            # index of the closest neighbor among the max-label set
+            chosen_local_index = np.argmin(dist)
+            
+            # The actual row index in df for that chosen neighbor
+            chosen_df_idx = max_label_indices[chosen_local_index]
+            
+            chosen_idx_list[i] = chosen_df_idx
+
+        return chosen_idx_list
+
     with ThreadPoolExecutor(max_workers=n_workers) as executor:
-        future_n = executor.submit(query_tree, tree_n, coords_2_n)
-        future_s = executor.submit(query_tree, tree_s, coords_2_s)
-        _, idxs_n = future_n.result()
-        _, idxs_s = future_s.result()
+        future_n = executor.submit(query_tree, tree_n, coords_psr_n)
+        future_s = executor.submit(query_tree, tree_s, coords_psr_s)
+        dist_n, idxs_n = future_n.result()
+        dist_s, idxs_s = future_s.result()
+
+    # with ThreadPoolExecutor(max_workers=n_workers) as executor:
+    #     future_n = executor.submit(query_tree_using_rad, tree_n, coords_psr_n, combined_df_n)
+    #     future_s = executor.submit(query_tree_using_rad, tree_s, coords_psr_s, combined_df_s)
+    #     idxs_n = future_n.result()
+    #     idxs_s = future_s.result()
+
+    print()
+    print(f"Max distance (northern): {dist_n.max()}")
+    print(f"Mean distance (northern): {dist_n.mean()}")
+    print(f"Max distance (southern): {dist_s.max()}")
+    print(f"Mean distance (southern): {dist_s.mean()}")
 
     df_merged_n = psr_df_n.copy()
+    df_merged_s = psr_df_s.copy()
+
     desired_cols = [c for c in combined_df_n.columns if c not in ['Latitude', 'Longitude']]
     df_merged_n[desired_cols] = combined_df_n.iloc[idxs_n][desired_cols].values
 
-    df_merged_s = psr_df_s.copy()
     desired_cols = [c for c in combined_df_s.columns if c not in ['Latitude', 'Longitude']]
     df_merged_s[desired_cols] = combined_df_s.iloc[idxs_s][desired_cols].values
 
+
+    # df_merged_n['Label'] = labels_n
+    # df_merged_s['Label'] = labels_s
+
     df_merged = pd.concat([df_merged_n, df_merged_s], ignore_index=True)
+
+    print()
+    print("Label proportions after combining 2:")
+    print(df_merged.value_counts('Label', normalize=True) * 100) # type: ignore
+    print()
+    print(f"Total number of points: {df_merged.shape[0]}")
+
+    print()
+    print("Combined_df_n label proportions:")
+    print(combined_df_n.value_counts('Label', normalize=True) * 100)    # type: ignore
+
+    print("Psr_df_n label proportions after mapping:")
+    print(df_merged_n.value_counts('Label', normalize=True) * 100)  # type: ignore
+
+    print("Combined_df_s label proportions:")
+    print(combined_df_s.value_counts('Label', normalize=True) * 100)    # type: ignore
+
+    print("Psr_df_s label proportions after mapping:")
+    print(df_merged_s.value_counts('Label', normalize=True) * 100)  # type: ignore
+
+    print()
+    print(f"Density of combined_df_n: {len(combined_df_n) / (psr_df_n['Latitude'].max() - psr_df_n['Latitude'].min())}")
+    print(f"Density of psr_df_n: {len(psr_df_n) / (psr_df_n['Latitude'].max() - psr_df_n['Latitude'].min())}")
+
+    print(f"Density of combined_df_s: {len(combined_df_s) / (psr_df_s['Latitude'].max() - psr_df_s['Latitude'].min())}")
+    print(f"Density of psr_df_s: {len(psr_df_s) / (psr_df_s['Latitude'].max() - psr_df_s['Latitude'].min())}")
+
+
 
     # Assert values are only between latitudes [-75, -90] and [75, 90]
     valid_mask = ((df_merged['Latitude'] >= -90) & (df_merged['Latitude'] <= -75)) | \
@@ -191,7 +298,7 @@ def gen_psr_df(args):
     save_by_lon_range(df_merged, args.psr_save_dir)
 
     # del tree, idxs, psr_df, psr_df_s, psr_df_n, combined_df; gc.collect()
-    del tree_n, tree_s, idxs_n, idxs_s, psr_df, psr_df_s, psr_df_n, combined_df, combined_df_n, combined_df_s; gc.collect()
+    del tree_n, tree_s, psr_df, psr_df_s, psr_df_n, combined_df, combined_df_n, combined_df_s; gc.collect()
 
     return df_merged
 
@@ -253,29 +360,9 @@ def main(args):
 
     plot_polar_data(lbl_bin_df, 'Label', frac=0.01, save_path=args.plot_dir, dpi=400, graph_cat='binary')
 
-
-    # Create a boxplot
-    plt.figure(figsize=(8, 6))
-    plt.boxplot(df_merged['LOLA'], vert=False, patch_artist=True, notch=True, showmeans=True)
-    plt.title('Boxplot of LOLA with Outliers', fontsize=14)
-    plt.xlabel('LOLA Values', fontsize=12)
-
-    plt.grid(axis='x', linestyle='--', alpha=0.7)
-    plt.savefig(f'{args.plot_dir}/boxplot_LOLA.png')
-
-    # Create a boxplot
-    plt.figure(figsize=(8, 6))
-    plt.boxplot(df_merged['M3'], vert=False, patch_artist=True, notch=True, showmeans=True)
-    plt.title('Boxplot of M3 with Outliers', fontsize=14)
-    plt.xlabel('M3 Values', fontsize=12)
-
-    plt.grid(axis='x', linestyle='--', alpha=0.7)
-    plt.savefig(f'{args.plot_dir}/boxplot_M3.png')
-
-
     # Define conditions
-    condition1 = (df_merged['Label'] < lbl) & (df_merged['psr'] == 1)   # psr           but NOT high label  - True -> 1
-    condition2 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 0)  # high label    but NOT psr         - True -> 2
+    condition1 = (df_merged['Label'] < lbl) & (df_merged['psr'] == 1)   # psr but NOT high label            - True -> 1
+    condition2 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 0)  # high label but NOT psr            - True -> 2
     condition3 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 1)  # BOTH high label and psr           - True -> 3
 
     df_merged['temp'] = np.select(

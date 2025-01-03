@@ -14,6 +14,8 @@ start_time=$(date +%s)
 # Navigate to the directory where the job was submitted
 cd $PBS_O_WORKDIR
 
+rm -rf ../../data/CSVs/combined/*.csv
+
 # Run the Python script
 python ../process_data.py   --n_workers 4 \
                             --download_dir /rds/general/user/as5023/ephemeral/data/raw \
