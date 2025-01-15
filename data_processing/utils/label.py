@@ -33,7 +33,7 @@ def combine(*dirs, n_workers=None):
     return combined_df
 
 
-def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4), eps=0.5):
+def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, eps=0.75):
 
     combined_save_path = dataset_dict['Combined']['combined_save_path']
 

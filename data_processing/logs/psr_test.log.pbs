@@ -7,14 +7,13 @@ Plot saved to ../../data/plots
 
 Label proportions after combining 1:
 Label
-2    48.254930
-0    43.231563
-3     3.880504
-4     2.275962
-1     2.050946
-6     0.247250
-5     0.058477
-7     0.000369
+0    90.944949
+2     4.573272
+1     4.108655
+4     0.255809
+3     0.116864
+5     0.000421
+6     0.000030
 Name: proportion, dtype: float64
 
 Total number of points: 110534688
@@ -26,14 +25,12 @@ Mean distance (southern): 0.003784346028938587
 
 Label proportions after combining 2:
 Label
-2.0    48.692307
-0.0    45.579439
-3.0     3.239693
-1.0     1.978201
-4.0     0.459034
-6.0     0.035863
-5.0     0.015437
-7.0     0.000026
+0.0    94.172001
+1.0     3.352552
+2.0     2.381971
+3.0     0.052154
+4.0     0.041295
+5.0     0.000026
 Name: proportion, dtype: float64
 
 Total number of points: 22828368
@@ -47,51 +44,51 @@ Percentage of points which are PSRs:            3.47%
 Percentage of psrs at NP:                       46.42%
 Percentage of psrs at SP:                       53.58%
 
-Percentage of points labelled >=2:              52.44%
-Percentage of points labelled >=3:              3.75%
-Percentage of points labelled >=4:              0.51%
+Percentage of points labelled >=2:              2.48%
+Percentage of points labelled >=3:              0.09%
+Percentage of points labelled >=4:              0.04%
 
-Percentage of labels >=2 labeled as PSR:        5.02%
-Percentage of labels >=3 labeled as PSR:        17.43%
-Percentage of labels >=4 labeled as PSR:        38.09%
+Percentage of labels >=2 labeled as PSR:        17.73%
+Percentage of labels >=3 labeled as PSR:        44.00%
+Percentage of labels >=4 labeled as PSR:        77.12%
 
 Percentage of each label which is a PSR:
-Label = 0,  158590  points out of 10405042  are PSR  (1.52%)
-Label = 1,   33195  points out of   451591  are PSR  (7.35%)
-Label = 2,  452087  points out of 11115659  are PSR  (4.07%)
-Label = 3,  104823  points out of   739569  are PSR  (14.17%)
-Label = 4,   36727  points out of   104790  are PSR  (35.05%)
-Label = 5,    1791  points out of     3524  are PSR  (50.82%)
-Label = 6,    5859  points out of     8187  are PSR  (71.56%)
-Label = 7,       1  points out of        6  are PSR  (16.67%)
+Label = 0,  608748  points out of 21497931  are PSR  (2.83%)
+Label = 1,   84104  points out of   765333  are PSR  (10.99%)
+Label = 2,   90831  points out of   543765  are PSR  (16.70%)
+Label = 3,    2115  points out of    11906  are PSR  (17.76%)
+Label = 4,    7274  points out of     9427  are PSR  (77.16%)
+Label = 5,       1  points out of        6  are PSR  (16.67%)
+Label = 6,       0  points out of        0  are PSR  (0.00%)
+Label = 7,       0  points out of        0  are PSR  (0.00%)
 
 Plot saved to ../../data/plots
-Proportion of binary labels indicating psr: 3.7283%
-Percentage of points with cat 0: 93.43%
-Percentage of points with cat 1: 2.82%
-Percentage of points with cat 2: 3.10%
-Percentage of points with cat 3: 0.65%
+Proportion of binary labels indicating psr: 0.0977%
+Percentage of points with cat 0: 96.47%
+Percentage of points with cat 1: 3.43%
+Percentage of points with cat 2: 0.05%
+Percentage of points with cat 3: 0.04%
 Plot saved to ../../data/plots
 
-Accuracy: 0.9408
-Precision: 0.5725
-Recall: 0.5780
-F1 Score: 0.5751
+Accuracy: 0.9651
+Precision: 0.7028
+Recall: 0.5056
+F1 Score: 0.5027
 
-Balanced Accuracy: 0.5780
+Balanced Accuracy: 0.5056
 
-Weighted Precision: 0.9430
-Weighted Recall: 0.9408
-Weighted F1 Score: 0.9419
+Weighted Precision: 0.9474
+Weighted Recall: 0.9651
+Weighted F1 Score: 0.9489
 
-Job finished on Wed 15 Jan 11:51:28 GMT 2025
-Total runtime: 10 minutes and 46 seconds
+Job finished on Wed 15 Jan 22:43:37 GMT 2025
+Total runtime: 11 minutes and 10 seconds
 
 ====================================
-CPU Time used: 00:10:49
-CPU Percent: 125%
-Memory usage: 34215424kb
-Approx Power usage: 0.002
-Walltime usage: 00:10:56
+CPU Time used: 00:09:42
+CPU Percent: 156%
+Memory usage: 34239864kb
+Approx Power usage: 0.0017999999999999997
+Walltime usage: 00:11:20
 
 ====================================
