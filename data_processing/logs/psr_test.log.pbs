@@ -7,14 +7,14 @@ Plot saved to ../../data/plots
 
 Label proportions after combining 1:
 Label
-2    47.510932
-0    41.904331
-4     4.715204
-3     3.002569
-1     2.226593
-6     0.472951
-5     0.158362
-7     0.009057
+2    48.254930
+0    43.231563
+3     3.880504
+4     2.275962
+1     2.050946
+6     0.247250
+5     0.058477
+7     0.000369
 Name: proportion, dtype: float64
 
 Total number of points: 110534688
@@ -26,62 +26,17 @@ Mean distance (southern): 0.003784346028938587
 
 Label proportions after combining 2:
 Label
-2.0    48.098677
-0.0    44.500492
-3.0     2.625488
-4.0     2.399764
-1.0     2.197349
-6.0     0.094448
-5.0     0.082284
-7.0     0.001498
+2.0    48.692307
+0.0    45.579439
+3.0     3.239693
+1.0     1.978201
+4.0     0.459034
+6.0     0.035863
+5.0     0.015437
+7.0     0.000026
 Name: proportion, dtype: float64
 
 Total number of points: 22828368
-
-Combined_df_n label proportions:
-Label
-2    49.145933
-0    42.779622
-3     3.874954
-1     2.715383
-4     1.387391
-5     0.094844
-6     0.001865
-7     0.000007
-Name: proportion, dtype: float64
-Psr_df_n label proportions after mapping:
-Label
-2.0    47.840152
-0.0    45.623586
-3.0     2.851172
-1.0     2.553384
-4.0     1.078824
-5.0     0.052049
-6.0     0.000824
-7.0     0.000009
-Name: proportion, dtype: float64
-Combined_df_s label proportions:
-Label
-2    45.881757
-0    41.018713
-4     8.047772
-3     2.130201
-1     1.736793
-6     0.944654
-5     0.221992
-7     0.018118
-Name: proportion, dtype: float64
-Psr_df_s label proportions after mapping:
-Label
-2.0    48.357202
-0.0    43.377398
-4.0     3.720704
-3.0     2.399804
-1.0     1.841314
-6.0     0.188073
-5.0     0.112518
-7.0     0.002988
-Name: proportion, dtype: float64
 
 Density of combined_df_n: 3685869.8432802972
 Density of psr_df_n: 761230.6571354773
@@ -92,51 +47,51 @@ Percentage of points which are PSRs:            3.47%
 Percentage of psrs at NP:                       46.42%
 Percentage of psrs at SP:                       53.58%
 
-Percentage of points labelled >=2:              53.30%
-Percentage of points labelled >=3:              5.20%
-Percentage of points labelled >=4:              2.58%
+Percentage of points labelled >=2:              52.44%
+Percentage of points labelled >=3:              3.75%
+Percentage of points labelled >=4:              0.51%
 
-Percentage of labels >=2 labeled as PSR:        5.08%
-Percentage of labels >=3 labeled as PSR:        15.27%
-Percentage of labels >=4 labeled as PSR:        24.27%
+Percentage of labels >=2 labeled as PSR:        5.02%
+Percentage of labels >=3 labeled as PSR:        17.43%
+Percentage of labels >=4 labeled as PSR:        38.09%
 
 Percentage of each label which is a PSR:
-Label = 0,  159328  points out of 10158736  are PSR  (1.57%)
-Label = 1,   15866  points out of   501619  are PSR  (3.16%)
-Label = 2,  436475  points out of 10980143  are PSR  (3.98%)
-Label = 3,   38591  points out of   599356  are PSR  (6.44%)
-Label = 4,  123523  points out of   547827  are PSR  (22.55%)
-Label = 5,    3988  points out of    18784  are PSR  (21.23%)
-Label = 6,   15091  points out of    21561  are PSR  (69.99%)
-Label = 7,     211  points out of      342  are PSR  (61.70%)
+Label = 0,  158590  points out of 10405042  are PSR  (1.52%)
+Label = 1,   33195  points out of   451591  are PSR  (7.35%)
+Label = 2,  452087  points out of 11115659  are PSR  (4.07%)
+Label = 3,  104823  points out of   739569  are PSR  (14.17%)
+Label = 4,   36727  points out of   104790  are PSR  (35.05%)
+Label = 5,    1791  points out of     3524  are PSR  (50.82%)
+Label = 6,    5859  points out of     8187  are PSR  (71.56%)
+Label = 7,       1  points out of        6  are PSR  (16.67%)
 
 Plot saved to ../../data/plots
-Proportion of binary labels indicating psr: 5.2097%
-Percentage of points with cat 0: 92.12%
-Percentage of points with cat 1: 2.68%
-Percentage of points with cat 2: 4.41%
-Percentage of points with cat 3: 0.79%
+Proportion of binary labels indicating psr: 3.7283%
+Percentage of points with cat 0: 93.43%
+Percentage of points with cat 1: 2.82%
+Percentage of points with cat 2: 3.10%
+Percentage of points with cat 3: 0.65%
 Plot saved to ../../data/plots
 
-Accuracy: 0.9291
-Precision: 0.5622
-Recall: 0.5915
-F1 Score: 0.5731
+Accuracy: 0.9408
+Precision: 0.5725
+Recall: 0.5780
+F1 Score: 0.5751
 
-Balanced Accuracy: 0.5915
+Balanced Accuracy: 0.5780
 
-Weighted Precision: 0.9433
-Weighted Recall: 0.9291
-Weighted F1 Score: 0.9359
+Weighted Precision: 0.9430
+Weighted Recall: 0.9408
+Weighted F1 Score: 0.9419
 
-Job finished on Fri  3 Jan 08:52:13 GMT 2025
-Total runtime: 11 minutes and 59 seconds
+Job finished on Wed 15 Jan 11:51:28 GMT 2025
+Total runtime: 10 minutes and 46 seconds
 
 ====================================
-CPU Time used: 00:11:22
-CPU Percent: 151%
-Memory usage: 34245036kb
-Approx Power usage: 0.0021999999999999997
-Walltime usage: 00:12:10
+CPU Time used: 00:10:49
+CPU Percent: 125%
+Memory usage: 34215424kb
+Approx Power usage: 0.002
+Walltime usage: 00:10:56
 
 ====================================

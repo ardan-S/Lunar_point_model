@@ -312,7 +312,7 @@ def plot_polar_data(df_in, variable, graph_cat='raw', frac=None, random_state=42
     def plot_pole_data(ax, df, pole):
         if len(df.index) == 0:
             return
-        sc = ax.scatter(df['theta'], df['r'], c=df[variable], cmap='Greys_r', s=50, vmin=vmin, vmax=vmax)  
+        sc = ax.scatter(df['theta'], df['r'], c=df[variable], cmap='Greys_r', s=5, vmin=vmin, vmax=vmax)  
         fig.colorbar(sc, ax=ax, label=variable)
         set_latitude_labels(ax, pole)
         ax.set_theta_zero_location('N')
@@ -403,7 +403,7 @@ def plot_labeled_polar_data(df, variable, label_column, save_path=None):
         # Plot data points with labels
         for label, colour in colour_map.items():
             df_subset = df[df[label_column] == label]
-            ax.scatter(df_subset['theta'], df_subset['r'], c=colour, s=10, label=f'Label {label}')
+            ax.scatter(df_subset['theta'], df_subset['r'], c=colour, s=5, label=f'Label {label}')
 
         ax.set_ylim(0, 15)
         ax.set_yticks(range(0, 16, 5))
@@ -425,7 +425,7 @@ def plot_labeled_polar_data(df, variable, label_column, save_path=None):
 
     if save_path:
         plt.savefig(save_path)
-        print(f"Label plot saved to {save_path} for {variable}")
+        print(f"Label plot saved to {save_path} for {variable}\n")
         plt.close(fig)  # Close the figure to free memory
     else:
         plt.show()

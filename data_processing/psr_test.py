@@ -79,7 +79,6 @@ def compute_psrs(jp2_url, lbl_url, pole):
 
     if pole == 'south':
         lat = -90 + np.degrees(c)
-        # lon = center_lon + np.degrees(np.arctan2(x, y)) 
         lon = center_lon + np.degrees(np.arctan2(x, y)) + 180
 
     else:
@@ -89,9 +88,6 @@ def compute_psrs(jp2_url, lbl_url, pole):
     lon = lon % 360
 
     binary_psr = np.array(img_data == 20000, dtype=int)  # 1 for PSR, 0 otherwise
-
-    # valid_mask = ((lat <= -80) & (lat >= -90)) | ((lat <= 90) & (lat >= 80))
-    # valid_mask &= np.isfinite(binary_psr)
 
     df = pd.DataFrame({
         'Latitude': lat.ravel(),
@@ -153,7 +149,6 @@ def gen_psr_df(args):
     print(combined_df.value_counts('Label', normalize=True) * 100) # type: ignore
     print()
     print(f"Total number of points: {combined_df.shape[0]}")
-
 
     # ----------------------------------------------------
     combined_df_n = combined_df[(combined_df['Latitude'] >= 75)]
@@ -255,10 +250,6 @@ def gen_psr_df(args):
     desired_cols = [c for c in combined_df_s.columns if c not in ['Latitude', 'Longitude']]
     df_merged_s[desired_cols] = combined_df_s.iloc[idxs_s][desired_cols].values
 
-
-    # df_merged_n['Label'] = labels_n
-    # df_merged_s['Label'] = labels_s
-
     df_merged = pd.concat([df_merged_n, df_merged_s], ignore_index=True)
 
     print()
@@ -268,25 +259,11 @@ def gen_psr_df(args):
     print(f"Total number of points: {df_merged.shape[0]}")
 
     print()
-    print("Combined_df_n label proportions:")
-    print(combined_df_n.value_counts('Label', normalize=True) * 100)    # type: ignore
-
-    print("Psr_df_n label proportions after mapping:")
-    print(df_merged_n.value_counts('Label', normalize=True) * 100)  # type: ignore
-
-    print("Combined_df_s label proportions:")
-    print(combined_df_s.value_counts('Label', normalize=True) * 100)    # type: ignore
-
-    print("Psr_df_s label proportions after mapping:")
-    print(df_merged_s.value_counts('Label', normalize=True) * 100)  # type: ignore
-
-    print()
     print(f"Density of combined_df_n: {len(combined_df_n) / (psr_df_n['Latitude'].max() - psr_df_n['Latitude'].min())}")
     print(f"Density of psr_df_n: {len(psr_df_n) / (psr_df_n['Latitude'].max() - psr_df_n['Latitude'].min())}")
 
     print(f"Density of combined_df_s: {len(combined_df_s) / (psr_df_s['Latitude'].max() - psr_df_s['Latitude'].min())}")
     print(f"Density of psr_df_s: {len(psr_df_s) / (psr_df_s['Latitude'].max() - psr_df_s['Latitude'].min())}")
-
 
 
     # Assert values are only between latitudes [-75, -90] and [75, 90]

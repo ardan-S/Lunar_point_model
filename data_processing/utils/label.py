@@ -29,11 +29,11 @@ def combine(*dirs, n_workers=None):
         print(f"ERROR - Combined dataframe columns: {combined_df.columns}")
         raise ValueError("Combined dataframe does not have the expected number of columns")
 
-    print("Dataframes combined.")
+    print("Dataframes combined.\n")
     return combined_df
 
 
-def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)):
+def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4), eps=0.5):
 
     combined_save_path = dataset_dict['Combined']['combined_save_path']
 
@@ -50,22 +50,32 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
     df.loc[df['Diviner'] <= 110, 'Label'] += 2
     df.loc[df['Diviner'] <= 110, 'Diviner label'] += 2
 
-    # -------------------- LOLA --------------------    
-    lola_thresh = df['LOLA'].mean() + 2.5 * df['LOLA'].std()      # z-score method
-    print(f"\nTaking the top {df[df['LOLA'] >= lola_thresh].shape[0] / df.shape[0] :.2%} of points from LOLA. Threshold = {lola_thresh:.2f}"); sys.stdout.flush()
+    plot_labeled_polar_data(df=df,variable='Diviner', label_column='Diviner label', save_path=os.path.join(plot_save_path, 'Diviner_label_plot.png'))
 
-    df = apply_area_label_2(df, 'LOLA', lola_thresh, lola_area_thresh, 'above', eps=1.25)    # eps to 1.5
+    # -------------------- LOLA --------------------
+    lola_thresh_n = df.loc[df['Latitude'] >= 0, 'LOLA'].mean() + 2 * df.loc[df['Latitude'] >= 0, 'LOLA'].std()
+    print(f"North pole LOLA threshold: {lola_thresh_n:.2f} ({df[df['LOLA'] >= lola_thresh_n].shape[0] / df.shape[0] :.2%} of data)")
+    apply_area_label_2(df, 'LOLA', lola_thresh_n, lola_area_thresh, 'above', 'north', eps=eps)
+
+    lola_thresh_s = df.loc[df['Latitude'] < 0, 'LOLA'].mean() + 2 * df.loc[df['Latitude'] < 0, 'LOLA'].std()
+    print(f"South pole LOLA threshold: {lola_thresh_s:.2f} ({df[df['LOLA'] >= lola_thresh_s].shape[0] / df.shape[0] :.2%} of data)")
+    apply_area_label_2(df, 'LOLA', lola_thresh_s, lola_area_thresh, 'above', 'south', eps=eps)
+
     plot_labeled_polar_data(df=df,variable='LOLA', label_column='LOLA label', save_path=os.path.join(plot_save_path, 'LOLA_label_plot.png'))
 
     # -------------------- M3 --------------------
-    m3_thresh = df['M3'].mean() - 2.5 * df['M3'].std()
-    print(f"\nTaking the bottom {df[df['M3'] <= m3_thresh].shape[0] / df.shape[0] :.2%} of points from M3. Threshold = {m3_thresh:.2f}"); sys.stdout.flush()
+    m3_thresh_n = df.loc[df['Latitude'] >= 0, 'M3'].mean() - 2 * df.loc[df['Latitude'] >= 0, 'M3'].std()
+    print(f"North pole M3 threshold: {m3_thresh_n:.2f} ({df[df['M3'] <= m3_thresh_n].shape[0] / df.shape[0] :.2%} of data)")
+    apply_area_label_2(df, 'M3', m3_thresh_n, m3_area_thresh, 'below', 'north', eps=eps)  # eps to 2.5
 
-    df = apply_area_label_2(df, 'M3', m3_thresh, m3_area_thresh, 'below', eps=1.25)  # eps to 2.5
+    m3_thresh_s = df.loc[df['Latitude'] < 0, 'M3'].mean() - 2 * df.loc[df['Latitude'] < 0, 'M3'].std()
+    print(f"South pole M3 threshold: {m3_thresh_s:.2f} ({df[df['M3'] <= m3_thresh_s].shape[0] / df.shape[0] :.2%} of data)")
+    apply_area_label_2(df, 'M3', m3_thresh_s, m3_area_thresh, 'below', 'south', eps=eps)  # eps to 2.5
+
     plot_labeled_polar_data(df=df,variable='M3', label_column='M3 label', save_path=os.path.join(plot_save_path, 'M3_label_plot.png'))
 
     # -------------------- MiniRF --------------------
-    MRF_thresh = df['MiniRF'].mean() + 2.5 * df['MiniRF'].std()
+    MRF_thresh = df['MiniRF'].mean() + 5.5 * df['MiniRF'].std()
     print(f"\nTaking the top {df[df['MiniRF'] >= MRF_thresh].shape[0] / df.shape[0] :.2%} of points from MiniRF. Threshold = {MRF_thresh:.2f}"); sys.stdout.flush()
     
     df.loc[df['MiniRF'] > MRF_thresh, 'Label'] += 1
@@ -73,11 +83,33 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
 
     plot_labeled_polar_data(df=df,variable='MiniRF', label_column='MiniRF label', save_path=os.path.join(plot_save_path, 'MiniRF_label_plot.png'))
 
+    # -------------------- Combine labels --------------------
     def print_label_counts(df, label_name):
         counts = df[label_name].value_counts(normalize=True) * 100
         for label in [0, 1, 2]:  # Ensure that we always include 0, 1, and 2 even if they are missing
             percentage = counts.get(label, 0.0)
             print(f"{label_name} - {label}: {percentage:.2f}%")
+
+    # def print_label_counts(df, label_name):
+    #     # Global percentage of 0
+    #     global_counts = df[label_name].value_counts(normalize=True) * 100
+    #     zero_percentage = global_counts.get(0, 0.0)
+    #     print(f"{label_name} - 0 (Global): {zero_percentage:.2f}%")
+
+    #     # Split the data into north and south poles
+    #     north_pole_df = df[df['Latitude'] >= 0]
+    #     south_pole_df = df[df['Latitude'] < 0]
+
+    #     # Calculate label counts for north and south poles
+    #     for label in [1, 2]:
+    #         north_counts = north_pole_df[label_name].value_counts(normalize=True) * 100
+    #         south_counts = south_pole_df[label_name].value_counts(normalize=True) * 100
+
+    #         north_percentage = north_counts.get(label, 0.0)
+    #         south_percentage = south_counts.get(label, 0.0)
+
+    #         print(f"{label_name} - {label} (North Pole): {north_percentage:.2f}%")
+    #         print(f"{label_name} - {label} (South Pole): {south_percentage:.2f}%")
 
     print()
     print("Label counts:")
@@ -115,163 +147,43 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=(3), m3_area_thresh=(2.4)
     plot_polar_data(df_bin, 'Label', frac=0.01, graph_cat='binary_orig', save_path=plot_save_path, dpi=400)
 
 
-# def apply_area_label(df, data_type, threshold, area_thresh, direction, eps):
-#     df = df.copy()
-    
-#     assert 'Label' in df.columns, "Label column not found in dataframe"
-#     assert f'{data_type} label' in df.columns, f"{data_type} label column not found in dataframe"
-    
-#     # Step 1: Filter the DataFrame based on the threshold and direction
-#     if direction == 'below':
-#         condition = df[data_type] < threshold
-#     elif direction == 'above':
-#         condition = df[data_type] > threshold
-#     else:
-#         raise ValueError("Invalid direction. Use 'above' or 'below'.")
-
-#     df.loc[condition, 'Label'] += 1
-#     df.loc[condition, f'{data_type} label'] += 1
-
-#     df_filtered = df[condition].copy()
-
-#     if df_filtered.empty:
-#         return df
-    
-#     # Step 2: Convert coordinates to radians
-#     df_filtered['longitude_rad'] = np.deg2rad(df_filtered['Longitude'])
-#     df_filtered['latitude_rad'] = np.deg2rad(df_filtered['Latitude'])
-#     coords_rad = df_filtered[['latitude_rad', 'longitude_rad']].values
-
-#     # Step 3: Perform clustering using DBSCAN with Haversine metric
-#     moon_radius_km = 1737.4 # km
-
-#     eps_km = eps     # The 'eps' parameter in radians (e.g., 0.75 km radius)
-#     eps_rad = eps_km / moon_radius_km
-
-#     clustering = DBSCAN(eps=eps_rad, min_samples=5, metric='haversine').fit(coords_rad)
-#     df_filtered['cluster_label'] = clustering.labels_
-
-#     # Step 4: Calculate area for each cluster and update labels
-#     cluster_labels = set(clustering.labels_)
-#     cluster_labels.discard(-1)  # Exclude noise points labeled as -1
-
-#     moon_radius_m = moon_radius_km * 1000  # Convert to meters
-
-#     crs_lunar_geo = CRS.from_proj4(
-#         f"+proj=longlat +a={moon_radius_m} +b={moon_radius_m} +no_defs +type=crs +celestial_body=Moon"
-#     )
-
-#     clusters_at_1 = 0
-#     clusters_at_2 = 0
-
-#     for cluster_label in cluster_labels:
-#         sys.stdout.flush()
-#         cluster_points = df_filtered[df_filtered['cluster_label'] == cluster_label]
-#         if len(cluster_points) < 3: # Need at least 3 points to form a polygon
-#             continue
-
-#         cluster_coords_lon = cluster_points['Longitude'].values
-#         cluster_coords_lat = cluster_points['Latitude'].values
-
-#         # Project the cluster coordinates to planar coordinates
-#         # Use an Azimuthal Equidistant projection centered on the cluster centroid
-#         centroid_lon = cluster_coords_lon.mean()
-#         centroid_lat = cluster_coords_lat.mean()
-
-#         proj_str = (
-#             f"+proj=aeqd +lat_0={centroid_lat} +lon_0={centroid_lon} "
-#             f"+a={moon_radius_m} +b={moon_radius_m} +units=m +no_defs +type=crs +celestial_body=Moon"
-#         )
-#         crs_lunar_proj = CRS.from_proj4(proj_str)
-#         transformer = Transformer.from_crs(crs_lunar_geo, crs_lunar_proj, always_xy=True)
-
-#         # Project the coordinates
-#         x_proj, y_proj = transformer.transform(cluster_coords_lon, cluster_coords_lat)
-#         cluster_coords_proj = np.column_stack((x_proj, y_proj))
-
-#         if not np.isfinite(cluster_coords_proj).all():
-#             continue
-
-#         # Create a Polygon from the projected cluster points
-#         unique_coords_proj = np.unique(cluster_coords_proj, axis=0)
-#         multipoint = MultiPoint(unique_coords_proj)
-#         polygon = multipoint.convex_hull
-
-#         if len(unique_coords_proj) < 3: # Need at least 3 unique points to form a polygon
-#             continue
-#         if not polygon.is_valid:    # Check if the polygon is valid
-#             continue
-#         if polygon.area == 0 or polygon.is_empty:   # Check if the polygon has zero area
-#             continue
-#         if polygon.geom_type != 'Polygon':  # Check if the geometry type is Polygon
-#             continue
-
-#         area_m2 = polygon.area  # Area in square meters
-
-#         # Determine label increment based on area threshold
-#         area_km2 = area_m2 / 1e6  # Convert to square kilometers
-#         if area_km2 < area_thresh:
-#             label_increment = 1
-#             clusters_at_1 += 1
-#         else:
-#             label_increment = 2
-#             clusters_at_2 += 1
-
-#         # Update labels for points in this cluster
-#         df_filtered.loc[cluster_points.index, 'Label'] += label_increment - 1
-#         df_filtered.loc[cluster_points.index, f'{data_type} label'] += label_increment - 1
-
-#     # Update the original DataFrame with the new labels
-#     df.update(df_filtered[['Label', f'{data_type} label']])
-#     print(f"{data_type} - Clusters at 1: {clusters_at_1}, Clusters at 2: {clusters_at_2}, Total clusters: {len(cluster_labels)}")
-
-#     return df
-
-
-
-def apply_area_label_2(df, data_type, threshold, area_thresh, direction, eps):
+def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, eps):
     assert 'Label' in df.columns, "Label column not found in dataframe"
     assert f'{data_type} label' in df.columns, f"{data_type} label column not found in dataframe"
+    assert pole.lower() in ['north', 'south'], "Invalid pole. Use 'north' or 'south'."
     
-    # Step 1: Filter the DataFrame based on the threshold and direction
-    if direction == 'below':
+    # Select data around threshold
+    if direction.lower() == 'below':
         condition = df[data_type] < threshold
-    elif direction == 'above':
+    elif direction.lower() == 'above':
         condition = df[data_type] > threshold
     else:
         raise ValueError("Invalid direction. Use 'above' or 'below'.")
     
-    cols = ['Latitude', 'Longitude', 'Label', f'{data_type} label']
-    df = df.astype({'Longitude': 'float32', 'Latitude': 'float32', 'Label': 'int8', f'{data_type} label': 'int8'})
-
-    df_n_fil = df[(condition) & (df['Latitude'] < 0)][cols]
-    df_n = cluster_pole(df_n_fil, data_type, area_thresh, eps)
-    del df_n_fil
+    # Select data around pole
+    if pole.lower() == 'north':
+        condition &= (df['Latitude'] >= 0)
+    elif pole.lower() == 'south':
+        condition &= (df['Latitude'] < 0)
+    else:
+        raise ValueError("Invalid pole. Use 'north' or 'south'.")
     
-    df_s_fil = df[(condition) & (df['Latitude'] >= 0)][cols]
-    df_s = cluster_pole(df_s_fil, data_type, area_thresh, eps)
-    del df_s_fil
+    df.astype({'Longitude': 'float32', 'Latitude': 'float32', 'Label': 'int8', f'{data_type} label': 'int8'}, copy=False)
 
-    df_labeled = pd.concat([df_n, df_s])
-    del df_n, df_s
+    cluster_pole(df, condition, data_type, area_thresh, eps)
 
-    df_labeled = df_labeled.astype({'Label': 'int8', f'{data_type} label': 'int8'})
-    df = df.astype({'Label': 'int8', f'{data_type} label': 'int8'})
 
-    df.loc[df_labeled.index, ['Label', f'{data_type} label']] = df_labeled[['Label', f'{data_type} label']]
-
-    return df
-
-def cluster_pole(df_filtered, data_type, area_thresh, eps):
-    if df_filtered.empty:
-        return df_filtered
+def cluster_pole(df, condition, data_type, area_thresh, eps):
+    if df.loc[condition].empty:
+        return df
     
-    # Step 1: Update labels for the filtered DataFrame
-    df_filtered['Label'] += 1
-    df_filtered[f'{data_type} label'] += 1
-        
-    # Step 2: Convert coordinates to radians
-    coords_rad = np.radians(df_filtered[['Latitude', 'Longitude']].to_numpy(dtype='float32'))
+    # Step 1: Update labels for the rows which meet the threshold condition
+    df.loc[condition, 'Label'] += 1
+    df.loc[condition, f'{data_type} label'] += 1
+
+
+    # Step 2: Convert filtered coordinates to radians
+    coords_rad = np.radians(df.loc[condition, ['Latitude', 'Longitude']].to_numpy(dtype='float32'))
 
     # Step 3: Perform clustering using DBSCAN with Haversine metric
     moon_radius_km = 1737.4
@@ -281,16 +193,14 @@ def cluster_pole(df_filtered, data_type, area_thresh, eps):
     print(f"Clustering {data_type} pole with eps={eps:.2f} and min_cluster={min_cluster}"); sys.stdout.flush()
 
     clustering = DBSCAN(eps=eps_rad, min_samples=min_cluster, metric='haversine')   # DBSCAN
-    # clustering = HDBSCAN(min_cluster_size=min_cluster, metric='haversine')           # HDBSCAN
     clustering_labels = clustering.fit_predict(coords_rad)
+    clustering_labels.astype('int32', copy=False)
 
-    df_filtered['cluster_label'] = clustering_labels.astype('int32')
-    del coords_rad, clustering
+    df.loc[condition, 'cluster_label'] = clustering_labels
+    del coords_rad, clustering, clustering_labels
 
-    # Step 4: Calculate area for each cluster and update labels
-    unique_labels = np.unique(clustering_labels)
-    unique_labels = unique_labels[unique_labels != -1]
-    del clustering_labels
+    all_labels = df.loc[condition, 'cluster_label'].unique()
+    unique_labels = all_labels[all_labels != -1]
 
     moon_radius_m = moon_radius_km * 1000  # Convert to meters
     crs_lunar_geo = CRS.from_proj4(
@@ -300,11 +210,12 @@ def cluster_pole(df_filtered, data_type, area_thresh, eps):
     clusters_at_1 = 0
     clusters_at_2 = 0
 
+    # Step 4: Calculate area for each cluster and update labels
     for cluster_label in unique_labels:
         sys.stdout.flush()
         
-        mask = df_filtered['cluster_label'] == cluster_label
-        cluster_points = df_filtered.loc[mask, ['Longitude', 'Latitude']].to_numpy(dtype='float32')
+        mask = (df['cluster_label'] == cluster_label) & condition
+        cluster_points = df.loc[mask, ['Longitude', 'Latitude']].to_numpy(dtype='float32')
         
         if len(cluster_points) < 3: # Need at least 3 points to form a polygon
             continue
@@ -346,13 +257,12 @@ def cluster_pole(df_filtered, data_type, area_thresh, eps):
 
         # Determine label increment based on area threshold
         if area_km2 > area_thresh:  # Clusters with size greater than threshold
-            df_filtered.loc[mask, 'Label'] += 1
-            df_filtered.loc[mask, f'{data_type} label'] += 1
+            df.loc[mask, 'Label'] += 1
+            df.loc[mask, f'{data_type} label'] += 1
             clusters_at_2 += 1
         else:
             clusters_at_1 += 1
 
     print(f"{data_type} - Clusters at 1: {clusters_at_1}, Clusters at 2: {clusters_at_2}, Total clusters: {len(unique_labels)}")
-    df_filtered.drop(columns=['cluster_label'], inplace=True)
+    df.drop(columns=['cluster_label'], inplace=True)
 
-    return df_filtered
