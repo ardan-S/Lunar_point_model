@@ -1,60 +1,147 @@
-Raw CSVs appear to exist for LOLA data. Skipping load df.
-Raw CSVs appear to exist for Diviner data. Skipping load df.
-Raw CSVs appear to exist for M3 data. Skipping load df.
-Raw CSVs appear to exist for MiniRF data. Skipping load df.
+Raw CSVs for MiniRF found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/Mini-RF. Skipping load df...
+Raw CSVs for Diviner found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/Diviner. Skipping load df...
+Raw CSVs for M3 found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/M3. Skipping load df...
+Raw CSVs for LOLA found at: /rds/general/user/as5023/ephemeral/data/CSVs/raw/LOLA. Skipping load df...
 Loading stage complete after 0.00 mins
 
-Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
-Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
+Meshes created. Total points: 110,534,688
+NOTE: Diviner resampled for 25.0% of data across all csvs due to abundance of data. Weighted to higher values
 Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
+Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
 Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
-Interpolation stage complete after 0.00 mins
+248861525 rows in raw csv: lon_000_030.csv
+Interpolating Diviner data for lon_000_030.csv
+Saving interpolated data length: 9211224
+267138277 rows in raw csv: lon_030_060.csv
+Interpolating Diviner data for lon_030_060.csv
+Saving interpolated data length: 9211224
+266137805 rows in raw csv: lon_060_090.csv
+Interpolating Diviner data for lon_060_090.csv
+Saving interpolated data length: 9211224
+267763857 rows in raw csv: lon_090_120.csv
+Interpolating Diviner data for lon_090_120.csv
+Saving interpolated data length: 9211224
+277017355 rows in raw csv: lon_120_150.csv
+Interpolating Diviner data for lon_120_150.csv
+Saving interpolated data length: 9211224
+276332286 rows in raw csv: lon_150_180.csv
+Interpolating Diviner data for lon_150_180.csv
+Saving interpolated data length: 9211224
+281143439 rows in raw csv: lon_180_210.csv
+Interpolating Diviner data for lon_180_210.csv
+Saving interpolated data length: 9211224
+277629563 rows in raw csv: lon_210_240.csv
+Interpolating Diviner data for lon_210_240.csv
+Saving interpolated data length: 9211224
+265185102 rows in raw csv: lon_240_270.csv
+Interpolating Diviner data for lon_240_270.csv
+Saving interpolated data length: 9211224
+265688695 rows in raw csv: lon_270_300.csv
+Interpolating Diviner data for lon_270_300.csv
+Saving interpolated data length: 9211224
+276753909 rows in raw csv: lon_300_330.csv
+Interpolating Diviner data for lon_300_330.csv
+Saving interpolated data length: 9211224
+254256896 rows in raw csv: lon_330_360.csv
+Interpolating Diviner data for lon_330_360.csv
+Saving interpolated data length: 9211224
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
 
-Dataframes combined. Shape: (172638382, 7)
+Interpolated Diviner df:
+          Longitude      Latitude       Diviner
+count  1.240935e+08  1.240935e+08  1.240935e+08
+mean   1.800033e+02  4.118014e-03  2.998248e+02
+std    1.029735e+02  8.261383e+01  1.456875e+01
+min    0.000000e+00 -9.000000e+01  6.228000e+01
+25%    9.049467e+01 -8.249341e+01  2.904546e+02
+50%    1.800033e+02  4.120000e-03  2.999154e+02
+75%    2.695119e+02  8.250164e+01  3.091917e+02
+max    3.600066e+02  9.000824e+01  4.021208e+02
+   Longitude  Latitude     Diviner
+0  28.008120      75.0  292.485657
+1  28.018013      75.0  292.486666
+2  28.027906      75.0  292.487674
+3  28.037798      75.0  292.488683
+4  28.047691      75.0  292.489692
+Interpolation stage complete after 61.76 mins
 
-LOLA - Clusters at 1: 785, Clusters at 2: 516, Total clusters: 1301
+Dataframes combined.
+
+Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/Diviner_label_plot.png for Diviner
+
+North pole LOLA threshold: 0.36 (7.35% of data)
+Clustering LOLA pole with eps=0.75 and min_cluster=85
+LOLA - Clusters at 1: 98, Clusters at 2: 382, Total clusters: 481
+South pole LOLA threshold: 0.38 (1.70% of data)
+Clustering LOLA pole with eps=0.75 and min_cluster=85
+LOLA - Clusters at 1: 40, Clusters at 2: 173, Total clusters: 213
 Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/LOLA_label_plot.png for LOLA
 
-Invalid projected coordinates for cluster 8. Skipping...
-Skipping cluster 2242 with less than 3 points
-Polygon area is zero for cluster 2507. Skipping...
-Skipping cluster 2599 with less than 3 points
-Skipping cluster 6473 with less than 3 points
-Polygon area is zero for cluster 6989. Skipping...
-Skipping cluster 7657 with less than 3 points
-Skipping cluster 10259 with less than 3 points
-Skipping cluster 10711 with less than 3 points
-Skipping cluster 16463 with less than 3 points
-Skipping cluster 17785 with less than 3 points
-Skipping cluster 19040 with less than 3 points
-M3 - Clusters at 1: 18531, Clusters at 2: 2426, Total clusters: 20969
+North pole M3 threshold: 0.50 (8.57% of data)
+Clustering M3 pole with eps=0.75 and min_cluster=85
+M3 - Clusters at 1: 215, Clusters at 2: 623, Total clusters: 839
+South pole M3 threshold: 0.39 (4.78% of data)
+Clustering M3 pole with eps=0.75 and min_cluster=85
+M3 - Clusters at 1: 236, Clusters at 2: 655, Total clusters: 891
 Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/M3_label_plot.png for M3
 
+
+Taking the top 0.23% of points from MiniRF. Threshold = 2.07
+Label plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/MiniRF_label_plot.png for MiniRF
+
+
 Label counts:
-Diviner label - 0: 50.54%
+Diviner label - 0: 99.98%
 Diviner label - 1: 0.00%
-Diviner label - 2: 49.46%
-LOLA label - 0: 97.78%
-LOLA label - 1: 0.03%
-LOLA label - 2: 2.19%
-M3 label - 0: 99.49%
-M3 label - 1: 0.28%
-M3 label - 2: 0.23%
-MiniRF label - 0: 95.20%
-MiniRF label - 1: 4.80%
+Diviner label - 2: 0.02%
+LOLA label - 0: 97.11%
+LOLA label - 1: 0.15%
+LOLA label - 2: 2.74%
+M3 label - 0: 93.70%
+M3 label - 1: 3.87%
+M3 label - 2: 2.42%
+MiniRF label - 0: 99.77%
+MiniRF label - 1: 0.23%
 MiniRF label - 2: 0.00%
+
+Label proportions after combining:
+Label
+0    90.944949
+2     4.573272
+1     4.108655
+4     0.255809
+3     0.116864
+5     0.000421
+6     0.000030
+Name: proportion, dtype: float64
+
+Total number of points: 110534688
+
 Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
-Dataframes labeled
+Len of df: 110534688, dtype of label: int8
+Len of df_bin: 110534688, dtype of label: int64
+Percentage of labels >= 3: 0.37%
+
+Binary label proportions (label=3):
+Label
+0    99.626876
+1     0.373124
+Name: proportion, dtype: float64
+
+Total number of points: 110534688
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots
+Proportion of binary labels indicating psr: 0.3776%
+Dataframes labeled after 198.40 mins
 
 
-Job finished on Mon  4 Nov 15:56:42 GMT 2024
-Total runtime: 119 minutes and 26 seconds
+Job finished on Wed 15 Jan 21:27:21 GMT 2025
+Total runtime: 199 minutes and 10 seconds
 
 ====================================
-CPU Time used: 02:01:16
-CPU Percent: 242%
-Memory usage: 110449380kb
-Approx Power usage: 0.0242
-Walltime usage: 01:59:37
+CPU Time used: 03:23:04
+CPU Percent: 309%
+Memory usage: 98565972kb
+Approx Power usage: 0.040600000000000004
+Walltime usage: 03:19:20
 
 ====================================

@@ -43,35 +43,45 @@ def process_LRO_image(image_file, address, metadata, data_type, max_val=1.0, min
 
 def generate_LRO_coords(image_shape, metadata):
     lines, samples = image_shape
-    projection_keys = ['LINE_PROJECTION_OFFSET', 'SAMPLE_PROJECTION_OFFSET', 'CENTER_LATITUDE',
-                       'CENTER_LONGITUDE', 'MAP_RESOLUTION', 'MINIMUM_LATITUDE', 'MAXIMUM_LATITUDE']
-    line_proj_offset, sample_proj_offset, center_lat, center_lon, map_res, min_lat, max_lat = \
-        (float(get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', key)) for key in projection_keys)
-    proj_type = get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'MAP_PROJECTION_TYPE', string=True)
-    a = get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'A_AXIS_RADIUS') if center_lat == 0.0 else 1737.4   # Moon's radius in km
 
-    # Generate pixel coordinates
-    x = (np.arange(samples) - sample_proj_offset) / map_res
-    y = (np.arange(lines) - line_proj_offset) / map_res
-    x, y = np.meshgrid(x, y)
+    projection_keys = ['LINE_PROJECTION_OFFSET', 'SAMPLE_PROJECTION_OFFSET', 'CENTER_LATITUDE',
+                       'CENTER_LONGITUDE', 'MAP_RESOLUTION', 'MINIMUM_LATITUDE', 'MAXIMUM_LATITUDE', 'MAP_SCALE']
+    line_proj_offset, sample_proj_offset, center_lat, center_lon, map_res, min_lat, max_lat, map_scale = \
+        (float(get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', key)) for key in projection_keys)
+
+    proj_type = get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'MAP_PROJECTION_TYPE', string=True)
+
+    a_km = float(get_metadata_value(metadata, 'IMAGE_MAP_PROJECTION', 'A_AXIS_RADIUS'))  # Moon's radius in km
+    a = 1737.4 * 1e3 if a_km is None else a_km * 1e3  # Default to Moon's radius if not found in metadata and convert to meters as map_scale is m/pixel
 
     if center_lat == 0.0:  # Equatorial (Mini-RF) - Simple Cylindrical
         assert proj_type == 'SIMPLE CYLINDRICAL', f"Unsupported projection type: {proj_type}"
         assert center_lat == 0.0 and center_lon == 0.0, "Center latitude and longitude must be 0.0 for Simple Cylindrical"
-        lons = np.degrees(x / a)
-        lon_scale = 360 / (2 * np.max(np.abs(lons)))  # Scale factor for longitudes
-        lons = (lons * lon_scale + 360) % 360  # Apply scaling and wrap to [0, 360)
 
-        # Map y directly to latitude range [-90, 90]
-        lats = y * (max_lat - min_lat) / np.max(np.abs(y))  # Scale y to latitude range
+        line_idxs = np.arange(lines)
+        sample_idxs = np.arange(samples)
+
+        sample_grid, line_grid = np.meshgrid(sample_idxs, line_idxs)
+
+        lats = (line_grid - line_proj_offset) / map_res
+        if lats.max() > 91 or lats.min() < -91:
+            raise ValueError(f"WARNING: Latitude values exceed bounds for Simple Cylindrical projection: {lats.min()} - {lats.max()}")
+
+        lats = np.clip(lats, -90, 90)   # due to line projection offset, lats can reach +- 90.31 so clip is applied
+        lons = (sample_grid - sample_proj_offset) / map_res
 
     else:   # Polar Stereographic (LOLA, Diviner)
         assert proj_type == 'POLAR STEREOGRAPHIC', f"Unsupported projection type: {proj_type}"
+
+        # Generate pixel coordinates
+        x = (np.arange(samples) - sample_proj_offset) * map_scale   
+        y = (np.arange(lines) - line_proj_offset) * map_scale
+        x, y = np.meshgrid(x, y)
+
         t = np.sqrt(x**2 + y**2)
         c = 2 * np.arctan(t / (2 * a))
 
-        lons = center_lon + np.degrees(np.arctan2(y, x))
-        lons = (center_lon + lons) % 360
+        lons = center_lon + np.degrees(np.arctan2(x, -y))
 
         if center_lat == 90.0:  # North Pole
             lats = center_lat - np.degrees(c)
@@ -80,10 +90,7 @@ def generate_LRO_coords(image_shape, metadata):
         else:
             raise ValueError(f"Center latitude is not supported: {center_lat}")
 
-    # Adjust latitude range to min_lat to max_lat
-    lat_scale = (max_lat - min_lat) / (np.max(lats) - np.min(lats))
-    lats = min_lat + (lats - np.min(lats)) * lat_scale
-    lats = np.clip(lats, min_lat, max_lat)
+    lons = lons % 360   # Convert to 0-360 range
 
     return lons, lats
 
@@ -92,11 +99,12 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
 
     os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
     os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
+    os.mkdir(data_dict['file_path']) if not os.path.exists(data_dict['file_path']) else None
 
     clear_dir(data_dict['save_path'])
 
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
-        print(f"Raw CSVs appear to exist for {data_type} data. Skipping load df.")
+        print(f"Raw CSVs for {data_type} found at: {data_dict['save_path']}. Skipping load df...")
         return
     print(f"Processing {data_type} data..."); sys.stdout.flush()
 
@@ -108,15 +116,13 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
     max_val = data_dict['max']
     min_val = data_dict['min']
 
-
     assert csv_save_path or plot_save_path, "At least one of 'save_path' or 'plot_path' must be provided."
     assert isinstance(data_type, str), "data_type must be a string."
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
 
-    # all_lons = []
-    # all_lats = []
-    # all_output_vals = []
+    if lbl_files == []:
+        raise ValueError(f"No files found with extension '{lbl_ext}' in directory: {file_path}\nHave you downloaded the data?")
 
     for lbl_file in lbl_files:
         lbl_path = f"{file_path}/{lbl_file}"
@@ -131,13 +137,17 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
         lons = lons.flatten()
         lats = lats.flatten()
 
-        assert np.all((lons >= 0) & (lons <= 360)), "Some longitude values are out of bounds."
-        assert np.all((lats >= -90) & (lats <= 90)), "Some latitude values are out of bounds."
+        if data_type == 'LOLA':
+            perc_remvd = np.sum((output_vals < min_val) | (output_vals > max_val)) / output_vals.size
+            print(f"Percentage of values removed for LOLA (out of bounds): {perc_remvd:.2%}")
 
         output_vals[(output_vals < min_val) | (output_vals > max_val)] = np.nan
 
         valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
-        valid_mask &= np.isfinite(output_vals)
+        valid_mask &= np.isfinite(output_vals)  # Remove non-finite vals from output_vals and clip coords to poles
+
+        assert np.all((lons >= 0) & (lons <= 360)), f"Some longitude values are out of bounds for {data_type}: \n{lons<0} \n{lons>360}"
+        assert np.all((lats >= -90) & (lats <= 90)), f"Some latitude values are out of bounds for {data_type}: \n{lats<-90} \n{lats>90}"
 
         df = pd.DataFrame({
             'Longitude': lons[valid_mask],
@@ -161,11 +171,16 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
 
     df = pd.concat(df_list, ignore_index=True)
 
+    # Cast lon and lat to float32 to save memory
+    # For lunar coordinates, this moves from sub-micrometer accuracy to sub-centimeter accuracy
+    df['Longitude'] = df['Longitude'].astype(np.float32)
+    df['Latitude'] = df['Latitude'].astype(np.float32)
+
     if plot_save_path:
         plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
 
     if debug:
-        print(f"{data_type} df:")
+        print(f"\n{data_type} df:")
         print(df.describe())
         create_hist(df, data_type)
 
@@ -173,7 +188,6 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
 
 
 def process_M3_image(image_file, address, metadata):
-
     lines = int(get_metadata_value(metadata, address, 'LINES'))
     line_samples = int(get_metadata_value(metadata, address, 'LINE_SAMPLES'))
     bands = int(get_metadata_value(metadata, address, 'BANDS'))
@@ -260,30 +274,6 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     assert os.path.isfile(loc_img_path), f"Location image file not found: {loc_img_path}"
     assert os.path.isfile(loc_lbl_path), f"Location label file not found: {loc_lbl_path}"
 
-    # loc_lbl_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_lbl_ext'])]
-    # loc_img_urls = [os.path.join(loc_file_dir, f) for f in os.listdir(loc_file_dir) if f.endswith(data_dict['loc_img_ext'])]
-
-
-    # loc_lbl_file = None
-    # loc_img_file = None
-
-    # # Loop through the lines and find the one that contains the loc_file_name
-    # for loc_lbl_url in loc_lbl_urls:
-    #     if loc_lbl_name in loc_lbl_url:
-    #         loc_lbl_file = loc_lbl_url
-    #         break
-
-    # # Loop through lines in the text file and find the one that contains the loc_img_name
-    # for loc_img_url in loc_img_urls:
-    #     if loc_img_name in loc_img_url:
-    #         loc_img_file = loc_img_url
-    #         break
-
-    # if not loc_lbl_file or not loc_img_file:
-    #     raise ValueError(f"Location file not found for {loc_lbl_name} or {loc_img_name}")
-
-    # with open(loc_lbl_path, 'rb') as f:
-    #     loc_metadata = parse_metadata_content(f.read())
     loc_metadata = parse_metadata_content(loc_lbl_path)
     
     loc_address = data_dict['loc_address']
@@ -314,13 +304,6 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     if loc_data.size != lines * line_samples * bands:
         raise ValueError(f"Mismatch in data size: expected {lines * line_samples * bands}, got {loc_data.size}")
     
-    # METHOD 1
-    # loc_data = loc_data.reshape((bands, lines, line_samples))
-    # lons = loc_data[0]
-    # lats = loc_data[1]
-    # radii = loc_data[2]
-
-    # METHOD 2
     lons = np.empty((lines, line_samples))
     lats = np.empty((lines, line_samples))
     radii = np.empty((lines, line_samples))
@@ -345,12 +328,14 @@ def generate_M3_coords(image_shape, metadata, data_dict):
 def load_m3_df(data_dict, plot_frac=0.25, debug=False):
     os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
     os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
+    os.mkdir(data_dict['file_path']) if not os.path.exists(data_dict['file_path']) else None
 
     clear_dir(data_dict['save_path'])
 
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
-        print(f"Raw CSVs appear to exist for M3 data. Skipping load df.")
+        print(f"Raw CSVs for M3 found at: {data_dict['save_path']}. Skipping load df...")
         return
+    print(f"Processing M3 data..."); sys.stdout.flush()
 
     file_path = data_dict['file_path']
     address = data_dict['address']
@@ -361,6 +346,8 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
     assert plot_save_path or csv_save_path, "At least one of 'plot_path' or 'save_path' must be provided."
 
     lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
+    if lbl_files == []:
+        raise ValueError(f"No files found with extension '{lbl_ext}' in directory: {file_path}\nHave you downloaded the data?")
 
     for lbl_file in lbl_files:
         lbl_path = f"{file_path}/{lbl_file}"
@@ -403,6 +390,11 @@ def load_m3_df(data_dict, plot_frac=0.25, debug=False):
             df_list.append(df_temp)
 
     df = pd.concat(df_list, ignore_index=True)
+
+    # Cast lon and lat to float32 to save memory
+    # For lunar coordinates, this moves from sub-micrometer accuracy to sub-centimeter accuracy
+    df['Longitude'] = df['Longitude'].astype(np.float32)
+    df['Latitude'] = df['Latitude'].astype(np.float32)
 
     if plot_save_path:
         plot_polar_data(df, 'M3', frac=plot_frac, save_path=plot_save_path)

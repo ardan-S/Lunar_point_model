@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N process_data
-#PBS -l select=1:ncpus=4:mem=128gb
+#PBS -l select=1:ncpus=4:mem=512gb
 #PBS -l walltime=15:00:00
 
 #PBS -j oe
@@ -13,6 +13,8 @@ start_time=$(date +%s)
 
 # Navigate to the directory where the job was submitted
 cd $PBS_O_WORKDIR
+
+rm -rf ../../data/CSVs/combined/*.csv
 
 # Run the Python script
 python ../process_data.py   --n_workers 4 \

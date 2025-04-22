@@ -1,7 +1,7 @@
 name: final-report
 
 # on: [push, pull_request]
-on: []
+on: workflow_dispatch
 
 jobs:
   tests:

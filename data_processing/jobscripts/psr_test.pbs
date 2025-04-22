@@ -1,10 +1,10 @@
 #!/bin/bash
-#PBS -N compute_psrs
-#PBS -l select=1:ncpus=4:mem=64gb
-#PBS -l walltime=01:00:00
+#PBS -N psr_test
+#PBS -l select=1:ncpus=4:mem=512gb
+#PBS -l walltime=06:00:00
 
 #PBS -j oe
-#PBS -o /rds/general/user/as5023/home/Lunar_point_model/data_processing/logs/compute_psrs.log.pbs
+#PBS -o /rds/general/user/as5023/home/Lunar_point_model/data_processing/logs/psr_test.log.pbs
 
 eval "$(~/miniforge3/bin/conda shell.bash hook)"    # Load conda
 conda activate IRP
@@ -15,7 +15,7 @@ start_time=$(date +%s)
 cd $PBS_O_WORKDIR
 
 # Run the Python script
-python ../compute_psrs.py --n_workers 4
+python ../psr_test.py --n_workers 4
 
 end_time=$(date +%s)
 

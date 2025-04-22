@@ -25,6 +25,7 @@ dependencies:
  - pyproj
  - astropy
  - h5py
+ - seaborn
  - pip:
    - jupyter-book
    - pybryt

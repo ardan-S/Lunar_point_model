@@ -1,0 +1,94 @@
+Region  Number of points Non psr (%) psr (%) Lon min Lon max Lat min Lat max
+ South          11414184      96.28%   3.72%   0.015 359.985 -89.994 -75.000
+ North          11414184      96.77%   3.23%   0.015 359.985  75.000  89.994
+ Total          22828368      96.53%   3.47%   0.015 359.985 -89.994  89.994
+
+Plot saved to ../../data/plots
+
+Label proportions after combining 1:
+Label
+0    90.944949
+2     4.573272
+1     4.108655
+4     0.255809
+3     0.116864
+5     0.000421
+6     0.000030
+Name: proportion, dtype: float64
+
+Total number of points: 110534688
+
+Max distance (northern): 0.007002650713381136
+Mean distance (northern): 0.0037846855539377337
+Max distance (southern): 0.0070009699114467715
+Mean distance (southern): 0.003784346028938587
+
+Label proportions after combining 2:
+Label
+0.0    94.172001
+1.0     3.352552
+2.0     2.381971
+3.0     0.052154
+4.0     0.041295
+5.0     0.000026
+Name: proportion, dtype: float64
+
+Total number of points: 22828368
+
+Density of combined_df_n: 3685869.8432802972
+Density of psr_df_n: 761230.6571354773
+Density of combined_df_s: 3683441.7340291245
+Density of psr_df_s: 761230.6571354773
+
+Percentage of points which are PSRs:            3.47%
+Percentage of psrs at NP:                       46.42%
+Percentage of psrs at SP:                       53.58%
+
+Percentage of points labelled >=2:              2.48%
+Percentage of points labelled >=3:              0.09%
+Percentage of points labelled >=4:              0.04%
+
+Percentage of labels >=2 labeled as PSR:        17.73%
+Percentage of labels >=3 labeled as PSR:        44.00%
+Percentage of labels >=4 labeled as PSR:        77.12%
+
+Percentage of each label which is a PSR:
+Label = 0,  608748  points out of 21497931  are PSR  (2.83%)
+Label = 1,   84104  points out of   765333  are PSR  (10.99%)
+Label = 2,   90831  points out of   543765  are PSR  (16.70%)
+Label = 3,    2115  points out of    11906  are PSR  (17.76%)
+Label = 4,    7274  points out of     9427  are PSR  (77.16%)
+Label = 5,       1  points out of        6  are PSR  (16.67%)
+Label = 6,       0  points out of        0  are PSR  (0.00%)
+Label = 7,       0  points out of        0  are PSR  (0.00%)
+
+Plot saved to ../../data/plots
+Proportion of binary labels indicating psr: 0.0977%
+Percentage of points with cat 0: 96.47%
+Percentage of points with cat 1: 3.43%
+Percentage of points with cat 2: 0.05%
+Percentage of points with cat 3: 0.04%
+Plot saved to ../../data/plots
+
+Accuracy: 0.9651
+Precision: 0.7028
+Recall: 0.5056
+F1 Score: 0.5027
+
+Balanced Accuracy: 0.5056
+
+Weighted Precision: 0.9474
+Weighted Recall: 0.9651
+Weighted F1 Score: 0.9489
+
+Job finished on Wed 15 Jan 22:43:37 GMT 2025
+Total runtime: 11 minutes and 10 seconds
+
+====================================
+CPU Time used: 00:09:42
+CPU Percent: 156%
+Memory usage: 34239864kb
+Approx Power usage: 0.0017999999999999997
+Walltime usage: 00:11:20
+
+====================================

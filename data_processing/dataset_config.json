@@ -47,7 +47,7 @@
         "img_ext": ".img",
         "lbl_ext": ".lbl",
         "address": "IMAGE",
-        "max": 1.5,
+        "max": 4.5,
         "min": 0
     },
     "Combined": {
