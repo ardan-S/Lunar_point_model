@@ -4,6 +4,7 @@ from scipy.interpolate import Rbf, griddata
 import os
 import sys
 from scipy.stats import binned_statistic_2d
+from scipy.spatial import cKDTree
 
 from data_processing.utils.utils import generate_mesh, save_by_lon_range, plot_polar_data, load_every_nth_line
 
@@ -127,7 +128,6 @@ def interpolate_using_griddata(df, lon_lat_grid_north, lon_lat_grid_south, metho
     lons = df['Longitude'].values
     lats = df['Latitude'].values
     values = df[data_type].values
-    
     points = np.column_stack((lons, lats))
 
     # Interpolation on northern mesh grid
@@ -167,62 +167,72 @@ def interpolate_using_griddata(df, lon_lat_grid_north, lon_lat_grid_south, metho
     return interpolated_df
 
 
-def interpolate_diviner(df, lon_lat_grid_north, lon_lat_grid_south, method='linear', n_bins=100):
-    # Extract data
+def interpolate_diviner(df, lon_lat_grid_north, lon_lat_grid_south, method='linear'):
     lons = df['Longitude'].values
     lats = df['Latitude'].values
     values = df['Diviner'].values
 
-    # Spatial binning and compute maxima in each bin
-    lon_bins = np.linspace(lons.min(), lons.max(), n_bins + 1)
-    lat_bins = np.linspace(lats.min(), lats.max(), n_bins + 1)
+    assert np.all(np.abs(lats) >= 75), "Diviner data contains points between lat 75 and -75"
 
-    max_temp, _, _, _ = binned_statistic_2d(
-        x=lons, y=lats, values=values, statistic='max', bins=(lon_bins, lat_bins)   # type: ignore
-    )
+    lon_grid_north, lat_grid_north = lon_lat_grid_north[:, 0], lon_lat_grid_north[:, 1]
+    lon_grid_south, lat_grid_south = lon_lat_grid_south[:, 0], lon_lat_grid_south[:, 1]
 
-    # Compute centers of bins
-    lon_centers = (lon_bins[:-1] + lon_bins[1:]) / 2
-    lat_centers = (lat_bins[:-1] + lat_bins[1:]) / 2
-    lon_grid, lat_grid = np.meshgrid(lon_centers, lat_centers)
+    north_mask = lats >= 75
+    south_mask = lats <= -75
 
-    # Flatten grids and filter valid points
-    valid_mask = ~np.isnan(max_temp.ravel())
-    points = np.column_stack((lon_grid.ravel()[valid_mask], lat_grid.ravel()[valid_mask]))
-    max_values = max_temp.ravel()[valid_mask]
+    points_n = np.column_stack((lons[north_mask], lats[north_mask]))
+    values_n = values[north_mask]
 
-    # Interpolate onto northern and southern grids
-    lon_grid_n = lon_lat_grid_north[:, 0]
-    lat_grid_n = lon_lat_grid_north[:, 1]
-    coords_n = np.column_stack((lon_grid_n, lat_grid_n))
+    points_s = np.column_stack((lons[south_mask], lats[south_mask]))
+    values_s = values[south_mask]
 
-    interp_n = griddata(points, max_values, coords_n, method=method)
+    grid_n = np.column_stack((lon_grid_north, lat_grid_north))
+    grid_s = np.column_stack((lon_grid_south, lat_grid_south))
 
-    lon_grid_s = lon_lat_grid_south[:, 0]
-    lat_grid_s = lon_lat_grid_south[:, 1]
-    coords_s = np.column_stack((lon_grid_s, lat_grid_s))
+    print("Points stacked"); sys.stdout.flush()
 
-    interp_s = griddata(points, max_values, coords_s, method=method)
+    interp_n = max_rad_interp(points_n, values_n, grid_n)
+    interp_s = max_rad_interp(points_s, values_s, grid_s)
+
+    print("Interpolated"); sys.stdout.flush()
 
     # Fill gaps with nearest interpolation
     if np.any(np.isnan(interp_n)):
         nan_idx_north = np.isnan(interp_n)
-        interp_n[nan_idx_north] = griddata(
-            points, max_values, coords_n[nan_idx_north], method='nearest'
-        )
+        interp_n[nan_idx_north] = griddata(points_n, values, grid_n[nan_idx_north], method='nearest')
 
     if np.any(np.isnan(interp_s)):
         nan_idx_south = np.isnan(interp_s)
-        interp_s[nan_idx_south] = griddata(
-            points, max_values, coords_s[nan_idx_south], method='nearest'
-        )
+        interp_s[nan_idx_south] = griddata(points_n, values, grid_s[nan_idx_south], method='nearest')
+
     interpolated_df = pd.DataFrame({
-        'Longitude': np.concatenate([lon_grid_n, lon_grid_s]),
-        'Latitude': np.concatenate([lat_grid_n, lat_grid_s]),
+        'Longitude': np.concatenate([lon_grid_north, lon_grid_south]),
+        'Latitude': np.concatenate([lat_grid_north, lat_grid_south]),
         'Diviner': np.concatenate([interp_n, interp_s])
     })
 
     return interpolated_df
+
+
+def max_rad_interp(points, values, targets, radius_degs=0.5):
+    tree = cKDTree(points)
+    print("Built tree"); sys.stdout.flush()
+    idx_lists = tree.query_ball_point(targets, r=radius_degs)   # Vectorised query for all targets
+    print("Queried"); sys.stdout.flush()
+
+    interpolated = np.empty(len(targets), dtype=float)
+    points_per_target = np.array([len(idxs) for idxs in idx_lists])
+    print(f"Average num points per target: {np.mean(points_per_target)}")
+    print(f"Min num points per target: {np.min(points_per_target)}")
+    print(f"Max num points per target: {np.max(points_per_target)}")
+    sys.stdout.flush()
+
+    for i, idxs in enumerate(idx_lists):
+        if idxs:
+            interpolated[i] = np.nanmax(values[idxs])   # Take max if possible
+        else:
+            interpolated[i] = np.nan    # Set to nan if no points
+    return interpolated
 
 
 def interpolate(data_dict, data_type, plot_save_path=None, method='linear', debug=False):
@@ -244,19 +254,17 @@ def interpolate(data_dict, data_type, plot_save_path=None, method='linear', debu
 
     for (csv, (lon_lat_grid_north, lon_lat_grid_south)) in zip(csvs, meshes):
         df = pd.read_csv(f"{data_dict['save_path']}/{csv}")
-        print(f"{len(df)} rows in raw csv: {csv}")
 
         if data_type == 'Diviner':
-            print(f"Interpolating Diviner data for {csv}")
             weights = df[data_type].values / df[data_type].sum()
             df = df.sample(frac=div_frac, weights=weights, random_state=42)    # Resample Diviner data, weighted to higher values
-            interpolated_df = interpolate_diviner(df, lon_lat_grid_north, lon_lat_grid_south, n_bins=400)
+            print(f"Interpolating Diviner for {csv}"); sys.stdout.flush()
+            interpolated_df = interpolate_diviner(df, lon_lat_grid_north, lon_lat_grid_south)
+            print()
         else:
-            print(f"Interpolating {data_type} data for {csv}")
             elev = df['Elevation'].values if data_type == 'M3' else None
             interpolated_df = interpolate_using_griddata(df, lon_lat_grid_north, lon_lat_grid_south, method, elev, data_type)
     
-        print(f"Saving interpolated data length: {len(interpolated_df)}")
         save_by_lon_range(interpolated_df, save_path)
 
         del interpolated_df, df
