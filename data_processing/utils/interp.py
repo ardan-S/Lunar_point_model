@@ -250,7 +250,7 @@ def interpolate(data_dict, data_type, plot_save_path=None, method='linear', debu
 
     div_frac = 0.25
     if data_type == 'Diviner':
-        print(f"NOTE: Diviner resampled for {div_frac*100}% of data across all csvs due to abundance of data. Weighted to higher values"); sys.stdout.flush()
+        print(f"NOTE: Diviner resampled for {div_frac:.2%} of data across all csvs due to abundance of data. Weighted to higher values"); sys.stdout.flush()
 
     for (csv, (lon_lat_grid_north, lon_lat_grid_south)) in zip(csvs, meshes):
         df = pd.read_csv(f"{data_dict['save_path']}/{csv}")

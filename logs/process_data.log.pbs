@@ -1,0 +1,13 @@
+python: can't open file '/rds/general/user/as5023/home/Lunar_point_model/jobscripts/pbs/../data_processing/process_data.py': [Errno 2] No such file or directory
+
+Job finished on Tue 22 Apr 15:17:20 BST 2025
+Total runtime: 0 minutes and 1 seconds
+
+====================================
+CPU Time used: 00:00:00
+CPU Percent: 0%
+Memory usage: 0b
+Approx Power usage: 0.0
+Walltime usage: 00:00:11
+
+====================================

@@ -35,32 +35,32 @@ def main(args):
 
     print(f"Loading stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
 
-    with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
-        interp_futures = [
-            executor.submit(interpolate, dataset_dict['Diviner'], 'Diviner', plot_save_path=dataset_dict['Diviner']['plot_path'], debug=True),
-            executor.submit(interpolate, dataset_dict['LOLA'], 'LOLA', plot_save_path=dataset_dict['LOLA']['plot_path'], debug=True),
-            executor.submit(interpolate, dataset_dict['M3'], 'M3', plot_save_path=dataset_dict['M3']['plot_path'], debug=True),
-            executor.submit(interpolate, dataset_dict['MiniRF'], 'MiniRF', plot_save_path=dataset_dict['MiniRF']['plot_path'], debug=True)
-        ]
+    # with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
+    #     interp_futures = [
+    #         executor.submit(interpolate, dataset_dict['Diviner'], 'Diviner', plot_save_path=dataset_dict['Diviner']['plot_path'], debug=True),
+    #         executor.submit(interpolate, dataset_dict['LOLA'], 'LOLA', plot_save_path=dataset_dict['LOLA']['plot_path'], debug=True),
+    #         executor.submit(interpolate, dataset_dict['M3'], 'M3', plot_save_path=dataset_dict['M3']['plot_path'], debug=True),
+    #         executor.submit(interpolate, dataset_dict['MiniRF'], 'MiniRF', plot_save_path=dataset_dict['MiniRF']['plot_path'], debug=True)
+    #     ]
 
-        for future in as_completed(interp_futures):
-            try:
-                future.result()
-            except Exception as e:
-                raise e
+    #     for future in as_completed(interp_futures):
+    #         try:
+    #             future.result()
+    #         except Exception as e:
+    #             raise e
 
-    print(f"Interpolation stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
+    # print(f"Interpolation stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
 
-    label(combine(dataset_dict['Diviner']['interp_dir'],
-                  dataset_dict['LOLA']['interp_dir'],
-                  dataset_dict['M3']['interp_dir'],
-                  dataset_dict['MiniRF']['interp_dir'], 
-                  n_workers=args.n_workers
-                  ),
-            dataset_dict, args.plot_dir
-            )
+    # label(combine(dataset_dict['Diviner']['interp_dir'],
+    #               dataset_dict['LOLA']['interp_dir'],
+    #               dataset_dict['M3']['interp_dir'],
+    #               dataset_dict['MiniRF']['interp_dir'], 
+    #               n_workers=args.n_workers
+    #               ),
+    #         dataset_dict, args.plot_dir
+    #         )
 
-    print(f"Dataframes labeled after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
+    # print(f"Dataframes labeled after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
 
 
 def parse_args():
