@@ -6,25 +6,32 @@ import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from data_processing.utils.load_dfs import load_lro_df, load_m3_df
-from data_processing.utils.interp import interpolate
+from data_processing.utils.load_dfs import load_lro_df, load_m3_df, load_lola_df
+from data_processing.utils.interp2 import interpolate
 from data_processing.utils.label import combine, label
 from data_processing.utils.utils import load_dataset_config
 
 
 def main(args):
     start_time = time.time()
-    dataset_dict = load_dataset_config('../dataset_config.json', args)
+    dataset_dict = load_dataset_config('../../data_processing/dataset_config.json', args)
 
     os.makedirs(args.save_dir, exist_ok=True)
     os.makedirs(args.download_dir, exist_ok=True)
 
+    # Temporarily disable plot saving
+    dataset_dict['Diviner']['plot_path'] = None
+    dataset_dict['LOLA']['plot_path'] = None
+    dataset_dict['M3']['plot_path'] = None
+    dataset_dict['MiniRF']['plot_path'] = None
+    print("REMINDER: Plot saving is disabled. ")
+
     with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
         load_futures = [
-            executor.submit(load_lro_df, dataset_dict['Diviner'], 'Diviner', debug=True),
-            executor.submit(load_lro_df, dataset_dict['LOLA'], 'LOLA', debug=True, plot_frac=0.5),
-            executor.submit(load_m3_df, dataset_dict['M3'], debug=True),
-            executor.submit(load_lro_df, dataset_dict['MiniRF'], 'MiniRF', debug=True)
+            executor.submit(load_lro_df, dataset_dict['Diviner'], 'Diviner', plot_frac=0.5),
+            executor.submit(load_lola_df, dataset_dict['LOLA'], 'LOLA', plot_frac=1.),
+            executor.submit(load_m3_df, dataset_dict['M3']),
+            executor.submit(load_lro_df, dataset_dict['MiniRF'], 'MiniRF')
         ]
 
         for future in as_completed(load_futures):
@@ -35,21 +42,23 @@ def main(args):
 
     print(f"Loading stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
 
-    # with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
-    #     interp_futures = [
-    #         executor.submit(interpolate, dataset_dict['Diviner'], 'Diviner', plot_save_path=dataset_dict['Diviner']['plot_path'], debug=True),
-    #         executor.submit(interpolate, dataset_dict['LOLA'], 'LOLA', plot_save_path=dataset_dict['LOLA']['plot_path'], debug=True),
-    #         executor.submit(interpolate, dataset_dict['M3'], 'M3', plot_save_path=dataset_dict['M3']['plot_path'], debug=True),
-    #         executor.submit(interpolate, dataset_dict['MiniRF'], 'MiniRF', plot_save_path=dataset_dict['MiniRF']['plot_path'], debug=True)
-    #     ]
+    os.makedirs(args.interp_dir, exist_ok=True)
 
-    #     for future in as_completed(interp_futures):
-    #         try:
-    #             future.result()
-    #         except Exception as e:
-    #             raise e
+    with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
+        interp_futures = [
+            executor.submit(interpolate, dataset_dict['Diviner'], 'Diviner', plot_save_path=dataset_dict['Diviner']['plot_path'], debug=True),
+            executor.submit(interpolate, dataset_dict['LOLA'], 'LOLA', plot_save_path=dataset_dict['LOLA']['plot_path'], debug=True),
+            executor.submit(interpolate, dataset_dict['M3'], 'M3', plot_save_path=dataset_dict['M3']['plot_path'], debug=True),
+            executor.submit(interpolate, dataset_dict['MiniRF'], 'MiniRF', plot_save_path=dataset_dict['MiniRF']['plot_path'], debug=True)
+        ]
 
-    # print(f"Interpolation stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
+        for future in as_completed(interp_futures):
+            try:
+                future.result()
+            except Exception as e:
+                raise e
+
+    print(f"Interpolation stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
 
     # label(combine(dataset_dict['Diviner']['interp_dir'],
     #               dataset_dict['LOLA']['interp_dir'],

@@ -15,7 +15,7 @@ start_time=$(date +%s)
 cd $PBS_O_WORKDIR
 
 # Run the Python script
-python ../data_processing/psr_test.py --n_workers 4
+python ../../data_processing/psr_test.py --n_workers 4
 
 end_time=$(date +%s)
 

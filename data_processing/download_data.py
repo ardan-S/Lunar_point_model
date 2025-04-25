@@ -15,13 +15,16 @@ import aiohttp
 from bs4 import BeautifulSoup
 import time
 from pathlib import Path
+import requests
 
 
-def clear_dir(home_dir):
+def clear_dir(home_dir, dirs_only=True):
     for file in os.listdir(home_dir):
         full_path = os.path.join(home_dir, file)
         if os.path.isdir(full_path):
             shutil.rmtree(full_path)    # Remove directories and their contents
+        elif not dirs_only:
+            os.remove(full_path)
 
 
 async def download_file(session, url, download_dir, semaphore):
@@ -82,36 +85,148 @@ async def download_diviner(download_dir, home_url, session, semaphore, keyword='
         print(f"Downloaded {n_files_down} Diviner files")
 
 
-async def download_lola(download_dir, home_url, session, semaphore, keyword='ldam', test=False):
-    tasks = []
+# async def download_lola(download_dir, home_url, session, semaphore, keyword='lro', test=False):
+
+#     os.makedirs(download_dir, exist_ok=True)
+
+#     lasers = ["laser1", "laser2"]
+#     tasks = []
+#     n_tot = n_down = 0
+
+#     for laser in lasers:
+#         # Get subdirs for each laser
+#         laser_url = urljoin(home_url, f"{laser}/")
+#         try:
+#             async with semaphore, session.get(laser_url) as response:
+#                 response.raise_for_status()
+#                 text = await response.text()
+#         except Exception as e:
+#             print(f"Failed to fetch LOLA data from {laser_url}. Error: {e}")
+#             continue
+
+#         soup = BeautifulSoup(text, 'html.parser')
+#         subdirs = [
+#             a['href'].rstrip('/') for a in soup.find_all('a', href=True)
+#             if a['href'].endswith('/')
+#         ]
+
+#         # Download .tab files from each subdir
+#         for subdir in subdirs:
+#             subdir_url = urljoin(laser_url, f"{subdir}/")
+#             try:
+#                 async with semaphore, session.get(subdir_url) as response2:
+#                     response2.raise_for_status()
+#                     text2 = await response2.text()
+#             except Exception as e:
+#                 print(f"Failed to fetch LOLA data from {subdir_url}. Error: {e}")
+#                 continue
+
+#             soup2 = BeautifulSoup(text2, 'html.parser')
+#             tab_files = [
+#                 a['href'] for a in soup2.find_all('a', href=True)
+#                 if a['href'].lower().endswith('.tab')
+#             ]
+#             n_tot += len(tab_files)
+
+#             for tab in tab_files:
+#                 file_url = urljoin(subdir_url, tab)
+#                 tasks.append(download_file(session, file_url, download_dir, semaphore))
+#                 n_down += 1
+#                 if test:
+#                     break
+#             if test:
+#                 break
+        
+#     await asyncio.gather(*tasks)
+#     print(f"Downloaded {n_down} LOLA files out of {n_tot} files")
+
+
+async def _fetch(session, url, semaphore):
+    """Return the directory listing for *url* or None on failure."""
     try:
-        async with session.get(home_url) as response:
-            response.raise_for_status()
-            content = await response.read()
-    except Exception as e:
-        print(f"Failed to fetch LOLA data from {home_url}. Error: {e}")
-        return
+        async with semaphore, session.get(url) as r:
+            r.raise_for_status()
+            return await r.text()
+    except Exception as exc:
+        print(f"Failed to fetch {url}. Error: {exc}")
+        return None
 
-    soup = BeautifulSoup(content, 'html.parser')
-    jp2_urls = [
-        urljoin(home_url, link['href'])  # Construct the full URL
-        for link in soup.find_all('a', href=True)  # Find all <a> tags with href attribute
-        if link['href'].endswith('.jp2')  # Filter for .jp2 files
-        and keyword in link['href']  # Ensure the keyword (e.g., 'ldam') is in the file path
-    ]
 
-    for jp2_url in jp2_urls:
-        lbl_url = jp2_url.replace('.jp2', '_jp2.lbl')
-        tasks.append(download_file(session, jp2_url, download_dir, semaphore))
-        tasks.append(download_file(session, lbl_url, download_dir, semaphore))
-        if test:
-            break
+def _split_listing(html):
+    """Return ([dirs], [tab_files]) from a directory listing page."""
+    soup = BeautifulSoup(html, "html.parser")
+    dirs = [a["href"].rstrip("/")
+            for a in soup.find_all("a", href=True)
+            if a["href"].endswith("/") and not a["href"].startswith("..")]
+    tabs = [a["href"]
+            for a in soup.find_all("a", href=True)
+            if a["href"].lower().endswith(".tab")]
+    return dirs, tabs
+
+
+async def download_lola(download_dir, home_url, session, semaphore,
+                        keyword="lro", test=False):
+
+    os.makedirs(download_dir, exist_ok=True)
+
+    lasers = ["laser1", "laser2"]
+    tasks, n_tot, n_down = [], 0, 0
+
+    for laser in lasers:
+        laser_url = urljoin(home_url, f"{laser}/")
+        listing = await _fetch(session, laser_url, semaphore)
+        if listing is None:
+            continue
+
+        subdirs_lvl1, _ = _split_listing(listing)
+
+        for sub1 in subdirs_lvl1:
+            lvl1_url = urljoin(laser_url, f"{sub1}/")
+            lvl1_html = await _fetch(session, lvl1_url, semaphore)
+            if lvl1_html is None:
+                continue
+
+            # First try to harvest .tab files right here
+            _, tab_files = _split_listing(lvl1_html)
+
+            # If none found, the folder (e.g. polarpatch_np/sp) has another layer
+            if not tab_files:
+                subdirs_lvl2, _ = _split_listing(lvl1_html)
+
+                for sub2 in subdirs_lvl2:              # one level deeper
+                    lvl2_url = urljoin(lvl1_url, f"{sub2}/")
+                    lvl2_html = await _fetch(session, lvl2_url, semaphore)
+                    if lvl2_html is None:
+                        continue
+
+                    _, tab_files2 = _split_listing(lvl2_html)
+                    n_tot += len(tab_files2)
+
+                    for tab in tab_files2:
+                        file_url = urljoin(lvl2_url, tab)
+                        tasks.append(download_file(session, file_url,
+                                                   download_dir, semaphore))
+                        n_down += 1
+                        if test:
+                            break
+                    if test:
+                        break
+
+            else:
+                n_tot += len(tab_files)
+                for tab in tab_files:
+                    file_url = urljoin(lvl1_url, tab)
+                    tasks.append(download_file(session, file_url,
+                                               download_dir, semaphore))
+                    n_down += 1
+                    if test:
+                        break
+
+            if test:
+                break
 
     await asyncio.gather(*tasks)
-    if test:
-        print(f"Test: Downloaded 1 LOLA file out of {len(jp2_urls)} files")
-    else:
-        print(f"Downloaded {len(jp2_urls)} LOLA files")
+    print(f"Downloaded {n_down} LOLA files out of {n_tot} found")
 
 
 async def download_m3(download_dir, home_url, img_extension, lbl_extension, session, semaphore, keyword='DATA', test=False):
@@ -189,7 +304,8 @@ async def main(args):
             'download_func': download_diviner
         },
         'LOLA': {
-            'url': 'https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/jp2/',
+            # 'url': 'https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/jp2/',
+            'url': 'https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_radr/',
             'path': os.path.join(args.download_dir, 'LOLA'),
             'download_func': download_lola
         },
@@ -246,7 +362,7 @@ async def main(args):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--download_dir", type=str, default="../../data/raw", help="Directory to download data to")
-    parser.add_argument("--existing_dirs", type=str, default="Replace", help="Replace or Skip existing directories")
+    parser.add_argument("--existing_dirs", type=str, default="Skip", help="Replace or Skip existing directories")
     return parser.parse_args()
 
 

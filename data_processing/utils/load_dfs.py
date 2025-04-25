@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt # type: ignore
 import sys
 
 from utils.utils import get_metadata_value, clean_metadata_value, parse_metadata_content, load_every_nth_line
-from utils.utils import decode_image_file, get_closest_channels, plot_polar_data, save_by_lon_range
+from utils.utils import decode_image_file, get_closest_channels, plot_polar_data, save_by_lon_range, create_hist, from_csv_and_desc
 from download_data import clear_dir
 
 
@@ -78,7 +78,7 @@ def generate_LRO_coords(image_shape, metadata):
         y = (np.arange(lines) - line_proj_offset) * map_scale
         x, y = np.meshgrid(x, y)
 
-        t = np.sqrt(x**2 + y**2)
+        t = np.sqrt(x**2 + y**2)    # noqa for some operator warning
         c = 2 * np.arctan(t / (2 * a))
 
         lons = center_lon + np.degrees(np.arctan2(x, -y))
@@ -95,96 +95,162 @@ def generate_LRO_coords(image_shape, metadata):
     return lons, lats
 
 
-def load_lro_df(data_dict, data_type, plot_frac=0.25, debug=False):
+def load_lro_df(data_dict, data_type, plot_frac=0.25, hist=False):
 
-    os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
-    os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
-    os.mkdir(data_dict['file_path']) if not os.path.exists(data_dict['file_path']) else None
+    if data_dict['save_path'] is not None:
+        os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
+    if data_dict['file_path'] is not None:
+        os.mkdir(data_dict['file_path']) if not os.path.exists(data_dict['file_path']) else None
+    if  data_dict['plot_path'] is not None:
+        os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
 
     clear_dir(data_dict['save_path'])
 
+    plot_save_path = data_dict['plot_path'] if 'plot_path' in data_dict else None
+
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"Raw CSVs for {data_type} found at: {data_dict['save_path']}. Skipping load df...")
-        return
-    print(f"Processing {data_type} data..."); sys.stdout.flush()
 
-    file_path = data_dict['file_path']
-    address = data_dict['address']
-    lbl_ext = data_dict['lbl_ext']
+    else:
+        print(f"Processing {data_type} data..."); sys.stdout.flush()
+
+        file_path = data_dict['file_path']
+        address = data_dict['address']
+        lbl_ext = data_dict['lbl_ext']
+        csv_save_path = data_dict['save_path'] if 'save_path' in data_dict else None
+        max_val = data_dict['max']
+        min_val = data_dict['min']
+
+        assert csv_save_path or plot_save_path, "At least one of 'save_path' or 'plot_path' must be provided."
+        assert isinstance(data_type, str), "data_type must be a string."
+
+        lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
+
+        if lbl_files == []:
+            raise ValueError(f"No files found with extension '{lbl_ext}' in directory: {file_path}\nHave you downloaded the data?")
+
+        for lbl_file in lbl_files:
+            lbl_path = f"{file_path}/{lbl_file}"
+            metadata = parse_metadata_content(lbl_path)
+            print(f"{data_type} {lbl_file} lines: {get_metadata_value(metadata, address, 'LINES')}, line samples: {get_metadata_value(metadata, address, 'LINE_SAMPLES')}")
+
+            img_file = lbl_path.replace(data_dict['lbl_ext'], data_dict['img_ext'])
+
+            image_data, output_vals = process_LRO_image(img_file, address, metadata, data_type, max_val, min_val)
+            output_vals = output_vals.flatten()
+
+            lons, lats = generate_LRO_coords(image_data.shape, metadata)
+            lons = lons.flatten()
+            lats = lats.flatten()
+
+            output_vals[(output_vals < min_val) | (output_vals > max_val)] = np.nan
+
+            valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
+            valid_mask &= np.isfinite(output_vals)  # Remove non-finite vals from output_vals and clip coords to poles
+
+            print(f"Valid mask: {valid_mask.sum()} / {valid_mask.size} valid values out of {valid_mask.size} total")
+
+            assert np.all((lons >= 0) & (lons <= 360)), f"Some longitude values are out of bounds for {data_type}: \n{lons<0} \n{lons>360}"
+            assert np.all((lats >= -90) & (lats <= 90)), f"Some latitude values are out of bounds for {data_type}: \n{lats<-90} \n{lats>90}"
+
+            df = pd.DataFrame({
+                'Longitude': lons[valid_mask],
+                'Latitude': lats[valid_mask],
+                data_type: output_vals[valid_mask]
+            })
+
+            assert data_type in df.columns, f"Data type '{data_type}' not found in dataframe columns."
+
+            if csv_save_path:
+                save_by_lon_range(df, csv_save_path)
+
+            del df, image_data, output_vals, lons, lats
+
+    if plot_save_path or hist:
+        df = from_csv_and_desc(data_dict, data_type)
+
+        if plot_save_path:
+            plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
+
+        if hist:
+            create_hist(df, data_type)
+
+
+def load_lola_df(data_dict, data_type, hist=False, plot_frac=0.25):
+
+    if data_dict['save_path'] is not None:
+        os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
+    if data_dict['file_path'] is not None:
+        os.mkdir(data_dict['file_path']) if not os.path.exists(data_dict['file_path']) else None
+    if  data_dict['plot_path'] is not None:
+        os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
+
+    clear_dir(data_dict['save_path'])
+
     csv_save_path = data_dict['save_path'] if 'save_path' in data_dict else None
     plot_save_path = data_dict['plot_path'] if 'plot_path' in data_dict else None
-    max_val = data_dict['max']
-    min_val = data_dict['min']
 
-    assert csv_save_path or plot_save_path, "At least one of 'save_path' or 'plot_path' must be provided."
-    assert isinstance(data_type, str), "data_type must be a string."
+    if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
+        print(f"Raw CSVs for {data_type} found at: {data_dict['save_path']}. Skipping load df...")
+    
+    else:
+        print(f"Processing {data_type} data..."); sys.stdout.flush()
 
-    lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
+        files = os.listdir(data_dict['file_path'])
+        if len(files) == 0:
+            raise ValueError(f"No files found in directory: {data_dict['file_path']}\nHave you downloaded the data?")
+                
+        filecount = 0
+        skipped = 0
+        for file in files:
+            filecount += 1
+            df_temp = pd.read_csv(os.path.join(data_dict['file_path'], file), sep=r'\s+', header=None)
 
-    if lbl_files == []:
-        raise ValueError(f"No files found with extension '{lbl_ext}' in directory: {file_path}\nHave you downloaded the data?")
+            if df_temp.shape[1] < 3:
+                raise ValueError(f"File {file} has only {df_temp.shape[1]} columns, expected at least 3. Processed {filecount} files.")
 
-    for lbl_file in lbl_files:
-        lbl_path = f"{file_path}/{lbl_file}"
-        metadata = parse_metadata_content(lbl_path)
+            df_temp = df_temp.iloc[:, :3]  # Select only the first three columns
+            df_temp.columns = ['Latitude', 'Longitude', data_type]
 
-        img_file = lbl_path.replace(data_dict['lbl_ext'], data_dict['img_ext'])
+            df_temp['Longitude'] = df_temp['Longitude'].astype(np.float32)
+            df_temp['Latitude'] = df_temp['Latitude'].astype(np.float32)
+            df_temp[data_type] = df_temp[data_type].astype(np.float32)
 
-        image_data, output_vals = process_LRO_image(img_file, address, metadata, data_type, max_val, min_val)
-        output_vals = output_vals.flatten()
+            # Check for values within latitude bounds
+            points_in_bounds = ((df_temp['Latitude'] <= -75) & (df_temp['Latitude'] >= -90)) | ((df_temp['Latitude'] <= 90) & (df_temp['Latitude'] >= 75))
+            if not points_in_bounds.any():
+                skipped += 1
+                continue
 
-        lons, lats = generate_LRO_coords(image_data.shape, metadata)
-        lons = lons.flatten()
-        lats = lats.flatten()
+            max_val = data_dict['max']
+            min_val = data_dict['min']
 
-        if data_type == 'LOLA':
-            perc_remvd = np.sum((output_vals < min_val) | (output_vals > max_val)) / output_vals.size
-            print(f"Percentage of values removed for LOLA (out of bounds): {perc_remvd:.2%}")
+            # df_temp[data_type][(df_temp[data_type] < min_val) | (df_temp[data_type] > max_val)] = np.nan
+            df_temp.loc[(df_temp[data_type] < min_val) | (df_temp[data_type] > max_val), data_type] = np.nan
 
-        output_vals[(output_vals < min_val) | (output_vals > max_val)] = np.nan
+            valid_mask = ((df_temp['Latitude'] <= -75) & (df_temp['Latitude'] >= -90)) | ((df_temp['Latitude'] <= 90) & (df_temp['Latitude'] >= 75))
+            valid_mask &= np.isfinite(df_temp[data_type])  # Remove non-finite vals from output_vals and clip coords to poles
 
-        valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
-        valid_mask &= np.isfinite(output_vals)  # Remove non-finite vals from output_vals and clip coords to poles
+            assert np.all((df_temp['Longitude'] >= 0) & (df_temp['Longitude'] <= 360)), f"Some longitude values are out of bounds for {data_type}: \n{df_temp['Longitude']<0} \n{df_temp['Longitude']>360}"
+            assert np.all((df_temp['Latitude'] >= -90) & (df_temp['Latitude'] <= 90)), f"Some latitude values are out of bounds for {data_type}: \n{df_temp['Latitude']<-90} \n{df_temp['Latitude']>90}"
 
-        assert np.all((lons >= 0) & (lons <= 360)), f"Some longitude values are out of bounds for {data_type}: \n{lons<0} \n{lons>360}"
-        assert np.all((lats >= -90) & (lats <= 90)), f"Some latitude values are out of bounds for {data_type}: \n{lats<-90} \n{lats>90}"
+            # Remove invalid values
+            df_temp.drop_duplicates(subset=['Longitude', 'Latitude'], inplace=True)
+            df_temp.reset_index(drop=True, inplace=True)
 
-        df = pd.DataFrame({
-            'Longitude': lons[valid_mask],
-            'Latitude': lats[valid_mask],
-            data_type: output_vals[valid_mask]
-        })
+            if csv_save_path:
+                save_by_lon_range(df_temp, csv_save_path)
 
-        assert data_type in df.columns, f"Data type '{data_type}' not found in dataframe columns."
+        print(f"\nLOLA: {filecount} files processed out of {len(files)}, {skipped} files skipped due to no valid points.")
 
-        if csv_save_path:
-            save_by_lon_range(df, csv_save_path)
+    if plot_save_path or hist:
+        df = from_csv_and_desc(data_dict, data_type)
 
-        del df, image_data, output_vals, lons, lats
+        if plot_save_path:
+            plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
 
-    df_list = []
-
-    for file in os.listdir(data_dict['save_path']):
-        if file.endswith('.csv') and 'lon' in file:
-            df_temp = load_every_nth_line(os.path.join(data_dict['save_path'], file), 10)
-            df_list.append(df_temp)
-
-    df = pd.concat(df_list, ignore_index=True)
-
-    # Cast lon and lat to float32 to save memory
-    # For lunar coordinates, this moves from sub-micrometer accuracy to sub-centimeter accuracy
-    df['Longitude'] = df['Longitude'].astype(np.float32)
-    df['Latitude'] = df['Latitude'].astype(np.float32)
-
-    if plot_save_path:
-        plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
-
-    if debug:
-        print(f"\n{data_type} df:")
-        print(df.describe())
-        create_hist(df, data_type)
-
-    del df, df_list
+        if hist:
+            create_hist(df, data_type)
 
 
 def process_M3_image(image_file, address, metadata):
@@ -325,93 +391,75 @@ def generate_M3_coords(image_shape, metadata, data_dict):
     return lons, lats, elev
 
 
-def load_m3_df(data_dict, plot_frac=0.25, debug=False):
-    os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
-    os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
-    os.mkdir(data_dict['file_path']) if not os.path.exists(data_dict['file_path']) else None
+def load_m3_df(data_dict, plot_frac=0.25, hist=False):
+
+    if data_dict['save_path'] is not None:
+        os.mkdir(data_dict['save_path']) if not os.path.exists(data_dict['save_path']) else None
+    if data_dict['file_path'] is not None:
+        os.mkdir(data_dict['file_path']) if not os.path.exists(data_dict['file_path']) else None
+    if  data_dict['plot_path'] is not None:
+        os.mkdir(data_dict['plot_path']) if not os.path.exists(data_dict['plot_path']) else None
 
     clear_dir(data_dict['save_path'])
+    
+    plot_save_path = data_dict['plot_path'] if 'plot_path' in data_dict else None
 
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"Raw CSVs for M3 found at: {data_dict['save_path']}. Skipping load df...")
-        return
-    print(f"Processing M3 data..."); sys.stdout.flush()
+    
+    else:
+        print(f"Processing M3 data..."); sys.stdout.flush()
 
-    file_path = data_dict['file_path']
-    address = data_dict['address']
-    lbl_ext = data_dict['lbl_ext']
-    plot_save_path = data_dict['plot_path'] if 'plot_path' in data_dict else None
-    csv_save_path = data_dict['save_path'] if 'save_path' in data_dict else None
+        file_path = data_dict['file_path']
+        address = data_dict['address']
+        lbl_ext = data_dict['lbl_ext']
+        csv_save_path = data_dict['save_path'] if 'save_path' in data_dict else None
 
-    assert plot_save_path or csv_save_path, "At least one of 'plot_path' or 'save_path' must be provided."
+        assert plot_save_path or csv_save_path, "At least one of 'plot_path' or 'save_path' must be provided."
 
-    lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
-    if lbl_files == []:
-        raise ValueError(f"No files found with extension '{lbl_ext}' in directory: {file_path}\nHave you downloaded the data?")
+        lbl_files = [f for f in os.listdir(file_path) if f.endswith(lbl_ext)]
+        if lbl_files == []:
+            raise ValueError(f"No files found with extension '{lbl_ext}' in directory: {file_path}\nHave you downloaded the data?")
 
-    for lbl_file in lbl_files:
-        lbl_path = f"{file_path}/{lbl_file}"
-        metadata = parse_metadata_content(lbl_path)
-        img_file = lbl_path.replace(data_dict['lbl_ext'], data_dict['img_ext'])
+        for lbl_file in lbl_files:
+            lbl_path = f"{file_path}/{lbl_file}"
+            metadata = parse_metadata_content(lbl_path)
+            img_file = lbl_path.replace(data_dict['lbl_ext'], data_dict['img_ext'])
 
-        image_data, output_vals = process_M3_image(img_file, address, metadata)
-        lons, lats, elev = generate_M3_coords(image_data.shape, metadata, data_dict)
+            image_data, output_vals = process_M3_image(img_file, address, metadata)
+            lons, lats, elev = generate_M3_coords(image_data.shape, metadata, data_dict)
 
-        lons = lons.flatten()
-        lats = lats.flatten()
-        elev = elev.flatten()
-        output_vals = output_vals.flatten()
+            lons = lons.flatten()
+            lats = lats.flatten()
+            elev = elev.flatten()
+            output_vals = output_vals.flatten()
 
-        assert np.all((lons >= 0) & (lons <= 360)), "Some longitude values are out of bounds."
-        assert np.all((lats >= -90) & (lats <= 90)), "Some latitude values are out of bounds."
+            assert np.all((lons >= 0) & (lons <= 360)), "Some longitude values are out of bounds."
+            assert np.all((lats >= -90) & (lats <= 90)), "Some latitude values are out of bounds."
 
-        valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
-        valid_mask &= np.isfinite(output_vals) & np.isfinite(elev)
+            valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
+            valid_mask &= np.isfinite(output_vals) & np.isfinite(elev)
 
-        df = pd.DataFrame({
-            'Longitude': lons[valid_mask],
-            'Latitude': lats[valid_mask],
-            'Elevation': elev[valid_mask],
-            'M3': output_vals[valid_mask]
-        })
+            df = pd.DataFrame({
+                'Longitude': lons[valid_mask],
+                'Latitude': lats[valid_mask],
+                'Elevation': elev[valid_mask],
+                'M3': output_vals[valid_mask]
+            })
 
-        assert 'M3' in df.columns, f"Data type 'M3' not found in dataframe columns."
+            assert 'M3' in df.columns, f"Data type 'M3' not found in dataframe columns."
 
-        if csv_save_path:
-            save_by_lon_range(df, csv_save_path)
+            if csv_save_path:
+                save_by_lon_range(df, csv_save_path)
 
-        del df, image_data, output_vals, lons, lats, elev
+            del df, image_data, output_vals, lons, lats, elev
 
-    df_list = []
+    if plot_save_path or hist:
+        df = from_csv_and_desc(data_dict, 'M3')
 
-    for file in os.listdir(data_dict['save_path']):
-        if file.endswith('.csv') and 'lon' in file:
-            df_temp = load_every_nth_line(os.path.join(data_dict['save_path'], file), 10)
-            df_list.append(df_temp)
+        if plot_save_path:
+            plot_polar_data(df, 'M3', frac=plot_frac, save_path=plot_save_path)
 
-    df = pd.concat(df_list, ignore_index=True)
+        if hist: 
+            create_hist(df, 'M3')
 
-    # Cast lon and lat to float32 to save memory
-    # For lunar coordinates, this moves from sub-micrometer accuracy to sub-centimeter accuracy
-    df['Longitude'] = df['Longitude'].astype(np.float32)
-    df['Latitude'] = df['Latitude'].astype(np.float32)
-
-    if plot_save_path:
-        plot_polar_data(df, 'M3', frac=plot_frac, save_path=plot_save_path)
-
-    if debug:
-        print(f"M3 df:")
-        print(df.describe())
-        create_hist(df, 'M3')
-
-    del df, df_list
-
-
-def create_hist(df, name):
-    plt.figure(figsize=(8, 6))
-    plt.hist(df[name], bins=50, edgecolor='black')
-    plt.title(f'Histogram of {name} data')
-    plt.xlabel('Value')
-    plt.ylabel('Frequency')
-    plt.savefig(f'../../data/plots/{name}_hist.png')
-    sys.stdout.flush()

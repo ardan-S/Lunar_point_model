@@ -1,13 +1,115 @@
-python: can't open file '/rds/general/user/as5023/home/Lunar_point_model/jobscripts/pbs/../data_processing/process_data.py': [Errno 2] No such file or directory
+REMINDER: Plot saving is disabled. 
+Raw CSVs for Diviner found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/Diviner. Skipping load df...
+Raw CSVs for LOLA found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/LOLA. Skipping load df...
+Raw CSVs for M3 found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/M3. Skipping load df...
+Raw CSVs for MiniRF found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/Mini-RF. Skipping load df...
+Loading stage complete after 0.00 mins
 
-Job finished on Tue 22 Apr 15:17:20 BST 2025
-Total runtime: 0 minutes and 1 seconds
+XY‑meshes created: 12 slices, 61,427,388 total points
+NOTE: Diviner resampled for 25.00% of data across all csvs due to abundance of data. Weighted to higher values
+Diviner mesh sizes - n: 1287264, s: 1287264
+Interpolating Diviner for lon_000_030.csv
+Avg/min/max points per target: 2.0 / 2 / 2
+Avg/min/max points per target: 13.1 / 5 / 14
+Interpolation of Diviner returning df of length 2574528 from meshgrid of 2574528
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_030_060.csv
+Avg/min/max points per target: 10.1 / 4 / 11
+Avg/min/max points per target: 6.5 / 4 / 8
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_060_090.csv
+Avg/min/max points per target: 1.0 / 0 / 1
+Avg/min/max points per target: 7.4 / 3 / 9
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_090_120.csv
+Avg/min/max points per target: 0.9 / 0 / 1
+Avg/min/max points per target: 5.8 / 3 / 6
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_120_150.csv
+Avg/min/max points per target: 0.0 / 0 / 0
+Avg/min/max points per target: 11.8 / 6 / 12
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_150_180.csv
+Avg/min/max points per target: 4.4 / 2 / 6
+Avg/min/max points per target: 4.7 / 2 / 6
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_180_210.csv
+Avg/min/max points per target: 6.6 / 3 / 7
+Avg/min/max points per target: 4.8 / 3 / 5
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_210_240.csv
+Avg/min/max points per target: 5.2 / 1 / 6
+Avg/min/max points per target: 6.7 / 4 / 9
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_240_270.csv
+Avg/min/max points per target: 1.0 / 1 / 3
+Avg/min/max points per target: 0.0 / 0 / 1
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_270_300.csv
+Avg/min/max points per target: 0.9 / 0 / 1
+Avg/min/max points per target: 9.4 / 3 / 10
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 1367718, s: 1367718
+Interpolating Diviner for lon_300_330.csv
+Avg/min/max points per target: 1.0 / 1 / 1
+Avg/min/max points per target: 6.9 / 4 / 7
+Interpolation of Diviner returning df of length 2735436 from meshgrid of 2735436
+
+Diviner mesh sizes - n: 15749250, s: 15749250
+Interpolating Diviner for lon_330_360.csv
+Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
+Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
+Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
+Avg/min/max points per target: 1.9 / 0 / 4
+Avg/min/max points per target: 9.7 / 0 / 21
+Interpolation of Diviner returning df of length 31498500 from meshgrid of 31498500
+
+
+Interpolated Diviner df:
+          Longitude      Latitude       Diviner
+count  7.170555e+07  7.170555e+07  7.170555e+07
+mean   1.806817e+02 -2.106110e-15  1.365559e+02
+std    1.028422e+02  8.999250e+01  8.466302e+01
+min    0.000000e+00 -9.000000e+01  4.156000e+01
+25%    9.113370e+01 -8.999249e+01  4.766000e+01
+50%    1.806110e+02  0.000000e+00  1.560200e+02
+75%    2.697883e+02  8.999249e+01  2.196800e+02
+max    3.599889e+02  9.000000e+01  2.721600e+02
+   Longitude   Latitude  Diviner
+0  28.000989  89.999990     44.7
+1  28.000989  89.999980     44.7
+2  28.000989  89.999970     44.7
+3  28.000989  89.999960     44.7
+4  28.000988  89.999951     44.7
+Interpolation stage complete after 69.01 mins
+
+
+Job finished on Fri 25 Apr 10:47:13 BST 2025
+Total runtime: 69 minutes and 43 seconds
 
 ====================================
-CPU Time used: 00:00:00
-CPU Percent: 0%
-Memory usage: 0b
-Approx Power usage: 0.0
-Walltime usage: 00:00:11
+CPU Time used: 01:08:34
+CPU Percent: 99%
+Memory usage: 20694724kb
+Approx Power usage: 0.0136
+Walltime usage: 01:09:53
 
 ====================================

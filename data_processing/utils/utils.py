@@ -542,6 +542,64 @@ def generate_mesh(RESOLUTION=0.3):
     return meshes
 
 
+def generate_xy_mesh(
+    RESOLUTION_KM: float = 0.3,
+    MOON_RADIUS_KM: float = 1737.4,
+    LAT_MIN_DEG: float = 75.0
+):
+    """
+    Build polar-equidistant XY meshes (in km) for north & south caps, in 12 longitude slices.
+
+    Returns:
+        List of (mesh_north, mesh_south), each an (N,2) array of (x,y) points.
+    """
+
+    # 1) Compute maximum radial distance from pole (co‑latitude of LAT_MIN_DEG)
+    lat_min_rad = np.deg2rad(LAT_MIN_DEG)
+    r_max = MOON_RADIUS_KM * (np.pi/2 - lat_min_rad)
+
+    # 2) Radial steps (0 out to r_max, step RESOLUTION_KM)
+    rs = np.arange(0, r_max + RESOLUTION_KM, RESOLUTION_KM, dtype=np.float32)
+
+    # 3) 12 slices of longitude, in degrees
+    lon_slices = [(i * 30, (i+1) * 30) for i in range(12)]
+
+    meshes = []
+
+    for lon0, lon1 in lon_slices:
+        lon0 -= 2 if lon0 != 0 else 0
+        lon1 += 2 if lon1 != 360 else 360
+
+        # angular range in radians
+        theta_0, theta_1 = np.deg2rad([lon0, lon1])
+        # pick dtheta so that arc length at r_max ≈ RESOLUTION_KM
+        dtheta = RESOLUTION_KM / r_max
+        thetas = np.arange(theta_0, theta_1 + dtheta, dtheta, dtype=np.float32)
+
+        # 4) build a (len(rs) × len(thetas)) mesh in polar coords
+        #    Rr: radial runs down rows, theta: angle runs across columns
+        Rr, theta = np.meshgrid(rs, thetas, indexing='xy')
+
+        # 5) convert to (x,y)
+        X = (Rr * np.cos(theta)).astype(np.float32)
+        Y = (Rr * np.sin(theta)).astype(np.float32)
+
+        # 6) flatten to (N,2)
+        mesh_north = np.column_stack([X.ravel(), Y.ravel()])
+
+        # For the south pole mesh we use the same radial/angle grid, 
+        # but we flip Y (so “north” points to negative Y).
+        mesh_south = np.column_stack([ X.ravel(), (-Y).ravel() ])
+
+        meshes.append((mesh_north, mesh_south))
+
+    total_pts = sum(mn.shape[0] + ms.shape[0] for mn, ms in meshes)
+    print(f"XY‑meshes created: {len(meshes)} slices, {total_pts:,} total points")
+
+    return meshes
+
+
+
 def psr_eda(data, save_dir, lbl_thresh=3):
     assert 'Label' in data.columns, "Missing 'label' column in DataFrame"
     assert 'psr' in data.columns, "Missing 'psr' column in DataFrame"
@@ -570,3 +628,42 @@ def psr_eda(data, save_dir, lbl_thresh=3):
     print(f"Weighted Precision: {prec_weighted:.4f}")
     print(f"Weighted Recall: {rec_weighted:.4f}")
     print(f"Weighted F1 Score: {f1_weighted:.4f}")
+
+
+
+def from_csv_and_desc(data_dict, data_type, n=10):
+    df_list = []
+
+    for file in os.listdir(data_dict['save_path']):
+        if file.endswith('.csv') and 'lon' in file:
+            df_temp = load_every_nth_line(os.path.join(data_dict['save_path'], file), n)
+            df_list.append(df_temp)
+
+    df = pd.concat(df_list, ignore_index=True)
+
+    # Cast lon and lat to float32 to save memory
+    # For lunar coordinates, this moves from sub-micrometer accuracy to sub-centimeter accuracy
+    df['Longitude'] = df['Longitude'].astype(np.float32)
+    df['Latitude'] = df['Latitude'].astype(np.float32)
+
+    print(f"{data_type} df:")
+    print(df.describe())
+    print()
+
+    return df
+
+
+def create_hist(df, name):
+    plt.figure(figsize=(8, 6))
+    plt.hist(df[name], bins=50, edgecolor='black')
+    plt.title(f'Histogram of {name} data')
+    plt.xlabel('Value')
+    plt.ylabel('Frequency')
+    plt.savefig(f'../../data/plots/{name}_hist.png')
+    sys.stdout.flush()
+
+
+if __name__ == "__main__":
+    meshes = generate_xy_mesh()
+    for i, (mesh_north, mesh_south) in enumerate(meshes):
+        print(f"Slice {i}: North mesh shape: {mesh_north.shape}, South mesh shape: {mesh_south.shape}")

@@ -10,6 +10,7 @@ import gc
 from concurrent.futures import ThreadPoolExecutor
 import sys
 import matplotlib.pyplot as plt 
+from pyproj import Transformer, CRS
 
 from utils.utils import plot_polar_data, load_csvs_parallel, save_by_lon_range
 from utils.utils import plot_psr_data, psr_eda
@@ -95,10 +96,12 @@ def compute_psrs(jp2_url, lbl_url, pole):
         'psr': binary_psr.ravel()
     })
 
+    df = df[(df['Latitude'] <= -75) | (df['Latitude'] >= 75)]
+
     return df
 
 
-def gen_psr_df(args):
+def gen_psr_df():
     jp2_url_s = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65s_240m_201608.jp2"
     lbl_url_s = "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/extras/illumination/jp2/lpsr_65s_240m_201608_jp2.lbl"
 
@@ -111,12 +114,109 @@ def gen_psr_df(args):
 
     psr_df = pd.concat([psr_df_s, psr_df_n], ignore_index=True)
 
-    # Remove values not between latitudes [-75, -90] and [75, 90]
-    psr_df = psr_df[(psr_df['Latitude'] <= -75) | (psr_df['Latitude'] >= 75)]
+    assert np.all(psr_df['Latitude'] <= 90) and np.all(psr_df['Latitude'] >= -90), "Latitude values out of the allowed range"
+
+    return psr_df
+
+
+def merge_psr_df(psr_df, args):
+
+    combined_df = load_csvs_parallel('../../data/CSVs/combined', n_workers=args.n_workers)
+
+    print()
+    print("Label proportions after combining 1:")
+    print(combined_df.value_counts('Label', normalize=True) * 100) # type: ignore
+    print()
+    print(f"Total number of points: {combined_df.shape[0]}")
+
+    combined_df_n = combined_df[(combined_df['Latitude'] >= 75)].reset_index(drop=True)
+    combined_df_s = combined_df[(combined_df['Latitude'] <= -75)].reset_index(drop=True)
+    psr_df_n = psr_df[(psr_df['Latitude'] >= 75)].reset_index(drop=True)
+    psr_df_s = psr_df[(psr_df['Latitude'] <= -75)].reset_index(drop=True)
+
+    # Planetocentric lat/long, sphere of radius 1 737 400 m (IAU-2000 Moon)
+    MOON_GEOG = "+proj=longlat +R=1737400 +no_defs"
+
+    MOON_PS_N = "+proj=stere +lat_0=90  +lon_0=0 +k=1 +x_0=0 +y_0=0 +R=1737400 +units=m +no_defs"
+    MOON_PS_S = "+proj=stere +lat_0=-90 +lon_0=0 +k=1 +x_0=0 +y_0=0 +R=1737400 +units=m +no_defs"
+
+    # One-off transformers (lon,lat ➜ x,y in metres)
+    T_N = Transformer.from_crs(CRS.from_proj4(MOON_GEOG),
+                            CRS.from_proj4(MOON_PS_N),
+                            always_xy=True)
+    T_S = Transformer.from_crs(CRS.from_proj4(MOON_GEOG),
+                            CRS.from_proj4(MOON_PS_S),
+                            always_xy=True)
+
+    def _to_xy(df, transformer):
+        """Vector-project lon/lat columns → (x,y) ndarray."""
+        lon = df["Longitude"].to_numpy(float)
+        lat = df["Latitude"].to_numpy(float)
+        x, y = transformer.transform(lon, lat)  # returns 1-D arrays
+        return np.column_stack((x, y))
+
+    coords_n = _to_xy(combined_df_n, T_N)
+    coords_s = _to_xy(combined_df_s, T_S)
+    coords_psr_n = _to_xy(psr_df_n, T_N)
+    coords_psr_s = _to_xy(psr_df_s, T_S)
+    tree_n = cKDTree(coords_n)
+    tree_s = cKDTree(coords_s)
+
+    def _query_tree(tree, coords, k=1):
+        return (np.array([]), np.array([])) if tree is None else tree.query(coords, k=k)
+
+    # Find nearest neighbors in the combined_df for each point in psr_df
+    with ThreadPoolExecutor(max_workers=args.n_workers) as executor:
+        dist_n, idxs_n = executor.submit(_query_tree, tree_n, coords_psr_n).result()
+        dist_s, idxs_s = executor.submit(_query_tree, tree_s, coords_psr_s).result()
+
+    # For each point in psr_df, find the closest point in combined_df and copy into df
+    desired_cols = [c for c in combined_df_n.columns if c not in ['Latitude', 'Longitude']]
+
+    df_merged_n = psr_df_n.copy()
+    if len(idxs_n):
+        df_merged_n[desired_cols] = combined_df_n.iloc[idxs_n][desired_cols].values
+
+    df_merged_s = psr_df_s.copy()
+    if len(idxs_s):
+        df_merged_s[desired_cols] = combined_df_s.iloc[idxs_s][desired_cols].values
+
+    df_merged = pd.concat([df_merged_n, df_merged_s], ignore_index=True)
+
+    # Assert values are only between latitudes [-75, -90] and [75, 90]
+    valid_mask = ((df_merged['Latitude'] >= -90) & (df_merged['Latitude'] <= -75)) | \
+                ((df_merged['Latitude'] >= 75) & (df_merged['Latitude'] <= 90))
+    assert np.all(valid_mask), "Latitude values out of the allowed range"
+
+    print(f"\nMax/mean distance N: {dist_n.max():.1f} m / {dist_n.mean():.1f} m")
+    print(f"Max/mean distance S: {dist_s.max():.1f} m / {dist_s.mean():.1f} m")
+    print("\nLabel proportions after combining 2:")
+    print(df_merged.value_counts('Label', normalize=True) * 100) # type: ignore
+    print(f"\nTotal number of points: {df_merged.shape[0]}")
+    print(f"\nDensity of combined_df_n: {len(combined_df_n) / (psr_df_n['Latitude'].max() - psr_df_n['Latitude'].min())}")
+    print(f"Density of psr_df_n: {len(psr_df_n) / (psr_df_n['Latitude'].max() - psr_df_n['Latitude'].min())}")
+    print(f"Density of combined_df_s: {len(combined_df_s) / (psr_df_s['Latitude'].max() - psr_df_s['Latitude'].min())}")
+    print(f"Density of psr_df_s: {len(psr_df_s) / (psr_df_s['Latitude'].max() - psr_df_s['Latitude'].min())}")
+
+    save_by_lon_range(df_merged, args.psr_save_dir)
+    return df_merged
+
+
+def main(args):
+
+    # if len([file for file in os.listdir(save_dir) if file.endswith('.csv')]) == 12:
+    #     print("Files found, loading psr data from CSVs")
+    #     df_merged = load_csvs_parallel(save_dir, n_workers=args.n_workers)
+    #     valid_mask = ((df_merged['Latitude'] <= -80) & (df_merged['Latitude'] >= -90)) | ((df_merged['Latitude'] <= 90) & (df_merged['Latitude'] >= 80))
+    #     valid_mask &= np.isfinite(df_merged['psr'])
+    # else:
+    #     print("No files found, generating psr data")
+    #     df_merged = gen_psr_df(args)
+    psr_df = gen_psr_df()
+
+    # Compute stats
     psr_df_n = psr_df[(psr_df['Latitude'] >= 75)]
     psr_df_s = psr_df[(psr_df['Latitude'] <= -75)]
-
-    assert np.all(psr_df['Latitude'] <= 90) and np.all(psr_df['Latitude'] >= -90), "Latitude values out of the allowed range"
 
     def compute_stats(name, df):
         return {
@@ -138,159 +238,10 @@ def gen_psr_df(args):
     print(stats_df.to_string(index=False))
     print()
 
+    # Plot PSR data
     plot_polar_data(psr_df, 'psr', frac=0.01, save_path=args.plot_dir, dpi=400)
 
-    n_workers = args.n_workers
-
-    combined_df = load_csvs_parallel('../../data/CSVs/combined', n_workers=n_workers)
-
-    print()
-    print("Label proportions after combining 1:")
-    print(combined_df.value_counts('Label', normalize=True) * 100) # type: ignore
-    print()
-    print(f"Total number of points: {combined_df.shape[0]}")
-
-    # ----------------------------------------------------
-    combined_df_n = combined_df[(combined_df['Latitude'] >= 75)]
-    combined_df_s = combined_df[(combined_df['Latitude'] <= -75)]
-
-    coords_n = np.column_stack((combined_df_n['Latitude'].to_numpy(float), combined_df_n['Longitude'].to_numpy(float)))
-    coords_s = np.column_stack((combined_df_s['Latitude'].to_numpy(float), combined_df_s['Longitude'].to_numpy(float)))
-
-    psr_df_n = psr_df[(psr_df['Latitude'] >= 75)]
-    psr_df_s = psr_df[(psr_df['Latitude'] <= -75)]
-
-    coords_psr_n = np.column_stack((psr_df_n['Latitude'].to_numpy(float), psr_df_n['Longitude'].to_numpy(float)))
-    coords_psr_s = np.column_stack((psr_df_s['Latitude'].to_numpy(float), psr_df_s['Longitude'].to_numpy(float)))
-
-    tree_n = cKDTree(coords_n)
-    tree_s = cKDTree(coords_s)
-
-    def query_tree(tree, coords, k=1):
-        dist, idxs = tree.query(coords, k=k)
-        return dist, idxs
-    
-    def query_tree_using_rad(tree, coords, df, r=0.01):
-
-        # Step A: Query the tree for all points within a radius r
-        neighbour_idx_lst = tree.query_ball_point(coords, r)
-
-        # Step B: Analyze the neighbors
-        neighbor_counts = [len(indices) for indices in neighbour_idx_lst]
-        mean_neighbors = np.mean(neighbor_counts)
-        max_neighbors  = np.max(neighbor_counts)
-        min_neighbors  = np.min(neighbor_counts)
-        no_neighbours = np.sum(np.array(neighbor_counts) == 0)
-
-        print()
-        print(f"Mean number of neighbors: {mean_neighbors}")
-        print(f"Max number of neighbors: {max_neighbors}")
-        print(f"Min number of neighbors: {min_neighbors}")
-        print(f"Number of points with no neighbors: {no_neighbours}")
-
-
-        # Step C: pick exactly one best match (highest label, then closest)
-        chosen_idx_list = np.full(len(coords), -1, dtype=int)  # default -1 for no neighbors
-        
-        for i, neighbor_indices in enumerate(neighbour_idx_lst):
-            if len(neighbor_indices) == 0:
-                continue  # remain -1 if no neighbors
-
-            # 1) Extract labels for these neighbors
-            local_labels = df.iloc[neighbor_indices]['Label'].values
-            
-            # 2) Find the maximum label among them
-            max_label = local_labels.max()
-            
-            # 3) Identify the subset of neighbors that share this max label
-            positions_of_max = np.where(local_labels == max_label)[0]
-            max_label_indices = [neighbor_indices[j] for j in positions_of_max]
-            
-            # 4) Among those max-label neighbors, pick the one closest to coords[i]
-            #    We'll do naive Euclidean distance in (Lat, Lon) space
-            #    If you want geodesic/haversine, you need a different formula.
-            query_latlon = coords[i]  # e.g. [Lat, Lon]
-            neighbors_coord = df.iloc[max_label_indices][['Latitude','Longitude']].values
-            dist = np.linalg.norm(neighbors_coord - query_latlon, axis=1)
-
-            # index of the closest neighbor among the max-label set
-            chosen_local_index = np.argmin(dist)
-            
-            # The actual row index in df for that chosen neighbor
-            chosen_df_idx = max_label_indices[chosen_local_index]
-            
-            chosen_idx_list[i] = chosen_df_idx
-
-        return chosen_idx_list
-
-    with ThreadPoolExecutor(max_workers=n_workers) as executor:
-        future_n = executor.submit(query_tree, tree_n, coords_psr_n)
-        future_s = executor.submit(query_tree, tree_s, coords_psr_s)
-        dist_n, idxs_n = future_n.result()
-        dist_s, idxs_s = future_s.result()
-
-    # with ThreadPoolExecutor(max_workers=n_workers) as executor:
-    #     future_n = executor.submit(query_tree_using_rad, tree_n, coords_psr_n, combined_df_n)
-    #     future_s = executor.submit(query_tree_using_rad, tree_s, coords_psr_s, combined_df_s)
-    #     idxs_n = future_n.result()
-    #     idxs_s = future_s.result()
-
-    print()
-    print(f"Max distance (northern): {dist_n.max()}")
-    print(f"Mean distance (northern): {dist_n.mean()}")
-    print(f"Max distance (southern): {dist_s.max()}")
-    print(f"Mean distance (southern): {dist_s.mean()}")
-
-    df_merged_n = psr_df_n.copy()
-    df_merged_s = psr_df_s.copy()
-
-    desired_cols = [c for c in combined_df_n.columns if c not in ['Latitude', 'Longitude']]
-    df_merged_n[desired_cols] = combined_df_n.iloc[idxs_n][desired_cols].values
-
-    desired_cols = [c for c in combined_df_s.columns if c not in ['Latitude', 'Longitude']]
-    df_merged_s[desired_cols] = combined_df_s.iloc[idxs_s][desired_cols].values
-
-    df_merged = pd.concat([df_merged_n, df_merged_s], ignore_index=True)
-
-    print()
-    print("Label proportions after combining 2:")
-    print(df_merged.value_counts('Label', normalize=True) * 100) # type: ignore
-    print()
-    print(f"Total number of points: {df_merged.shape[0]}")
-
-    print()
-    print(f"Density of combined_df_n: {len(combined_df_n) / (psr_df_n['Latitude'].max() - psr_df_n['Latitude'].min())}")
-    print(f"Density of psr_df_n: {len(psr_df_n) / (psr_df_n['Latitude'].max() - psr_df_n['Latitude'].min())}")
-
-    print(f"Density of combined_df_s: {len(combined_df_s) / (psr_df_s['Latitude'].max() - psr_df_s['Latitude'].min())}")
-    print(f"Density of psr_df_s: {len(psr_df_s) / (psr_df_s['Latitude'].max() - psr_df_s['Latitude'].min())}")
-
-
-    # Assert values are only between latitudes [-75, -90] and [75, 90]
-    valid_mask = ((df_merged['Latitude'] >= -90) & (df_merged['Latitude'] <= -75)) | \
-                ((df_merged['Latitude'] >= 75) & (df_merged['Latitude'] <= 90))
-
-    assert np.all(valid_mask), "Latitude values out of the allowed range"
-
-    save_by_lon_range(df_merged, args.psr_save_dir)
-
-    # del tree, idxs, psr_df, psr_df_s, psr_df_n, combined_df; gc.collect()
-    del tree_n, tree_s, psr_df, psr_df_s, psr_df_n, combined_df, combined_df_n, combined_df_s; gc.collect()
-
-    return df_merged
-
-def main(args):
-    save_dir = args.psr_save_dir
-
-    # if len([file for file in os.listdir(save_dir) if file.endswith('.csv')]) == 12:
-    #     print("Files found, loading psr data from CSVs")
-    #     df_merged = load_csvs_parallel(save_dir, n_workers=args.n_workers)
-    #     valid_mask = ((df_merged['Latitude'] <= -80) & (df_merged['Latitude'] >= -90)) | ((df_merged['Latitude'] <= 90) & (df_merged['Latitude'] >= 80))
-    #     valid_mask &= np.isfinite(df_merged['psr'])
-    # else:
-    #     print("No files found, generating psr data")
-    #     df_merged = gen_psr_df(args)
-    df_merged = gen_psr_df(args)
+    df_merged = merge_psr_df(psr_df, args)
     
     # Check cols
     expected_columns = ['Latitude', 'Longitude', 'psr', 'Diviner', 'MiniRF', 'LOLA', 'M3', 'Elevation', 'Label']
@@ -354,54 +305,6 @@ def main(args):
     print(f"Percentage of points with cat 3: {np.sum(df_merged['temp'] == 3) / df_merged.shape[0]:.2%}")
     plot_psr_data(df_merged, 'temp', graph_cat='labelled', frac=0.01, save_path=args.plot_dir, dpi=400)
     psr_eda(df_merged, args.plot_dir, lbl_thresh=lbl)
-
-    return
-    # Cast coordinates down to float32 to save memory
-    # For lunar coordinates, this moves from sub-micrometer accuracy to sub-centimeter 
-    # Float16 would have accuracy in the order of tens of meters    
-    coordinates = df_merged[['Latitude', 'Longitude']].values.astype(np.float32)
-    print(coordinates[:5])
-
-    # Split the data into northern and southern hemispheres
-    northern_mask = coordinates[:, 0] >= 75
-    southern_mask = coordinates[:, 0] <= -75
-    print(f"Northern hemisphere: {np.sum(northern_mask)} points")
-    print(f"Southern hemisphere: {np.sum(southern_mask)} points")
-
-    northern_coords = np.radians(coordinates[northern_mask])
-    southern_coords = np.radians(coordinates[southern_mask])
-
-    eps = 0.005
-    min_samples = 10
-
-    # Process northern hemisphere
-    print("\nProcessing Northern Hemisphere..."); sys.stdout.flush()
-    dbscan_north = DBSCAN(eps=eps, min_samples=min_samples, metric='haversine')
-    north_clusters = dbscan_north.fit_predict(northern_coords)
-    print("Done processing Northern Hemisphere."); sys.stdout.flush()
-
-    del northern_coords, dbscan_north; gc.collect()
-
-    # Process southern hemisphere
-    print("\nProcessing Southern Hemisphere..."); sys.stdout.flush()
-    dbscan_south = DBSCAN(eps=eps, min_samples=min_samples, metric='haversine')
-    south_clusters = dbscan_south.fit_predict(southern_coords)
-    print("Done processing Southern Hemisphere."); sys.stdout.flush()
-
-    del southern_coords, dbscan_south; gc.collect()
-
-    # AFTER MAYBE TRY HDBSCAN
-
-    # Combine results back into the original DataFrame
-    clusters = np.full(len(coordinates), -1, dtype=np.int32)  # Default cluster to -1 (noise)
-    clusters[northern_mask] = north_clusters
-    clusters[southern_mask] = south_clusters
-
-    df_merged['Cluster'] = clusters
-
-    print("\nClusters:")
-    print(df_merged['Cluster'].value_counts())
-    print(f"Number of clusters: {len(df_merged['Cluster'].unique())}")
 
 
 def parse_args():

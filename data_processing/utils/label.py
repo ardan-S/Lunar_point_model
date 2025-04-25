@@ -7,7 +7,7 @@ import numpy as np
 from shapely.geometry import Polygon, MultiPoint    # type: ignore
 from shapely.ops import transform   # type: ignore
 from functools import partial
-from pyproj import CRS, Transformer
+from pyproj import CRS, Transformer, Proj, Geod
 import sys
 
 from data_processing.utils.utils import save_by_lon_range, plot_labeled_polar_data, load_csvs_parallel, plot_polar_data
@@ -148,9 +148,10 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
 
 
 def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, eps):
+    pole = pole.lower()
     assert 'Label' in df.columns, "Label column not found in dataframe"
     assert f'{data_type} label' in df.columns, f"{data_type} label column not found in dataframe"
-    assert pole.lower() in ['north', 'south'], "Invalid pole. Use 'north' or 'south'."
+    assert pole in ['north', 'south'], "Invalid pole. Use 'north' or 'south'."
     
     # Select data around threshold
     if direction.lower() == 'below':
@@ -161,108 +162,115 @@ def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, e
         raise ValueError("Invalid direction. Use 'above' or 'below'.")
     
     # Select data around pole
-    if pole.lower() == 'north':
+    if pole == 'north':
         condition &= (df['Latitude'] >= 0)
-    elif pole.lower() == 'south':
+    elif pole == 'south':
         condition &= (df['Latitude'] < 0)
     else:
         raise ValueError("Invalid pole. Use 'north' or 'south'.")
     
     df.astype({'Longitude': 'float32', 'Latitude': 'float32', 'Label': 'int8', f'{data_type} label': 'int8'}, copy=False)
 
-    cluster_pole(df, condition, data_type, area_thresh, eps)
+    cluster_pole(df, condition, data_type, area_thresh, eps, pole)
 
 
-def cluster_pole(df, condition, data_type, area_thresh, eps):
+def cluster_pole(df, condition, data_type, area_thresh, eps, pole, R_MOON=1737.4e3):
     if df.loc[condition].empty:
+        print(f"WARNING: Clustering failed for {data_type} pole. No data points meet the condition.")
         return df
     
     # Step 1: Update labels for the rows which meet the threshold condition
-    df.loc[condition, 'Label'] += 1
-    df.loc[condition, f'{data_type} label'] += 1
+    df.loc[condition, ['Label', f'{data_type} label']] += 1
 
+    # Step 2: Convert filtered coordinates to xy with polar aeqd projection 
+    proj_n = Proj(proj='aeqd', lat_0=90, lon_0=0, R=R_MOON, always_xy=True)
+    proj_s = Proj(proj='aeqd', lat_0=-90, lon_0=0, R=R_MOON, always_xy=True)
 
-    # Step 2: Convert filtered coordinates to radians
-    coords_rad = np.radians(df.loc[condition, ['Latitude', 'Longitude']].to_numpy(dtype='float32'))
+    lon = df.loc[condition, 'Longitude'].to_numpy(dtype='float32')
+    lat = df.loc[condition, 'Latitude'].to_numpy(dtype='float32')
 
-    # Step 3: Perform clustering using DBSCAN with Haversine metric
-    moon_radius_km = 1737.4
-    eps_rad = eps / moon_radius_km
+    if pole == 'north':
+        x, y = proj_n(lon, lat)
+    elif pole == 'south':
+        x, y = proj_s(lon, lat)
+    else:
+        raise ValueError("Invalid pole. Use 'north' or 'south'.")
+    
+    coords_xy = np.column_stack((x, y))
 
+    # Step 3: Perform clustering using DBSCAN
+    # Note DBSCAN is a hard clustering algorithm, points are assigned to exactly one cluster
     min_cluster = 85
-    print(f"Clustering {data_type} pole with eps={eps:.2f} and min_cluster={min_cluster}"); sys.stdout.flush()
-
-    clustering = DBSCAN(eps=eps_rad, min_samples=min_cluster, metric='haversine')   # DBSCAN
-    clustering_labels = clustering.fit_predict(coords_rad)
-    clustering_labels.astype('int32', copy=False)
+    print(f"Clustering {data_type} pole - eps={eps:.2f} m, min_cluster={min_cluster}")
+    clustering = DBSCAN(eps=eps, min_samples=min_cluster, metric="euclidean")
+    clustering_labels = clustering.fit_predict(coords_xy).astype('int32')
 
     df.loc[condition, 'cluster_label'] = clustering_labels
-    del coords_rad, clustering, clustering_labels
 
-    all_labels = df.loc[condition, 'cluster_label'].unique()
-    unique_labels = all_labels[all_labels != -1]
+    # Step 4: area calculation and second increment
+    unique_clusters = [l for l in np.unique(clustering_labels) if l != -1]
+    clusters_at_1 = clusters_at_2 = 0
 
-    moon_radius_m = moon_radius_km * 1000  # Convert to meters
-    crs_lunar_geo = CRS.from_proj4(
-        f"+proj=longlat +a={moon_radius_m} +b={moon_radius_m} +no_defs +type=crs +celestial_body=Moon"
-    )
-
-    clusters_at_1 = 0
-    clusters_at_2 = 0
+    geod = Geod(a=R_MOON, b=R_MOON)
 
     # Step 4: Calculate area for each cluster and update labels
-    for cluster_label in unique_labels:
-        sys.stdout.flush()
-        
-        mask = (df['cluster_label'] == cluster_label) & condition
-        cluster_points = df.loc[mask, ['Longitude', 'Latitude']].to_numpy(dtype='float32')
-        
-        if len(cluster_points) < 3: # Need at least 3 points to form a polygon
+    for clabel in unique_clusters:        
+        mask = (df['cluster_label'] == clabel) & condition
+        lon_cl = df.loc[mask, 'Longitude'].to_numpy(dtype='float32')
+        lat_cl = df.loc[mask, 'Latitude'].to_numpy(dtype='float32')
+
+        if len(np.unique(np.column_stack((lon_cl, lat_cl)), axis=0)) < 3:
             continue
+        
+        # if len(cluster_points) < 3: # Need at least 3 points to form a polygon
+        #     continue
 
         # Project the cluster coordinates to planar coordinates
         # Use an Azimuthal Equidistant projection centered on the cluster centroid
-        centroid_lon = float(cluster_points[:, 0].mean())
-        centroid_lat = float(cluster_points[:, 1].mean())
+        # centroid_lon = float(cluster_points[:, 0].mean())
+        # centroid_lat = float(cluster_points[:, 1].mean())
 
-        proj_str = (
-            f"+proj=aeqd +lat_0={centroid_lat} +lon_0={centroid_lon} "
-            f"+a={moon_radius_m} +b={moon_radius_m} +units=m +no_defs +type=crs +celestial_body=Moon"
-        )
-        crs_lunar_proj = CRS.from_proj4(proj_str)
+        # proj_str = (
+        #     f"+proj=aeqd +lat_0={centroid_lat} +lon_0={centroid_lon} "
+        #     f"+a={moon_radius_m} +b={moon_radius_m} +units=m +no_defs +type=crs +celestial_body=Moon"
+        # )
+        # crs_lunar_proj = CRS.from_proj4(proj_str)
         
-        transformer = Transformer.from_crs(crs_lunar_geo, crs_lunar_proj, always_xy=True)
-        x_proj, y_proj = transformer.transform(cluster_points[:, 0], cluster_points[:, 1])
-        cluster_coords_proj = np.column_stack((x_proj, y_proj))
+        # transformer = Transformer.from_crs(crs_lunar_geo, crs_lunar_proj, always_xy=True)
+        # x_proj, y_proj = transformer.transform(cluster_points[:, 0], cluster_points[:, 1])
+        # cluster_coords_proj = np.column_stack((x_proj, y_proj))
 
-        if not np.isfinite(cluster_coords_proj).all():
-            continue
+        # if not np.isfinite(cluster_coords_proj).all():
+        #     continue
 
         # Create a Polygon from the projected cluster points
-        unique_coords_proj = np.unique(cluster_coords_proj, axis=0)
-        multipoint = MultiPoint(unique_coords_proj)
-        polygon = multipoint.convex_hull
+        # unique_coords_proj = np.unique(cluster_coords_proj, axis=0)
+        # multipoint = MultiPoint(unique_coords_proj)
+        # polygon = multipoint.convex_hull
 
-        if len(unique_coords_proj) < 3: # Need at least 3 unique points to form a polygon
-            continue
-        if not polygon.is_valid:    # Check if the polygon is valid
-            continue
-        if polygon.area == 0 or polygon.is_empty:   # Check if the polygon has zero area
-            continue
-        if polygon.geom_type != 'Polygon':  # Check if the geometry type is Polygon
-            continue
+        # if len(unique_coords_proj) < 3: # Need at least 3 unique points to form a polygon
+        #     continue
+        # if not polygon.is_valid:    # Check if the polygon is valid
+        #     continue
+        # if polygon.area == 0 or polygon.is_empty:   # Check if the polygon has zero area
+        #     continue
+        # if polygon.geom_type != 'Polygon':  # Check if the geometry type is Polygon
+        #     continue
 
-        area_m2 = polygon.area  # Area in square meters
+        # area_m2 = polygon.area  # Area in square meters
+
+        area_m2, _ = geod.polygon_area_perimeter(lon_cl, lat_cl)
+        area_m2 = abs(area_m2)  # Orientation independent
+    
         area_km2 = area_m2 / 1e6  # Convert to square kilometers
 
         # Determine label increment based on area threshold
         if area_km2 > area_thresh:  # Clusters with size greater than threshold
-            df.loc[mask, 'Label'] += 1
-            df.loc[mask, f'{data_type} label'] += 1
+            df.loc[mask, ['Label', f'{data_type} label']] += 1
             clusters_at_2 += 1
         else:
             clusters_at_1 += 1
 
-    print(f"{data_type} - Clusters at 1: {clusters_at_1}, Clusters at 2: {clusters_at_2}, Total clusters: {len(unique_labels)}")
+    print(f"{data_type} - Clusters at 1: {clusters_at_1}, Clusters at 2: {clusters_at_2}, Total clusters: {len(unique_clusters)}")
     df.drop(columns=['cluster_label'], inplace=True)
 
