@@ -172,7 +172,6 @@ def max_rad_interp(points, values, targets, radius_m=1000, fallback='nearest'):
 
     interpolated = np.empty(len(targets), dtype=float)
     points_per_target = np.array([len(idxs) for idxs in idx_lists])
-    print(f"Avg/min/max points per target: {np.mean(points_per_target):.1f} / {np.min(points_per_target)} / {np.max(points_per_target)}")
 
     for i, idxs in enumerate(idx_lists):
         if idxs:
@@ -190,9 +189,9 @@ def interpolate(data_dict, data_type, plot_save_path=None, debug=False):
         print(f"Creating interp dir for {data_type}")
         os.mkdir(data_dict['interp_dir'])
 
-    if len([f for f in os.listdir(data_dict['interp_dir']) if f.endswith('.csv') and 'lon' in f]) == 12:
-        print(f"Interpolated CSVs appear to exist for {data_type} data. Skipping interpolation.")
-        return
+    # if len([f for f in os.listdir(data_dict['interp_dir']) if f.endswith('.csv') and 'lon' in f]) == 12:
+    #     print(f"Interpolated CSVs appear to exist for {data_type} data. Skipping interpolation.")
+    #     return
     
     # If CSVs dont already exist, clear the directory
     clear_dir(data_dict['interp_dir'], dirs_only=False)
@@ -204,9 +203,7 @@ def interpolate(data_dict, data_type, plot_save_path=None, debug=False):
 
     for (csv, (mesh_north, mesh_south)) in zip(csvs, meshes):
         df = pd.read_csv(f"{data_dict['save_path']}/{csv}")
-
         print(f"{data_type} mesh sizes - n: {len(mesh_north)}, s: {len(mesh_south)}")
-
         if data_type == 'Diviner':
             # div_frac = 0.25
             # weights = df[data_type].values / df[data_type].sum()
@@ -220,6 +217,7 @@ def interpolate(data_dict, data_type, plot_save_path=None, debug=False):
             elev = df['Elevation'].values if data_type == 'M3' else None
             interpolated_df = interpolate_csv(df, mesh_north, mesh_south, data_type, elev)
     
+        print(f"Interpolated {data_type} df contains {len(interpolated_df)} points")
         save_by_lon_range(interpolated_df, save_path)
 
         del interpolated_df, df

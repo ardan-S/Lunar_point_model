@@ -545,7 +545,8 @@ def generate_mesh(RESOLUTION=0.3):
 def generate_xy_mesh(
     RESOLUTION_KM: float = 0.3,
     MOON_RADIUS_KM: float = 1737.4,
-    LAT_MIN_DEG: float = 75.0
+    LAT_MIN_DEG: float = 75.0,
+    MARGIN_DEG: float = 2.0
 ):
     """
     Build polar-equidistant XY meshes (in km) for north & south caps, in 12 longitude slices.
@@ -563,32 +564,29 @@ def generate_xy_mesh(
 
     # 3) 12 slices of longitude, in degrees
     lon_slices = [(i * 30, (i+1) * 30) for i in range(12)]
+    dtheta = RESOLUTION_KM / r_max
 
     meshes = []
 
     for lon0, lon1 in lon_slices:
-        lon0 -= 2 if lon0 != 0 else 0
-        lon1 += 2 if lon1 != 360 else 360
+        # lon0 -= 2 if lon0 != 0 else 0
+        # lon1 += 2 if lon1 != 360 else 360
+        lon0 = (lon0 - MARGIN_DEG) % 360   
+        lon1 = (lon1 + MARGIN_DEG) % 360
 
         # angular range in radians
-        theta_0, theta_1 = np.deg2rad([lon0, lon1])
-        # pick dtheta so that arc length at r_max ≈ RESOLUTION_KM
-        dtheta = RESOLUTION_KM / r_max
-        thetas = np.arange(theta_0, theta_1 + dtheta, dtheta, dtype=np.float32)
+        theta_0 = np.deg2rad(lon0)
+        theta_1 = np.deg2rad(lon1 if lon1 > lon0 else lon1 + 360)
 
-        # 4) build a (len(rs) × len(thetas)) mesh in polar coords
-        #    Rr: radial runs down rows, theta: angle runs across columns
+        thetas = np.arange(theta_0, theta_1, dtheta, dtype=np.float32)
+
+        # 4) polar meshgrid then convert to xy
         Rr, theta = np.meshgrid(rs, thetas, indexing='xy')
 
-        # 5) convert to (x,y)
         X = (Rr * np.cos(theta)).astype(np.float32)
         Y = (Rr * np.sin(theta)).astype(np.float32)
 
-        # 6) flatten to (N,2)
         mesh_north = np.column_stack([X.ravel(), Y.ravel()])
-
-        # For the south pole mesh we use the same radial/angle grid, 
-        # but we flip Y (so “north” points to negative Y).
         mesh_south = np.column_stack([ X.ravel(), (-Y).ravel() ])
 
         meshes.append((mesh_north, mesh_south))
@@ -665,5 +663,8 @@ def create_hist(df, name):
 
 if __name__ == "__main__":
     meshes = generate_xy_mesh()
+    total = 0
     for i, (mesh_north, mesh_south) in enumerate(meshes):
         print(f"Slice {i}: North mesh shape: {mesh_north.shape}, South mesh shape: {mesh_south.shape}")
+        total += mesh_north.shape[0] + mesh_south.shape[0]
+    print(f"Total points in all slices: {total:,}")
