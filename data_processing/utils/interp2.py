@@ -100,8 +100,6 @@ def interpolate_csv(df, mesh_north, mesh_south, data_type,  elev=None, MOON_RADI
     lon_n = (lon_n + 360) % 360
     lon_s = (lon_s + 360) % 360
 
-    print(f"Interpolation of {data_type} returning df of length {len(lon_n) + len(lon_s)} from meshgrid of {len(mesh_north) + len(mesh_south)}")
-
     df_interp = pd.DataFrame({
         'Longitude': np.concatenate([lon_n, lon_s]),
         'Latitude': np.concatenate([lat_n, lat_s]),
@@ -155,8 +153,6 @@ def interpolate_diviner(df, mesh_north, mesh_south, MOON_RADIUS_M=1737.4e3):
     lon_grid_north = (lon_grid_north + 360) % 360
     lon_grid_south = (lon_grid_south + 360) % 360
 
-    print(f"Interpolation of Diviner returning df of length {len(lon_grid_north) + len(lon_grid_south)} from meshgrid of {len(mesh_north) + len(mesh_south)}")
-
     interpolated_df = pd.DataFrame({
         'Longitude': np.concatenate([lon_grid_north, lon_grid_south]),
         'Latitude': np.concatenate([lat_grid_north, lat_grid_south]),
@@ -189,9 +185,9 @@ def interpolate(data_dict, data_type, plot_save_path=None, debug=False):
         print(f"Creating interp dir for {data_type}")
         os.mkdir(data_dict['interp_dir'])
 
-    # if len([f for f in os.listdir(data_dict['interp_dir']) if f.endswith('.csv') and 'lon' in f]) == 12:
-    #     print(f"Interpolated CSVs appear to exist for {data_type} data. Skipping interpolation.")
-    #     return
+    if len([f for f in os.listdir(data_dict['interp_dir']) if f.endswith('.csv') and 'lon' in f]) == 12:
+        print(f"Interpolated CSVs appear to exist for {data_type} data. Skipping interpolation.")
+        return
     
     # If CSVs dont already exist, clear the directory
     clear_dir(data_dict['interp_dir'], dirs_only=False)
@@ -203,24 +199,18 @@ def interpolate(data_dict, data_type, plot_save_path=None, debug=False):
 
     for (csv, (mesh_north, mesh_south)) in zip(csvs, meshes):
         df = pd.read_csv(f"{data_dict['save_path']}/{csv}")
-        print(f"{data_type} mesh sizes - n: {len(mesh_north)}, s: {len(mesh_south)}")
         if data_type == 'Diviner':
             # div_frac = 0.25
             # weights = df[data_type].values / df[data_type].sum()
             # df = df.sample(frac=div_frac, weights=weights, random_state=42)    # Resample Diviner data, weighted to higher values
             # print(f"NOTE: Diviner resampled for {div_frac:.2%} of data across all csvs due to abundance of data. Weighted to higher values"); sys.stdout.flush()
 
-            print(f"Interpolating Diviner for {csv}"); sys.stdout.flush()
             interpolated_df = interpolate_diviner(df, mesh_north, mesh_south)
-            print()
         else:
             elev = df['Elevation'].values if data_type == 'M3' else None
             interpolated_df = interpolate_csv(df, mesh_north, mesh_south, data_type, elev)
     
-        print(f"Interpolated {data_type} df contains {len(interpolated_df)} points")
         save_by_lon_range(interpolated_df, save_path)
-
-        del interpolated_df, df
 
     df_list = []
 
@@ -239,5 +229,3 @@ def interpolate(data_dict, data_type, plot_save_path=None, debug=False):
         print(f"\nInterpolated {data_type} df:")
         print(interpolated_df.describe())
         print(interpolated_df.head())
-
-    del interpolated_df, df_list

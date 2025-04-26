@@ -75,8 +75,8 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     plot_labeled_polar_data(df=df,variable='M3', label_column='M3 label', save_path=os.path.join(plot_save_path, 'M3_label_plot.png'))
 
     # -------------------- MiniRF --------------------
-    MRF_thresh = df['MiniRF'].mean() + 5.5 * df['MiniRF'].std()
-    print(f"\nTaking the top {df[df['MiniRF'] >= MRF_thresh].shape[0] / df.shape[0] :.2%} of points from MiniRF. Threshold = {MRF_thresh:.2f}"); sys.stdout.flush()
+    MRF_thresh = df['MiniRF'].mean() + 2 * df['MiniRF'].std()
+    print(f"\nTaking the top {df[df['MiniRF'] >= MRF_thresh].shape[0] / df.shape[0] :.2%} of points from MiniRF. Threshold = {MRF_thresh:.2f}")
     
     df.loc[df['MiniRF'] > MRF_thresh, 'Label'] += 1
     df.loc[df['MiniRF'] > MRF_thresh, 'MiniRF label'] += 1
@@ -124,7 +124,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     print(f"Total number of points: {df.shape[0]}")
     print()
 
-    df.drop(columns=['Diviner label', 'LOLA label', 'M3 label', 'MiniRF label'], inplace=True)
+    # df.drop(columns=['Diviner label', 'LOLA label', 'M3 label', 'MiniRF label'], inplace=True)
 
     save_by_lon_range(df, combined_save_path)
     plot_polar_data(df, 'Label', graph_cat='labeled', save_path=plot_save_path)
@@ -147,12 +147,13 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     plot_polar_data(df_bin, 'Label', frac=0.01, graph_cat='binary_orig', save_path=plot_save_path, dpi=400)
 
 
-def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, eps):
+def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, eps, R_MOON_M=1737.4e3):
     pole = pole.lower()
     assert 'Label' in df.columns, "Label column not found in dataframe"
     assert f'{data_type} label' in df.columns, f"{data_type} label column not found in dataframe"
     assert pole in ['north', 'south'], "Invalid pole. Use 'north' or 'south'."
-    
+    df.astype({'Longitude': 'float32', 'Latitude': 'float32', 'Label': 'int8', f'{data_type} label': 'int8'}, copy=False)
+
     # Select data around threshold
     if direction.lower() == 'below':
         condition = df[data_type] < threshold
@@ -169,12 +170,10 @@ def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, e
     else:
         raise ValueError("Invalid pole. Use 'north' or 'south'.")
     
-    df.astype({'Longitude': 'float32', 'Latitude': 'float32', 'Label': 'int8', f'{data_type} label': 'int8'}, copy=False)
-
-    cluster_pole(df, condition, data_type, area_thresh, eps, pole)
+#     cluster_pole(df, condition, data_type, area_thresh, eps, pole)
 
 
-def cluster_pole(df, condition, data_type, area_thresh, eps, pole, R_MOON=1737.4e3):
+# def cluster_pole(df, condition, data_type, area_thresh, eps, pole, R_MOON=1737.4e3):
     if df.loc[condition].empty:
         print(f"WARNING: Clustering failed for {data_type} pole. No data points meet the condition.")
         return df
@@ -183,19 +182,14 @@ def cluster_pole(df, condition, data_type, area_thresh, eps, pole, R_MOON=1737.4
     df.loc[condition, ['Label', f'{data_type} label']] += 1
 
     # Step 2: Convert filtered coordinates to xy with polar aeqd projection 
-    proj_n = Proj(proj='aeqd', lat_0=90, lon_0=0, R=R_MOON, always_xy=True)
-    proj_s = Proj(proj='aeqd', lat_0=-90, lon_0=0, R=R_MOON, always_xy=True)
+    proj_n = Proj(proj='aeqd', lat_0=90, lon_0=0, R=R_MOON_M, always_xy=True)
+    proj_s = Proj(proj='aeqd', lat_0=-90, lon_0=0, R=R_MOON_M, always_xy=True)
 
     lon = df.loc[condition, 'Longitude'].to_numpy(dtype='float32')
     lat = df.loc[condition, 'Latitude'].to_numpy(dtype='float32')
 
-    if pole == 'north':
-        x, y = proj_n(lon, lat)
-    elif pole == 'south':
-        x, y = proj_s(lon, lat)
-    else:
-        raise ValueError("Invalid pole. Use 'north' or 'south'.")
-    
+    x, y = proj_n(lon, lat) if pole == 'north' else proj_s(lon, lat)    # Case for invalid pole handled earlier
+
     coords_xy = np.column_stack((x, y))
 
     # Step 3: Perform clustering using DBSCAN
@@ -211,7 +205,7 @@ def cluster_pole(df, condition, data_type, area_thresh, eps, pole, R_MOON=1737.4
     unique_clusters = [l for l in np.unique(clustering_labels) if l != -1]
     clusters_at_1 = clusters_at_2 = 0
 
-    geod = Geod(a=R_MOON, b=R_MOON)
+    geod = Geod(a=R_MOON_M, b=R_MOON_M)
 
     # Step 4: Calculate area for each cluster and update labels
     for clabel in unique_clusters:        
@@ -221,43 +215,6 @@ def cluster_pole(df, condition, data_type, area_thresh, eps, pole, R_MOON=1737.4
 
         if len(np.unique(np.column_stack((lon_cl, lat_cl)), axis=0)) < 3:
             continue
-        
-        # if len(cluster_points) < 3: # Need at least 3 points to form a polygon
-        #     continue
-
-        # Project the cluster coordinates to planar coordinates
-        # Use an Azimuthal Equidistant projection centered on the cluster centroid
-        # centroid_lon = float(cluster_points[:, 0].mean())
-        # centroid_lat = float(cluster_points[:, 1].mean())
-
-        # proj_str = (
-        #     f"+proj=aeqd +lat_0={centroid_lat} +lon_0={centroid_lon} "
-        #     f"+a={moon_radius_m} +b={moon_radius_m} +units=m +no_defs +type=crs +celestial_body=Moon"
-        # )
-        # crs_lunar_proj = CRS.from_proj4(proj_str)
-        
-        # transformer = Transformer.from_crs(crs_lunar_geo, crs_lunar_proj, always_xy=True)
-        # x_proj, y_proj = transformer.transform(cluster_points[:, 0], cluster_points[:, 1])
-        # cluster_coords_proj = np.column_stack((x_proj, y_proj))
-
-        # if not np.isfinite(cluster_coords_proj).all():
-        #     continue
-
-        # Create a Polygon from the projected cluster points
-        # unique_coords_proj = np.unique(cluster_coords_proj, axis=0)
-        # multipoint = MultiPoint(unique_coords_proj)
-        # polygon = multipoint.convex_hull
-
-        # if len(unique_coords_proj) < 3: # Need at least 3 unique points to form a polygon
-        #     continue
-        # if not polygon.is_valid:    # Check if the polygon is valid
-        #     continue
-        # if polygon.area == 0 or polygon.is_empty:   # Check if the polygon has zero area
-        #     continue
-        # if polygon.geom_type != 'Polygon':  # Check if the geometry type is Polygon
-        #     continue
-
-        # area_m2 = polygon.area  # Area in square meters
 
         area_m2, _ = geod.polygon_area_perimeter(lon_cl, lat_cl)
         area_m2 = abs(area_m2)  # Orientation independent

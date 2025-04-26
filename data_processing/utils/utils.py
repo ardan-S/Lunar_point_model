@@ -222,6 +222,7 @@ def save_by_lon_range(df, output_dir):
 
     """"
     IMPORTANT NOTE: THIS FUNCTION SAVES AN OVERLAP OF 2 DEGREES BETWEEN FILES
+    IMPORTANT NOTE: THIS METHOD OF SAVING CREATES DUPLICATES IN THE FILES
     """
     # Define longitude ranges with 2-degree overlaps
     lon_ranges = [
@@ -344,7 +345,8 @@ def plot_polar_data(df_in, variable, graph_cat='raw', frac=None, random_state=42
 
     if 'binary' in graph_cat.lower():
         df = pd.concat([north_pole_df, south_pole_df])
-        assert df['Label'].nunique() == 2, "Binary plot requires exactly 2 unique labels"
+        print(f"Nuniqe in df: {df['Label'].nunique()}")
+        assert df['Label'].nunique() == 2, f"Binary plot requires exactly 2 unique labels not {df['Label'].nunique()}. Labels found: {df['Label'].unique()}"
         assert set(df['Label']).issubset({0, 1}), "Binary plot requires labels to be 0 or 1"
         print(f"Proportion of binary labels indicating psr: {df['Label'].sum() / len(df):.4%}") # Proportion of 1s
 
