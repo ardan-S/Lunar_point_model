@@ -19,19 +19,19 @@ def main(args):
     os.makedirs(args.save_dir, exist_ok=True)
     os.makedirs(args.download_dir, exist_ok=True)
 
-    # Temporarily disable plot saving
-    dataset_dict['Diviner']['plot_path'] = None
-    dataset_dict['LOLA']['plot_path'] = None
-    dataset_dict['M3']['plot_path'] = None
-    dataset_dict['MiniRF']['plot_path'] = None
-    print("REMINDER: Plot saving is disabled. ")
+    # # Temporarily disable plot saving
+    # dataset_dict['Diviner']['plot_path'] = None
+    # dataset_dict['LOLA']['plot_path'] = None
+    # dataset_dict['M3']['plot_path'] = None
+    # dataset_dict['MiniRF']['plot_path'] = None
+    # print("REMINDER: Plot saving is disabled. ")
 
     with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
         load_futures = [
-            executor.submit(load_lro_df, dataset_dict['Diviner'], 'Diviner', plot_frac=0.5),
-            executor.submit(load_lola_df, dataset_dict['LOLA'], 'LOLA', plot_frac=1.),
+            executor.submit(load_lro_df, dataset_dict['Diviner'], 'Diviner', plot_frac=0.95),
+            executor.submit(load_lola_df, dataset_dict['LOLA'], 'LOLA', plot_frac=0.95),
             executor.submit(load_m3_df, dataset_dict['M3']),
-            executor.submit(load_lro_df, dataset_dict['MiniRF'], 'MiniRF')
+            executor.submit(load_lro_df, dataset_dict['MiniRF'], 'MiniRF', plot_frac=0.95),
         ]
 
         for future in as_completed(load_futures):
@@ -46,10 +46,10 @@ def main(args):
 
     with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
         interp_futures = [
-            executor.submit(interpolate, dataset_dict['Diviner'], 'Diviner', plot_save_path=dataset_dict['Diviner']['plot_path'], debug=True),
-            executor.submit(interpolate, dataset_dict['LOLA'], 'LOLA', plot_save_path=dataset_dict['LOLA']['plot_path'], debug=True),
-            executor.submit(interpolate, dataset_dict['M3'], 'M3', plot_save_path=dataset_dict['M3']['plot_path'], debug=True),
-            executor.submit(interpolate, dataset_dict['MiniRF'], 'MiniRF', plot_save_path=dataset_dict['MiniRF']['plot_path'], debug=True)
+            executor.submit(interpolate, dataset_dict['Diviner'], 'Diviner', plot_save_path=dataset_dict['Diviner']['plot_path']),
+            executor.submit(interpolate, dataset_dict['LOLA'], 'LOLA', plot_save_path=dataset_dict['LOLA']['plot_path']),
+            executor.submit(interpolate, dataset_dict['M3'], 'M3', plot_save_path=dataset_dict['M3']['plot_path']),
+            executor.submit(interpolate, dataset_dict['MiniRF'], 'MiniRF', plot_save_path=dataset_dict['MiniRF']['plot_path'])
         ]
 
         for future in as_completed(interp_futures):

@@ -1,30 +1,971 @@
-REMINDER: Plot saving is disabled. 
-Raw CSVs for MiniRF found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/Mini-RF. Skipping load df...
-Raw CSVs for LOLA found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/LOLA. Skipping load df...
-Raw CSVs for M3 found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/M3. Skipping load df...
-Raw CSVs for Diviner found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/Diviner. Skipping load df...
-Loading stage complete after 0.00 mins
+Processing Diviner data...
+Processing LOLA data...
+Processing M3 data...
+Processing MiniRF data...
+Diviner dgdr_tbol_avg_pols_20111024d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6905309 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120618n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5548450 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140425d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4490684 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130422n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5801463 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140106d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6043276 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20151104d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4754643 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110220n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6408089 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140825d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6688953 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160623n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5328550 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20091211d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4935810 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100731n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6379206 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140216n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10367463 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20090705d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3098039 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150525d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10871350 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20111120d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6566991 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150705n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10384327 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110513n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6872183 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120902n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10045597 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160803d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5730924 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160830d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5722255 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150621d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10623126 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20131126d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2316698 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150718d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10844149 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100703n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5382575 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140715n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6834149 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150525d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2238489 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120806n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5056102 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20141226d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10593830 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150205n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9281411 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20111222n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2628766 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140922d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10310043 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160429d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 0 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100606d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4073443 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160623n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10558616 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20111218d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4366109 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130809d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5889478 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20111107n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5735433 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130325n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5770127 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20131016n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5807481 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20151104d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 323 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20090705n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2219620 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20090727d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 8903512 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140202d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10291163 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100523n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7018561 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20151229n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10435842 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20090920d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6314745 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120626d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4739429 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130822n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5692599 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150925n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4545875 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110830d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7584151 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160913n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5007613 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20141101n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1669644 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20131209d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6521643 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140729d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6943270 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20090810n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4784756 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160527n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9833830 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150828n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10536909 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130102n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5488322 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160208d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5236079 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140531n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7105663 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100813d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6799175 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120723d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5770586 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140315n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6507172 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20111204n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2161549 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20131029d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6053106 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100703n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6852809 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20151215d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10156044 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20151022n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 774707 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100717d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7203306 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150801n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10570069 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20111222n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9416029 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20121123n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2055231 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140605d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 11038199 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20090705n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1231540 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110624d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3928961 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150414d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10730532 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120210n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 11183313 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150608n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5192817 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140522d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 8712255 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120418d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5707259 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130130n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10861707 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130905d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6094246 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20141129d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7635484 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110625n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3561688 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20141126n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 726561 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140301d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10748906 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20151215d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5129095 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130102n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 11071406 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150428n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5860863 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110817n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7036753 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20131223n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4981543 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110430d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6445767 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150911d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10371992 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20151202n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10644784 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150428n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1875267 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160125n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5034388 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20101103d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7135305 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20141226d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7049672 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110913n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6470724 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150414d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3582117 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150705n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5108996 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140508n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3246575 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20101117n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6154489 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100107n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6691891 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130610n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3156683 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160221n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10131310 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20090920d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7236954 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150519n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1849022 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120612d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 8524666 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130726n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5736616 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160306d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10638930 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20151113n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 580135 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160504n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6001498 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100629d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3627319 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20101228n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6866736 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20090705d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6538872 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20111204n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6824108 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20121013d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6260800 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160513d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2385718 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110721n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6663751 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20121206d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 804762 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120405n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5837487 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100731n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6946474 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140522d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 44865 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110707d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7484563 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20121206d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4989617 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130919n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6107880 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20131206n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 855827 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20090713n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 8780647 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20090810n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7712008 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120929n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6099884 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130615d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3811830 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100910d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6391024 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110610n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1860720 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20141101n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10330625 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160416n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1127626 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20101227d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4929341 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110124n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6953231 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20091230d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4150608 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140119n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5488941 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20101201d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5263854 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150718d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5059060 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120502n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5720803 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110513n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5619443 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160319n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9089758 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20091017d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6534291 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130602d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 97862 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130919n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10607612 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140411n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9587156 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160221n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4880090 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140531n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2116486 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100620n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1917387 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150331n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6568028 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150511d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 0 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110111d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7266009 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20121026n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10703504 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150828n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5175808 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150318d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10559809 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20131112n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1705296 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20101021n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5791447 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100316d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6454873 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20131126d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 328914 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20091003n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5596366 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160306d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4721522 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140106d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10371614 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140908n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7043396 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100107n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6231616 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20090906n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5554922 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110927d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7344453 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130312d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5925147 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20101214n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4523772 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110306d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7562848 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20111107n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6665575 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150109n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6396077 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160720n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5691710 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150304n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6860998 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110830d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6440243 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20121026n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6138914 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100330n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7221326 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130519n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4178987 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160208d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9904045 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140328d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10403637 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20131002d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6337656 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160527n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5648742 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20111231d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6311453 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20090906n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6725450 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140328d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6107285 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130519n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6200075 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150109n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10885821 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140216n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5699004 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140812n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10631765 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20131112n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 8920977 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150608n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9387219 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140825d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10608117 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20141212n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10656644 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100426n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7358236 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140618n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9868885 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150122d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10351048 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130116d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6265171 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20090823d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4986321 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20090713n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5534974 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130712d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5740649 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130325n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10517116 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20121123n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9258457 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160720n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10164143 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130905d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10075561 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110207d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6634772 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20101007d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6761340 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20101214n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2346283 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120915d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 11026070 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20091127n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7159637 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100203n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4189223 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20101007d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7272083 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150815d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5308890 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140315n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10313183 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20131206n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9542368 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120806n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10866899 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20151113n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10222142 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150331n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9737170 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140922d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6730993 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120529n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4380119 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140425d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10766416 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140908n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10805904 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110817n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5863963 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110527d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6428481 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160429d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9320480 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140618n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6842328 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130408d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10816782 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20111024d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6485652 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150801n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5042722 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20101103d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6695491 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120516d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4625433 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20151022n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10231971 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120224d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5642608 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130116d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 11028227 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20141126n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9861306 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120405n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10782190 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100303n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6140344 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20151008d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6221588 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150621d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4905880 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20091031n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5894528 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20111231d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10710766 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130726n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10781630 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120128d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10695046 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160830d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9873652 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20121013d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 11036154 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20121214n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9119179 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100606d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4432726 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110124n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6973578 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140508n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7036548 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150318d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6252817 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20121220d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9042755 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150304n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10039442 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110402d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6786653 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20141212n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5107463 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130226n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6113803 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20151008d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7169761 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100827n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7023079 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110624d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1291588 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120929n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10702992 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160513d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10544568 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100121d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5157084 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150205n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7264720 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20101117n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7014351 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120516d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10935595 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20111218d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1202777 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100510d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6785494 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160111d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5128859 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130602d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 8578560 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130822n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10365122 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130610n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5972441 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100303n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6523926 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140729d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10900886 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160926d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7025530 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20091224n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4299010 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100412d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7740145 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120819d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10393184 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110306d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6503015 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20131029d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9401208 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160706d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5586229 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120612d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 384511 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20141019d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 8906110 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20091211d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4544211 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160609d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4988280 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120915d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5754016 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140812n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6553826 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130505d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4464847 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140605d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3686039 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100620n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4405366 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110707d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6840689 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150925n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10561377 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100203n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5253592 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110913n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7613861 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120529n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5465522 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120819d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5199547 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110416n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7273690 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120128d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6476849 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110416n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5793508 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100910d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6987700 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20091003n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7888665 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130312d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10791660 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130615d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10921666 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160416n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5480882 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100412d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6931949 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20151118d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5969184 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110402d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6089805 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100923n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6738435 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130809d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10591243 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120323d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5361247 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150219d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7003946 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150815d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10534250 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160816n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10214593 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140411n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6490064 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20091113d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7397675 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20141115d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 370727 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110430d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7609719 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20121220d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6508241 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20091017d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6951338 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140119n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10553177 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150511d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9301650 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20141019d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7375096 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110320n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6258633 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100510d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7386272 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150519n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5525872 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140702d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10941424 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20091127n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5879536 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20121109d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9947963 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20121214n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1464614 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120114n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10934978 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20111120d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6412988 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20131223n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10568640 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160609d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10626565 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120308n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9835068 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130629n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9521228 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110803d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6358355 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120902n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5823052 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160926d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5819835 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20090823d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 8448908 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160706d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10633922 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120224d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10674236 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120709n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10402002 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20091031n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6946828 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100629d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4089669 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110803d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7575413 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20141115d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6403300 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130629n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5992678 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120626d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10922439 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120723d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 11042648 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110610n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4792368 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110927d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6867155 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160402d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 1804953 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110207d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6601303 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160319n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5253956 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20101021n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7423242 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20150219d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10079875 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20101201d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7279023 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100827n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6057370 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110527d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5286539 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20090727d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5461514 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120308n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5140055 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140702d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6887154 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20141005n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6462985 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100121d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5097613 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20131016n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10134809 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100330n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6339902 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120618n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5303269 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20131002d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10423465 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20151229n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4650652 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100316d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7140016 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140301d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6333988 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160913n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10380122 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130226n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10607560 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130505d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10999828 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100426n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6407389 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120709n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5584652 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130422n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9658728 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160125n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9194580 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110721n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5842447 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100217d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6408364 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100923n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6563941 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20111010n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6622903 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20151118d_240_jp2.lbl lines: 3812.0, line samples: 3812.0MiniRF global_cpr_128ppd_simp_0c.lbl lines: 23040.0, line samples: 46080.0
+Valid mask: 169362588 / 1061683200 valid values out of 1061683200 total
+MiniRF df:
+          Longitude      Latitude        MiniRF
+count  1.901576e+07  1.901576e+07  1.901576e+07
+mean   1.800018e+02  1.752702e+00  5.215148e-01
+std    1.002760e+02  8.501549e+01  3.315217e-01
+min    3.906250e-03 -8.976953e+01  2.448716e-06
+25%    9.090234e+01 -8.202734e+01  3.066575e-01
+50%    1.797305e+02  7.529297e+01  4.439075e-01
+75%    2.693789e+02  8.251953e+01  6.429849e-01
+max    3.599961e+02  8.998828e+01  4.499947e+00
 
-Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
-Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
-Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
-Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
-Interpolation stage complete after 0.00 mins
+Loaded 19,015,763 points for MiniRF data.
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/MiniRF_continuous_raw.png
 
-Dataframes combined.
+Valid mask: 6206455 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120418d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 11062532 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20121109d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6257006 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20131209d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6628785 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20160816n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5873274 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20111010n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6426930 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110625n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6029851 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100813d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7423610 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20101228n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6404459 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130712d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 11026311 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160111d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 9940425 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20140715n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10599493 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20091113d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6855058 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20141129d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5974887 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20140202d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6173380 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20110111d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6731202 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20130213d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10689270 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120210n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5100772 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130213d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6287653 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160504n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2246955 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20091230d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5285790 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130408d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5435841 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150122d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7072585 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100523n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 4205197 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20101227d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2515510 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20141005n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10725508 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120502n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10318255 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20120323d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10445361 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20091224n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 2980893 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20151202n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 3980612 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160402d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10681775 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20120114n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5533636 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20130130n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5964088 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20100717d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6704079 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20100217d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 7008748 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_poln_20160803d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 10537282 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110320n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6572623 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20110220n_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 6283811 / 14531344 valid values out of 14531344 total
+Diviner dgdr_tbol_avg_pols_20150911d_240_jp2.lbl lines: 3812.0, line samples: 3812.0
+Valid mask: 5388064 / 14531344 valid values out of 14531344 total
+Diviner df:
+          Longitude      Latitude       Diviner
+count  3.223909e+08  3.223909e+08  3.223909e+08
+mean   1.806377e+02  1.518337e+01  1.282403e+02
+std    8.258926e+01  2.919971e+01  7.496133e+01
+min    1.503432e-02 -8.998321e+01  0.000000e+00
+25%    9.154632e+01 -7.970287e+01  7.094000e+01
+50%    1.805535e+02  7.638869e+01  8.506000e+01
+75%    2.693850e+02  8.066980e+01  2.029600e+02
+max    3.599850e+02  8.997982e+01  4.378200e+02
 
-Combined CSVs appear to exist. Skipping label stage.
-Dataframes labeled after 3.93 mins
+Loaded 322,390,876 points for Diviner data.
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/Diviner_continuous_raw.png
+M3 df:
+          Longitude      Latitude     Elevation            M3
+count  2.674667e+07  2.674667e+07  2.674667e+07  2.674667e+07
+mean   2.103575e+02  1.030764e+01 -9.984038e+02  8.859612e-01
+std    1.013760e+02  7.938000e+01  1.588986e+03  1.994082e-01
+min    1.765034e-06 -8.999926e+01 -7.668998e+03  2.831738e-05
+25%    1.211792e+02 -7.989843e+01 -1.842573e+03  8.747041e-01
+50%    2.425805e+02  7.633389e+01 -9.235243e+02  9.573093e-01
+75%    2.995417e+02  8.181812e+01 -1.996262e+02  9.888258e-01
+max    3.600000e+02  8.999524e+01  7.020257e+03  1.750000e+00
 
+Plot saved to /rds/general/user/as5023/home/Lunar_point_model/data/plots/M3_continuous_raw.png
+concurrent.futures.process._RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/rds/general/user/as5023/home/miniforge3/envs/IRP/lib/python3.11/concurrent/futures/process.py", line 261, in _process_worker
+    r = call_item.fn(*call_item.args, **call_item.kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/as5023/home/Lunar_point_model/data_processing/utils/load_dfs.py", line 243, in load_lola_df
+    assert np.all((df_temp['Longitude'] >= 0) & (df_temp['Longitude'] <= 360)), f"Some longitude values are out of bounds for {data_type}: \n{df_temp['Longitude']<0} \n{df_temp['Longitude']>360}"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Some longitude values are out of bounds for LOLA: 
+0        True
+1        True
+2        True
+3        True
+4        True
+         ... 
+23917    True
+23918    True
+23919    True
+23920    True
+23921    True
+Name: Longitude, Length: 23922, dtype: bool 
+0        False
+1        False
+2        False
+3        False
+4        False
+         ...  
+23917    False
+23918    False
+23919    False
+23920    False
+23921    False
+Name: Longitude, Length: 23922, dtype: bool
+"""
 
-Job finished on Sat 26 Apr 10:45:14 BST 2025
-Total runtime: 4 minutes and 41 seconds
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/rds/general/user/as5023/home/Lunar_point_model/jobscripts/pbs/../../data_processing/process_data.py", line 88, in <module>
+    main(args)
+  File "/rds/general/user/as5023/home/Lunar_point_model/jobscripts/pbs/../../data_processing/process_data.py", line 41, in main
+    raise e
+  File "/rds/general/user/as5023/home/Lunar_point_model/jobscripts/pbs/../../data_processing/process_data.py", line 39, in main
+    future.result()
+  File "/rds/general/user/as5023/home/miniforge3/envs/IRP/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/rds/general/user/as5023/home/miniforge3/envs/IRP/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+AssertionError: Some longitude values are out of bounds for LOLA: 
+0        True
+1        True
+2        True
+3        True
+4        True
+         ... 
+23917    True
+23918    True
+23919    True
+23920    True
+23921    True
+Name: Longitude, Length: 23922, dtype: bool 
+0        False
+1        False
+2        False
+3        False
+4        False
+         ...  
+23917    False
+23918    False
+23919    False
+23920    False
+23921    False
+Name: Longitude, Length: 23922, dtype: bool
+
+Job finished on Tue 29 Apr 15:20:47 BST 2025
+Total runtime: 202 minutes and 15 seconds
 
 ====================================
-CPU Time used: 00:05:52
-CPU Percent: 184%
-Memory usage: 18140092kb
-Approx Power usage: 0.001
-Walltime usage: 00:04:51
+CPU Time used: 04:07:47
+CPU Percent: 250%
+Memory usage: 50568736kb
+Approx Power usage: 0.04939999999999999
+Walltime usage: 03:22:26
 
 ====================================

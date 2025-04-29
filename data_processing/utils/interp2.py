@@ -7,7 +7,7 @@ from scipy.stats import binned_statistic_2d
 from scipy.spatial import cKDTree
 from pyproj import Proj
 
-from data_processing.utils.utils import generate_mesh, save_by_lon_range, plot_polar_data, load_every_nth_line, generate_xy_mesh
+from data_processing.utils.utils import save_by_lon_range, load_every_nth_line, generate_xy_mesh, plot_polar, plot_polar_test
 from data_processing.download_data import clear_dir
 
 
@@ -180,14 +180,15 @@ def max_rad_interp(points, values, targets, radius_m=1000, fallback='nearest'):
     return interpolated
 
 
-def interpolate(data_dict, data_type, plot_save_path=None, debug=False):
+def interpolate(data_dict, data_type, plot_save_path=None):
     if not os.path.exists(data_dict['interp_dir']):
         print(f"Creating interp dir for {data_type}")
         os.mkdir(data_dict['interp_dir'])
 
-    if len([f for f in os.listdir(data_dict['interp_dir']) if f.endswith('.csv') and 'lon' in f]) == 12:
-        print(f"Interpolated CSVs appear to exist for {data_type} data. Skipping interpolation.")
-        return
+    # if len([f for f in os.listdir(data_dict['interp_dir']) if f.endswith('.csv') and 'lon' in f]) == 12:
+    #     print(f"Interpolated CSVs appear to exist for {data_type} data. Skipping interpolation.")
+    #     return
+    print(f"REMINDER: Skip if combined CSVs already exist commented out in interp.py")
     
     # If CSVs dont already exist, clear the directory
     clear_dir(data_dict['interp_dir'], dirs_only=False)
@@ -200,15 +201,14 @@ def interpolate(data_dict, data_type, plot_save_path=None, debug=False):
     for (csv, (mesh_north, mesh_south)) in zip(csvs, meshes):
         df = pd.read_csv(f"{data_dict['save_path']}/{csv}")
         if data_type == 'Diviner':
-            # div_frac = 0.25
-            # weights = df[data_type].values / df[data_type].sum()
-            # df = df.sample(frac=div_frac, weights=weights, random_state=42)    # Resample Diviner data, weighted to higher values
-            # print(f"NOTE: Diviner resampled for {div_frac:.2%} of data across all csvs due to abundance of data. Weighted to higher values"); sys.stdout.flush()
-
             interpolated_df = interpolate_diviner(df, mesh_north, mesh_south)
-        else:
-            elev = df['Elevation'].values if data_type == 'M3' else None
+
+        elif data_type == 'M3':
+            elev = df['Elevation'].values
             interpolated_df = interpolate_csv(df, mesh_north, mesh_south, data_type, elev)
+
+        else:
+            interpolated_df = interpolate_csv(df, mesh_north, mesh_south, data_type)
     
         save_by_lon_range(interpolated_df, save_path)
 
@@ -222,10 +222,10 @@ def interpolate(data_dict, data_type, plot_save_path=None, debug=False):
     interpolated_df = pd.concat(df_list, ignore_index=True)
 
     if plot_save_path:
-        plot_polar_data(interpolated_df, data_type, graph_cat='interp', frac=0.25, save_path=plot_save_path)
-        print(f"Plot (hopefully) saved to {plot_save_path}")
+        plot_polar(interpolated_df, data_type, frac=0.1, save_path=plot_save_path, name_add='interp')
+        plot_polar_test(interpolated_df, data_type, frac=0.1, save_path=plot_save_path, cat='interp_test')
 
-    if debug:
-        print(f"\nInterpolated {data_type} df:")
-        print(interpolated_df.describe())
-        print(interpolated_df.head())
+
+    print(f"\nInterpolated {data_type} df:")
+    print(interpolated_df.describe())
+    print(interpolated_df.head())

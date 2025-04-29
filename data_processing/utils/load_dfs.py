@@ -6,9 +6,18 @@ import requests
 import matplotlib.pyplot as plt # type: ignore
 import sys
 
-from utils.utils import get_metadata_value, clean_metadata_value, parse_metadata_content, load_every_nth_line
-from utils.utils import decode_image_file, get_closest_channels, plot_polar_data, save_by_lon_range, create_hist, from_csv_and_desc
 from download_data import clear_dir
+from utils.utils import (
+    get_metadata_value, 
+    clean_metadata_value, 
+    parse_metadata_content, 
+    plot_polar, 
+    decode_image_file, 
+    get_closest_channels, 
+    save_by_lon_range, 
+    create_hist, 
+    from_csv_and_desc
+    )
 
 
 def process_LRO_image(image_file, address, metadata, data_type, max_val=1.0, min_val=0.0):
@@ -132,7 +141,6 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, hist=False):
         for lbl_file in lbl_files:
             lbl_path = f"{file_path}/{lbl_file}"
             metadata = parse_metadata_content(lbl_path)
-            print(f"{data_type} {lbl_file} lines: {get_metadata_value(metadata, address, 'LINES')}, line samples: {get_metadata_value(metadata, address, 'LINE_SAMPLES')}")
 
             img_file = lbl_path.replace(data_dict['lbl_ext'], data_dict['img_ext'])
 
@@ -148,10 +156,8 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, hist=False):
             valid_mask = ((lats <= -75) & (lats >= -90)) | ((lats <= 90) & (lats >= 75))
             valid_mask &= np.isfinite(output_vals)  # Remove non-finite vals from output_vals and clip coords to poles
 
-            print(f"Valid mask: {valid_mask.sum()} / {valid_mask.size} valid values out of {valid_mask.size} total")
-
-            assert np.all((lons >= 0) & (lons <= 360)), f"Some longitude values are out of bounds for {data_type}: \n{lons<0} \n{lons>360}"
-            assert np.all((lats >= -90) & (lats <= 90)), f"Some latitude values are out of bounds for {data_type}: \n{lats<-90} \n{lats>90}"
+            assert np.all((lons >= 0) & (lons <= 360)), f"Some longitude values are out of bounds for {data_type} - Min: {lons.min()}, max: {lons.max()}\n{sum(lons<0)} \n{sum(lons>360)}"
+            assert np.all((lats >= -90) & (lats <= 90)), f"Some latitude values are out of bounds for {data_type} - Min: {lats.min()}, max: {lats.max()}\n{sum(lats<-90)} \n{sum(lats>90)}"
 
             df = pd.DataFrame({
                 'Longitude': lons[valid_mask],
@@ -168,10 +174,10 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, hist=False):
 
     if plot_save_path or hist:
         df = from_csv_and_desc(data_dict, data_type)
-
+        print(f"Loaded {len(df):,} points for {data_type} data.")
+    
         if plot_save_path:
-            plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
-
+            plot_polar(df, data_type, frac=plot_frac, save_path=plot_save_path, name_add='raw')
         if hist:
             create_hist(df, data_type)
 
@@ -210,7 +216,7 @@ def load_lola_df(data_dict, data_type, hist=False, plot_frac=0.25):
                 raise ValueError(f"File {file} has only {df_temp.shape[1]} columns, expected at least 3. Processed {filecount} files.")
 
             df_temp = df_temp.iloc[:, :3]  # Select only the first three columns
-            df_temp.columns = ['Latitude', 'Longitude', data_type]
+            df_temp.columns = ['Longitude', 'Latitude', data_type]
 
             df_temp['Longitude'] = df_temp['Longitude'].astype(np.float32)
             df_temp['Latitude'] = df_temp['Latitude'].astype(np.float32)
@@ -247,7 +253,7 @@ def load_lola_df(data_dict, data_type, hist=False, plot_frac=0.25):
         df = from_csv_and_desc(data_dict, data_type)
 
         if plot_save_path:
-            plot_polar_data(df, data_type, frac=plot_frac, save_path=plot_save_path)
+            plot_polar(df, data_type, frac=plot_frac, save_path=plot_save_path, name_add='raw')
 
         if hist:
             create_hist(df, data_type)
@@ -458,7 +464,7 @@ def load_m3_df(data_dict, plot_frac=0.25, hist=False):
         df = from_csv_and_desc(data_dict, 'M3')
 
         if plot_save_path:
-            plot_polar_data(df, 'M3', frac=plot_frac, save_path=plot_save_path)
+            plot_polar(df, 'M3', frac=plot_frac, save_path=plot_save_path, name_add='raw')
 
         if hist: 
             create_hist(df, 'M3')
