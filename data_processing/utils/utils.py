@@ -458,35 +458,35 @@ def save_by_lon_range(df, output_dir):
 #         plt.show()
 
 
-def plot_polar_test(df_in, variable, save_path, cat='test', frac=None, random_state=42):
-    df = df_in.copy()
-    sp_df = df[df['Latitude'] < 0]
+# def plot_polar_test(df_in, variable, save_path, cat='test', frac=None, random_state=42):
+#     df = df_in.copy()
+#     sp_df = df[df['Latitude'] < 0]
 
-    if frac:
-        sp_df = sp_df.sample(frac=frac, random_state=random_state)
+#     if frac:
+#         sp_df = sp_df.sample(frac=frac, random_state=random_state)
 
-    ave_df = sp_df.groupby(['Longitude', 'Latitude'], as_index=False)[variable].mean()
+#     ave_df = sp_df.groupby(['Longitude', 'Latitude'], as_index=False)[variable].mean()
 
-    ave_df['r'] = 90 + ave_df['Latitude']
-    lon360 = (ave_df['Longitude'] + 360) % 360
-    ave_df['theta'] = np.deg2rad(lon360)
+#     ave_df['r'] = 90 + ave_df['Latitude']
+#     lon360 = (ave_df['Longitude'] + 360) % 360
+#     ave_df['theta'] = np.deg2rad(lon360)
 
-    fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, figsize=(10, 10))
+#     fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, figsize=(10, 10))
 
-    ax.set_ylim(0, 15)
-    ax.set_yticks(range(0, 16, 5))
-    labels = [str(-90 + x) for x in range(0, 16, 5)]
-    ax.set_yticklabels(labels)
-    ax.set_theta_zero_location('N')
-    ax.set_theta_direction(-1)
-    ax.set_title(f'{variable} values - South Pole - {cat}')
-    sc = ax.scatter(ave_df['theta'], ave_df['r'], c=ave_df[variable], cmap='Greys_r', s=5)
-    fig.colorbar(sc, ax=ax, label=variable)
+#     ax.set_ylim(0, 15)
+#     ax.set_yticks(range(0, 16, 5))
+#     labels = [str(-90 + x) for x in range(0, 16, 5)]
+#     ax.set_yticklabels(labels)
+#     ax.set_theta_zero_location('N')
+#     ax.set_theta_direction(-1)
+#     ax.set_title(f'{variable} values - South Pole - {cat}')
+#     sc = ax.scatter(ave_df['theta'], ave_df['r'], c=ave_df[variable], cmap='Greys_r', s=5)
+#     fig.colorbar(sc, ax=ax, label=variable)
 
-    name = f"{save_path}/{variable}_{cat}_plot.png"
-    plt.savefig(name)
-    print(f"Plot saved to {name} for {variable}\n")
-    plt.close(fig)  # Close the figure to free memory
+#     name = f"{save_path}/{variable}_{cat}_plot.png"
+#     plt.savefig(name)
+#     print(f"Plot saved to {name} for {variable}\n")
+#     plt.close(fig)  # Close the figure to free memory
 
 
 # def plot_psr_data(df, variable, graph_cat='raw', frac=None, random_state=42, save_path=None, dpi=100):
@@ -567,6 +567,9 @@ def plot_polar_test(df_in, variable, save_path, cat='test', frac=None, random_st
 
 
 def plot_polar(df_in, variable, save_path, mode='continuous', label_col=None, categories=None, cat_colours=None, frac=None, random_state=42, dpi=None, name_add=None):
+    """
+    Options for mode: labeled, binary, category, continuous
+    """
     # ---------- Basic checks ----------
     mode = mode.lower()
     required = {'Longitude', 'Latitude', variable}
@@ -592,12 +595,12 @@ def plot_polar(df_in, variable, save_path, mode='continuous', label_col=None, ca
     if mode == 'labeled':
         ave = ave[ave[label_col] > 0]
         cat_colours = cat_colours or {1: 'blue', 2: 'red'}
-        categories = sorted(ave[label_col].unique()) 
+        categories = sorted(ave[label_col].unique())
     elif mode == 'binary':
         labels = set(ave[label_col])
         assert labels <= {0, 1}, f"Binary mode requires labels to be 0 or 1, found: {labels}"
         categories = [0, 1]
-        cat_colours = cat_colours or {0: 'black', 1: 'gray'}
+        cat_colours = cat_colours if cat_colours else {0: 'black', 1: 'gray'}
     elif mode == 'category':
         assert categories, "Categories are required for category mode"
         assert cat_colours, "Category colours are required for category mode"
@@ -648,11 +651,12 @@ def plot_polar(df_in, variable, save_path, mode='continuous', label_col=None, ca
     draw(axS, south, 'south')
 
     # ---------- Save or show ----------
-    fname = f"{save_path}/{variable}_{mode}_{name_add}.png" if name_add else f"{save_path}/{variable}_{mode}.png"
+    fname = f"{variable}_{mode}_{name_add}.png" if name_add else f"{variable}_{mode}.png"
+    fpath = os.path.join(save_path, fname)
     if dpi:
-        plt.savefig(fname, dpi=dpi)
+        plt.savefig(fpath, dpi=dpi)
     else:
-        plt.savefig(fname)
+        plt.savefig(fpath)
 
     print(f"Plot saved to {fname}")
     plt.close(fig)

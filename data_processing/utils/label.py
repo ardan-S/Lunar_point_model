@@ -10,7 +10,7 @@ from functools import partial
 from pyproj import CRS, Transformer, Proj, Geod
 import sys
 
-from data_processing.utils.utils import save_by_lon_range, load_csvs_parallel
+from data_processing.utils.utils import save_by_lon_range, load_csvs_parallel, plot_polar
 from data_processing.download_data import clear_dir
 
 
@@ -30,12 +30,12 @@ def combine(*dirs, n_workers=None):
         print(f"ERROR - Combined dataframe columns: {combined_df.columns}")
         raise ValueError("Combined dataframe does not have the expected number of columns")
 
-    print(f"Dataframes combined - max lon: {combined_df['Longitude'].max():.2f}, min lon: {combined_df['Longitude'].min():.2f}, max lat: {combined_df['Latitude'].max():.2f}, min lat: {combined_df['Latitude'].min():.2f}")
+    print(f"Dataframes combined successfully. Shape: {combined_df.shape}\n")
     return combined_df
 
 
-def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, eps=0.75):
-
+def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, eps=350, min_cluster=5):
+    # -------------------- Setup --------------------
     combined_save_path = dataset_dict['Combined']['combined_save_path']
 
     # if len([f for f in os.listdir(combined_save_path) if f.endswith('.csv') and 'lon' in f]) == 12:
@@ -54,29 +54,32 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     df.loc[df['Diviner'] <= 110, 'Label'] += 2
     df.loc[df['Diviner'] <= 110, 'Diviner label'] += 2
 
-    plot_labeled_polar_data(df=df,variable='Diviner', label_column='Diviner label', save_path=os.path.join(plot_save_path, 'Diviner_label_plot.png'), frac=0.01)
+    print(f"Taking the top {df[df['Diviner'] <= 110].shape[0] / df.shape[0] :.2%} of points from Diviner. Threshold = 110")
+    plot_polar(df, 'Diviner', save_path=plot_save_path, mode='labeled', label_col='Diviner label', frac=0.01, dpi=400)
 
     # -------------------- LOLA --------------------
     lola_thresh_n = df.loc[df['Latitude'] >= 0, 'LOLA'].mean() + 2 * df.loc[df['Latitude'] >= 0, 'LOLA'].std()
     print(f"North pole LOLA threshold: {lola_thresh_n:.2f} ({df[df['LOLA'] >= lola_thresh_n].shape[0] / df.shape[0] :.2%} of data)")
-    apply_area_label_2(df, 'LOLA', lola_thresh_n, lola_area_thresh, 'above', 'north', eps=eps)
+    apply_area_label_2(df, 'LOLA', lola_thresh_n, lola_area_thresh, 'above', 'north', eps=eps, min_cluster=min_cluster)
 
     lola_thresh_s = df.loc[df['Latitude'] < 0, 'LOLA'].mean() + 2 * df.loc[df['Latitude'] < 0, 'LOLA'].std()
     print(f"South pole LOLA threshold: {lola_thresh_s:.2f} ({df[df['LOLA'] >= lola_thresh_s].shape[0] / df.shape[0] :.2%} of data)")
-    apply_area_label_2(df, 'LOLA', lola_thresh_s, lola_area_thresh, 'above', 'south', eps=eps)
+    apply_area_label_2(df, 'LOLA', lola_thresh_s, lola_area_thresh, 'above', 'south', eps=eps, min_cluster=min_cluster)
 
-    plot_labeled_polar_data(df=df,variable='LOLA', label_column='LOLA label', save_path=os.path.join(plot_save_path, 'LOLA_label_plot.png'), frac=0.01)
+    plot_polar(df, 'LOLA', save_path=plot_save_path, mode='labeled', label_col='LOLA label', frac=0.01, dpi=400)
+    print()
 
     # -------------------- M3 --------------------
     m3_thresh_n = df.loc[df['Latitude'] >= 0, 'M3'].mean() - 2 * df.loc[df['Latitude'] >= 0, 'M3'].std()
     print(f"North pole M3 threshold: {m3_thresh_n:.2f} ({df[df['M3'] <= m3_thresh_n].shape[0] / df.shape[0] :.2%} of data)")
-    apply_area_label_2(df, 'M3', m3_thresh_n, m3_area_thresh, 'below', 'north', eps=eps)  # eps to 2.5
+    apply_area_label_2(df, 'M3', m3_thresh_n, m3_area_thresh, 'below', 'north', eps=eps, min_cluster=min_cluster)  # eps to 2.5
 
     m3_thresh_s = df.loc[df['Latitude'] < 0, 'M3'].mean() - 2 * df.loc[df['Latitude'] < 0, 'M3'].std()
     print(f"South pole M3 threshold: {m3_thresh_s:.2f} ({df[df['M3'] <= m3_thresh_s].shape[0] / df.shape[0] :.2%} of data)")
-    apply_area_label_2(df, 'M3', m3_thresh_s, m3_area_thresh, 'below', 'south', eps=eps)  # eps to 2.5
+    apply_area_label_2(df, 'M3', m3_thresh_s, m3_area_thresh, 'below', 'south', eps=eps, min_cluster=min_cluster)  # eps to 2.5
 
-    plot_labeled_polar_data(df=df,variable='M3', label_column='M3 label', save_path=os.path.join(plot_save_path, 'M3_label_plot.png'), frac=0.01)
+    plot_polar(df, 'M3', save_path=plot_save_path, mode='labeled', label_col='M3 label', frac=0.01, dpi=400)
+    print()
 
     # -------------------- MiniRF --------------------
     MRF_thresh = df['MiniRF'].mean() + 2 * df['MiniRF'].std()
@@ -85,7 +88,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     df.loc[df['MiniRF'] > MRF_thresh, 'Label'] += 1
     df.loc[df['MiniRF'] > MRF_thresh, 'MiniRF label'] += 1
 
-    plot_labeled_polar_data(df=df,variable='MiniRF', label_column='MiniRF label', save_path=os.path.join(plot_save_path, 'MiniRF_label_plot.png'), frac=0.01)
+    plot_polar(df, 'MiniRF', save_path=plot_save_path, mode='labeled', label_col='MiniRF label', frac=0.01, dpi=400)
 
     # -------------------- Save labeled data --------------------
     save_by_lon_range(df, combined_save_path)
@@ -95,7 +98,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
         counts = df[label_name].value_counts(normalize=True) * 100
         for label in [0, 1, 2]:  # Ensure that we always include 0, 1, and 2 even if they are missing
             percentage = counts.get(label, 0.0)
-            print(f"{label_name} - {label}: {percentage:.2f}%")
+            print(f"{label_name:<7} - {label}: {percentage:6.2f}%")
     print()
     print("Label counts:")
     print_label_counts(df, 'Diviner label')
@@ -108,9 +111,8 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     print()
     print(f"Total number of points: {df.shape[0]}")
     print()
-    print(f"Max lon: {df['Longitude'].max():.2f}, min lon: {df['Longitude'].min():.2f}, max lat: {df['Latitude'].max():.2f}, min lat: {df['Latitude'].min():.2f}")
 
-    plot_polar_data(df, 'Label', graph_cat='labeled', save_path=plot_save_path, frac=0.01)
+    plot_polar(df, 'Label', save_path=plot_save_path, mode='continuous', label_col='Label', frac=0.01, dpi=400)
 
     # -------------------- Ice threshold --------------------
     lbl = 3
@@ -120,6 +122,8 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     print(f"Len of df: {len(df)}, dtype of label: {df['Label'].dtype}")
     print(f"Len of df_bin: {len(df_bin)}, dtype of label: {df_bin['Label'].dtype}")
 
+    assert len(df_bin) == len(df), "Length of binary dataframe does not match original dataframe"
+
     print(f"Percentage of labels >= {lbl}: {(df_bin['Label'] == 1).sum() / df_bin.shape[0]:.2%}")
 
     print()
@@ -128,16 +132,19 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     print()
     print(f"Total number of points: {df_bin.shape[0]}")
 
-    plot_polar_data(df_bin, 'Label', frac=0.01, graph_cat='binary_orig', save_path=plot_save_path, dpi=400)
+    # plot_polar_data(df_bin, 'Label', frac=0.01, graph_cat='binary_orig', save_path=plot_save_path, dpi=400)
+    plot_polar(df_bin, 'Label', save_path=plot_save_path, mode='binary', label_col='Label', frac=0.01, dpi=400)
 
 
-def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, eps, R_MOON_M=1737.4e3):
+def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, eps, min_cluster, R_MOON_M=1737.4e3):
+    # -------------------- Setup --------------------
     pole = pole.lower()
     assert 'Label' in df.columns, "Label column not found in dataframe"
     assert f'{data_type} label' in df.columns, f"{data_type} label column not found in dataframe"
     assert pole in ['north', 'south'], "Invalid pole. Use 'north' or 'south'."
     df.astype({'Longitude': 'float32', 'Latitude': 'float32', 'Label': 'int8', f'{data_type} label': 'int8'}, copy=False)
 
+    # ----------------- Define condition -----------------
     # Select data around threshold
     if direction.lower() == 'below':
         condition = df[data_type] < threshold
@@ -159,9 +166,10 @@ def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, e
 
 # def cluster_pole(df, condition, data_type, area_thresh, eps, pole, R_MOON=1737.4e3):
     if df.loc[condition].empty:
-        print(f"WARNING: Clustering failed for {data_type} pole. No data points meet the condition.")
+        print(f"WARNING: Clustering failed for {data_type} pole. No data points meet the pole/threshold conditions.")
         return df
     
+    # ----------------- Clustering -----------------
     # Step 1: Update labels for the rows which meet the threshold condition
     df.loc[condition, ['Label', f'{data_type} label']] += 1
 
@@ -177,8 +185,7 @@ def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, e
     coords_xy = np.column_stack((x, y))
 
     # Step 3: Perform clustering using DBSCAN
-    # Note DBSCAN is a hard clustering algorithm, points are assigned to exactly one cluster
-    min_cluster = 3
+    # Note DBSCAN is a hard clustering algorithm, points are assigned to exactly one cluster so no double counted points
     print(f"Clustering {data_type} pole - eps={eps:.2f} m, min_cluster={min_cluster}")
     clustering = DBSCAN(eps=eps, min_samples=min_cluster, metric="euclidean")
     clustering_labels = clustering.fit_predict(coords_xy).astype('int32')
@@ -191,7 +198,6 @@ def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, e
 
     geod = Geod(a=R_MOON_M, b=R_MOON_M)
 
-    # Step 4: Calculate area for each cluster and update labels
     for clabel in unique_clusters:        
         mask = (df['cluster_label'] == clabel) & condition
         lon_cl = df.loc[mask, 'Longitude'].to_numpy(dtype='float32')
@@ -212,6 +218,6 @@ def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, e
         else:
             clusters_at_1 += 1
 
-    print(f"{data_type} - Clusters at 1: {clusters_at_1}, Clusters at 2: {clusters_at_2}, Total clusters: {len(unique_clusters)}")
+    print(f"{data_type} - Clusters at 1: {clusters_at_1}, Clusters at 2: {clusters_at_2}, Total clusters: {clusters_at_1 + clusters_at_2}")
     df.drop(columns=['cluster_label'], inplace=True)
 

@@ -119,6 +119,7 @@ def load_lro_df(data_dict, data_type, plot_frac=0.25, hist=False):
 
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"Raw CSVs for {data_type} found at: {data_dict['save_path']}. Skipping load df...")
+        return  # Comment this return to still skip loading but obtain plot.
 
     else:
         print(f"Processing {data_type} data..."); sys.stdout.flush()
@@ -198,6 +199,7 @@ def load_lola_df(data_dict, data_type, hist=False, plot_frac=0.25):
 
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"Raw CSVs for {data_type} found at: {data_dict['save_path']}. Skipping load df...")
+        return  # Comment this return to still skip loading but obtain plot.
     
     else:
         print(f"Processing {data_type} data..."); sys.stdout.flush()
@@ -216,7 +218,8 @@ def load_lola_df(data_dict, data_type, hist=False, plot_frac=0.25):
                 raise ValueError(f"File {file} has only {df_temp.shape[1]} columns, expected at least 3. Processed {filecount} files.")
 
             df_temp = df_temp.iloc[:, :3]  # Select only the first three columns
-            df_temp.columns = ['Longitude', 'Latitude', data_type]
+            # df_temp.columns = ['Longitude', 'Latitude', data_type]
+            df_temp.columns = ['Latitude', 'Longitude', data_type]
 
             df_temp['Longitude'] = df_temp['Longitude'].astype(np.float32)
             df_temp['Latitude'] = df_temp['Latitude'].astype(np.float32)
@@ -226,7 +229,7 @@ def load_lola_df(data_dict, data_type, hist=False, plot_frac=0.25):
             points_in_bounds = ((df_temp['Latitude'] <= -75) & (df_temp['Latitude'] >= -90)) | ((df_temp['Latitude'] <= 90) & (df_temp['Latitude'] >= 75))
             if not points_in_bounds.any():
                 skipped += 1
-                continue
+                continue    
 
             max_val = data_dict['max']
             min_val = data_dict['min']
@@ -412,6 +415,7 @@ def load_m3_df(data_dict, plot_frac=0.25, hist=False):
 
     if len([f for f in os.listdir(data_dict['save_path']) if f.endswith('.csv') and 'lon' in f]) == 12:
         print(f"Raw CSVs for M3 found at: {data_dict['save_path']}. Skipping load df...")
+        return  # Comment this return to still skip loading but obtain plot.
     
     else:
         print(f"Processing M3 data..."); sys.stdout.flush()

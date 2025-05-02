@@ -7,177 +7,158 @@ from scipy.stats import binned_statistic_2d
 from scipy.spatial import cKDTree
 from pyproj import Proj
 
-from data_processing.utils.utils import save_by_lon_range, load_every_nth_line, generate_xy_mesh, plot_polar, plot_polar_test
+from data_processing.utils.utils import save_by_lon_range, load_every_nth_line, generate_xy_mesh, plot_polar
 from data_processing.download_data import clear_dir
 
 
-# def interpolate_using_griddata(df, lon_lat_grid_north, lon_lat_grid_south, method='linear', elev=None, data_type=None):
-#     lons = df['Longitude'].values
-#     lats = df['Latitude'].values
-#     values = df[data_type].values
-#     points = np.column_stack((lons, lats))
-
-#     # Interpolation on northern mesh grid
-#     lon_grid_north, lat_grid_north = lon_lat_grid_north[:, 0], lon_lat_grid_north[:, 1]
-#     grid_north = np.column_stack((lon_grid_north, lat_grid_north))
-#     interpolated_north = griddata(points, values, grid_north, method=method)
-
-#     # Interpolation on southern mesh grid
-#     lon_grid_south, lat_grid_south = lon_lat_grid_south[:, 0], lon_lat_grid_south[:, 1]
-#     grid_south = np.column_stack((lon_grid_south, lat_grid_south))
-#     interpolated_south = griddata(points, values, grid_south, method=method)
-
-#     # Handle NaNs with 'nearest' method
-#     nan_indices_north = np.isnan(interpolated_north)
-#     nan_indices_south = np.isnan(interpolated_south)
-#     interpolated_north[nan_indices_north] = griddata(points, values, grid_north[nan_indices_north], method='nearest')
-#     interpolated_south[nan_indices_south] = griddata(points, values, grid_south[nan_indices_south], method='nearest')
-
-#     interpolated_df = pd.DataFrame({
-#         'Longitude': np.concatenate([lon_grid_north, lon_grid_south]),
-#         'Latitude': np.concatenate([lat_grid_north, lat_grid_south]),
-#         data_type: np.concatenate([interpolated_north, interpolated_south])
-#     })
-
-#     if elev is not None:
-#         interpolated_elev_north = griddata(points, elev, grid_north, method=method)
-#         interpolated_elev_south = griddata(points, elev, grid_south, method=method)
-
-#         # Handle NaNs for elevation
-#         nan_indices_elev_north = np.isnan(interpolated_elev_north)
-#         nan_indices_elev_south = np.isnan(interpolated_elev_south)
-#         interpolated_elev_north[nan_indices_elev_north] = griddata(points, elev, grid_north[nan_indices_elev_north], method='nearest')
-#         interpolated_elev_south[nan_indices_elev_south] = griddata(points, elev, grid_south[nan_indices_elev_south], method='nearest')
-
-#         interpolated_df['Elevation'] = np.concatenate([interpolated_elev_north, interpolated_elev_south])
-
-#     return interpolated_df
-
-
-def interpolate_csv(df, mesh_north, mesh_south, data_type,  elev=None, MOON_RADIUS_M=1737.4e3):
+def interpolate_csv(df, mesh_north, mesh_south, data_type,  elev=None, MOON_RADIUS_M=1737.4e3, block=500_000):
     # Define AEQD CRS for polar projections
     transformer_north = Proj(proj='aeqd', lat_0=90, lon_0=0, R=MOON_RADIUS_M, always_xy=True)
     transformer_south = Proj(proj='aeqd', lat_0=-90, lon_0=0, R=MOON_RADIUS_M, always_xy=True)
 
-    lons = df['Longitude'].values
-    lats = df['Latitude'].values
+    lons = df['Longitude'].values.astype(np.float32, copy=False)
+    lats = df['Latitude'].values.astype(np.float32, copy=False)
 
     north_mask = lats >= 75
     south_mask = lats <= -75
 
-    if len(north_mask) == 0 or len(south_mask) == 0:
+    if not north_mask.any() or not south_mask.any():
         raise ValueError("No data points found in the specified latitude ranges.")
 
     xs_n, ys_n = transformer_north(lons[north_mask], lats[north_mask])
     xs_s, ys_s = transformer_south(lons[south_mask], lats[south_mask])
 
-    vals_n = df.loc[north_mask, data_type].values
-    vals_s = df.loc[south_mask, data_type].values
+    vals_n = df.loc[north_mask, data_type].values.astype(np.float32, copy=False)
+    vals_s = df.loc[south_mask, data_type].values.astype(np.float32, copy=False)
 
-    tree_n = cKDTree(np.column_stack((xs_n, ys_n)))
-    tree_s = cKDTree(np.column_stack((xs_s, ys_s)))
+    tree_n = cKDTree(np.column_stack((xs_n, ys_n)), balanced_tree=True, compact_nodes=True)
+    tree_s = cKDTree(np.column_stack((xs_s, ys_s)), balanced_tree=True, compact_nodes=True)
 
-    def idw_interpolate(tree, values, targets, k=1, power=2):
+    del xs_n, ys_n, xs_s, ys_s, lons, lats
+
+    def _idw_one(tree, values, targets, k, power=2):
+        """1-nearest-neighbour IDW – minimal allocations."""
         dists, idxs = tree.query(targets, k=k, workers=-1)
-        if k == 1:
-            dists = dists[:, np.newaxis]
-            idxs = idxs[:, np.newaxis]
 
-        dists = np.where(dists == 0, 1e-12, dists)
-        weights = 1. / (dists ** power)
-        weighted_vals = weights * values[idxs]
+        if k == 1:
+            return values[idxs]                            # in-place
+    
+        dists[dists == 0] = 1e-12
+        weights = 1.0 / np.power(dists, power)
+        weighted_vals = weights * values[idxs]           # broadcast to (N, k)
         return weighted_vals.sum(axis=1) / weights.sum(axis=1)
+
+    def _idw_chunked(tree, values, targets, block=200_000, power=2, k=1):
+        """Run _idw_one() in slices to cap peak RAM."""
+        out = np.empty(targets.shape[0], dtype=values.dtype)
+        for start in range(0, targets.shape[0], block):
+            end = start + block
+            out[start:end] = _idw_one(tree, values, targets[start:end], power=power, k=k)
+        return out
     
     # Interp onto each mesh
-    vals_mesh_n = idw_interpolate(tree_n, vals_n, mesh_north)
-    vals_mesh_s = idw_interpolate(tree_s, vals_s, mesh_south)
+    vals_mesh_n = _idw_chunked(tree_n, vals_n, mesh_north, block=block)
+    vals_mesh_s = _idw_chunked(tree_s, vals_s, mesh_south, block=block)
+
 
     # inverse project mesh points back to lon/lat
     lon_n, lat_n = transformer_north(mesh_north[:, 0], mesh_north[:, 1], inverse=True)
     lon_s, lat_s = transformer_south(mesh_south[:, 0], mesh_south[:, 1], inverse=True)
 
-    # Convert from range [-180, 180] to range [0, 360]
-    lon_n = (lon_n + 360) % 360
-    lon_s = (lon_s + 360) % 360
+    lon = np.concatenate((lon_n, lon_s)).astype(np.float32, copy=False)
+    lat = np.concatenate((lat_n, lat_s)).astype(np.float32, copy=False)
+    val = np.concatenate((vals_mesh_n, vals_mesh_s))        # already float32
 
-    df_interp = pd.DataFrame({
-        'Longitude': np.concatenate([lon_n, lon_s]),
-        'Latitude': np.concatenate([lat_n, lat_s]),
-        data_type: np.concatenate([vals_mesh_n, vals_mesh_s])
-    })
+    # Convert from range [-180, 180] to range [0, 360]
+    lon = (lon + 360) % 360
+
+    data = {'Longitude': lon, 'Latitude': lat, data_type: val}
 
     if elev is not None:
-        elev_n = idw_interpolate(tree_n, elev[north_mask], mesh_north)
-        elev_s = idw_interpolate(tree_s, elev[south_mask], mesh_south)
-        df_interp['Elevation'] = np.concatenate([elev_n, elev_s])
+        elev_n = _idw_chunked(tree_n, elev[north_mask], mesh_north, block=block)
+        elev_s = _idw_chunked(tree_s, elev[south_mask], mesh_south, block=block)
+        data['Elevation'] = np.concatenate([elev_n, elev_s])
 
-    return df_interp
+    return pd.DataFrame(data, copy=False)
 
 
-def interpolate_diviner(df, mesh_north, mesh_south, MOON_RADIUS_M=1737.4e3):
+def interpolate_diviner(df, mesh_north, mesh_south, MOON_RADIUS_M=1737.4e3, block=500_000):
     # Define AEQD CRS for polar projections
     transformer_north = Proj(proj='aeqd', lat_0=90, lon_0=0, R=MOON_RADIUS_M, always_xy=True)
     transformer_south = Proj(proj='aeqd', lat_0=-90, lon_0=0, R=MOON_RADIUS_M, always_xy=True)
 
-    lons = df['Longitude'].values
-    lats = df['Latitude'].values
+    lons = df['Longitude'].values.astype(np.float32, copy=False)
+    lats = df['Latitude'].values.astype(np.float32, copy=False)
 
     north_mask = lats >= 75
     south_mask = lats <= -75
 
-    if north_mask.sum() == 0 or south_mask.sum() == 0:
+    if not north_mask.any() or not south_mask.any():
         raise ValueError("No data points found in the specified latitude ranges.")
 
     xs_n, ys_n = transformer_north(lons[north_mask], lats[north_mask])
     xs_s, ys_s = transformer_south(lons[south_mask], lats[south_mask])
 
-    values_n = df.loc[north_mask, 'Diviner'].values
-    values_s = df.loc[south_mask, 'Diviner'].values
-
-    x_grid_north, y_grid_north = mesh_north[:, 0], mesh_north[:, 1]
-    x_grid_south, y_grid_south = mesh_south[:, 0], mesh_south[:, 1]
+    values_n = df.loc[north_mask, 'Diviner'].values.astype(np.float32, copy=False)
+    values_s = df.loc[south_mask, 'Diviner'].values.astype(np.float32, copy=False)
 
     points_n = np.column_stack((xs_n, ys_n))
     points_s = np.column_stack((xs_s, ys_s))
 
-    grid_n = np.column_stack((x_grid_north, y_grid_north))
-    grid_s = np.column_stack((x_grid_south, y_grid_south))
+    interp_n = max_rad_interp(points_n, values_n, mesh_north, block=block)
+    interp_s = max_rad_interp(points_s, values_s, mesh_south, block=block)
 
-    interp_n = max_rad_interp(points_n, values_n, grid_n)
-    interp_s = max_rad_interp(points_s, values_s, grid_s)
+    lon_grid_north, lat_grid_north = transformer_north(mesh_north[:, 0], mesh_north[:, 1], inverse=True)
+    lon_grid_south, lat_grid_south = transformer_south(mesh_south[:, 0], mesh_south[:, 1], inverse=True)
 
-    lon_grid_north, lat_grid_north = transformer_north(x_grid_north, y_grid_north, inverse=True)
-    lon_grid_south, lat_grid_south = transformer_south(x_grid_south, y_grid_south, inverse=True)
+    lon = np.concatenate((lon_grid_north, lon_grid_south)).astype(np.float32, copy=False)
+    lat = np.concatenate((lat_grid_north, lat_grid_south)).astype(np.float32, copy=False)
+    val = np.concatenate((interp_n, interp_s))        # already float32
 
-    # Convert from range [-180, 180] to range [0, 360]
-    lon_grid_north = (lon_grid_north + 360) % 360
-    lon_grid_south = (lon_grid_south + 360) % 360
+    lon = (lon + 360) % 360
 
-    interpolated_df = pd.DataFrame({
-        'Longitude': np.concatenate([lon_grid_north, lon_grid_south]),
-        'Latitude': np.concatenate([lat_grid_north, lat_grid_south]),
-        'Diviner': np.concatenate([interp_n, interp_s])
-    })
-
-    return interpolated_df
+    return pd.DataFrame({
+        'Longitude': lon,
+        'Latitude': lat,
+        'Diviner': val
+    }, copy=False)
 
 
-def max_rad_interp(points, values, targets, radius_m=1000, fallback='nearest'):
-    tree = cKDTree(points)
-    idx_lists = tree.query_ball_point(targets, r=radius_m)   # Vectorised query for all targets
+def max_rad_interp(points, values, targets, block, radius_m=1000, fallback='nearest'):
+    tree = cKDTree(points, balanced_tree=True, compact_nodes=True)
+    del points
 
-    interpolated = np.empty(len(targets), dtype=float)
-    points_per_target = np.array([len(idxs) for idxs in idx_lists])
+    out = np.empty(targets.shape[0], dtype=values.dtype)
 
-    for i, idxs in enumerate(idx_lists):
-        if idxs:
-            interpolated[i] = np.nanmax(values[idxs])   # Take max if possible
-        elif fallback == 'nearest':
-            _, idx = tree.query(targets[i], k=1)
-            interpolated[i] = values[idx]
-        else:
-            interpolated[i] = np.nan    # Set to nan if no points
-    return interpolated
+    n_tot    = 0            # sum of neighbour counts
+    n_pts    = 0            # number of target points processed
+    n_min    = np.inf       # current minimum
+    n_max    = -np.inf      # current maximum
+
+    for s in range(0, targets.shape[0], block):
+        e = s + block
+        slab = targets[s:e]
+
+        idx_lists = tree.query_ball_point(slab, r=radius_m)   # Vectorised query for all targets
+
+        for i, idxs in enumerate(idx_lists):
+            n = len(idxs)
+            n_tot += n
+            n_pts += 1
+            if n < n_min:
+                n_min = n
+            if n > n_max:
+                n_max = n
+            if idxs:
+                out[s + i] = np.nanmax(values[idxs])  # Use max value within radius
+            elif fallback == 'nearest':
+                _, idx = tree.query(slab[i], k=1)
+                out[s + i] = values[idx]
+            else:
+                out[s + i] = np.nan
+
+    print(f"radius_m: {radius_m}, n_min: {n_min}, n_max: {n_max}, mean: {n_tot/n_pts}")
+    return out
 
 
 def interpolate(data_dict, data_type, plot_save_path=None):
@@ -185,10 +166,9 @@ def interpolate(data_dict, data_type, plot_save_path=None):
         print(f"Creating interp dir for {data_type}")
         os.mkdir(data_dict['interp_dir'])
 
-    # if len([f for f in os.listdir(data_dict['interp_dir']) if f.endswith('.csv') and 'lon' in f]) == 12:
-    #     print(f"Interpolated CSVs appear to exist for {data_type} data. Skipping interpolation.")
-    #     return
-    print(f"REMINDER: Skip if combined CSVs already exist commented out in interp.py")
+    if len([f for f in os.listdir(data_dict['interp_dir']) if f.endswith('.csv') and 'lon' in f]) == 12:
+        print(f"Interpolated CSVs appear to exist for {data_type} data. Skipping interpolation.")
+        return
     
     # If CSVs dont already exist, clear the directory
     clear_dir(data_dict['interp_dir'], dirs_only=False)
@@ -199,6 +179,10 @@ def interpolate(data_dict, data_type, plot_save_path=None):
 
 
     for (csv, (mesh_north, mesh_south)) in zip(csvs, meshes):
+        # Cast lons/lats to float32 for memory efficiency
+        mesh_north = mesh_north.astype(np.float32)
+        mesh_south = mesh_south.astype(np.float32)
+
         df = pd.read_csv(f"{data_dict['save_path']}/{csv}")
         if data_type == 'Diviner':
             interpolated_df = interpolate_diviner(df, mesh_north, mesh_south)
@@ -223,7 +207,6 @@ def interpolate(data_dict, data_type, plot_save_path=None):
 
     if plot_save_path:
         plot_polar(interpolated_df, data_type, frac=0.1, save_path=plot_save_path, name_add='interp')
-        plot_polar_test(interpolated_df, data_type, frac=0.1, save_path=plot_save_path, cat='interp_test')
 
 
     print(f"\nInterpolated {data_type} df:")

@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N process_data
-#PBS -l select=1:ncpus=4:mem=512gb
+#PBS -l select=1:ncpus=2:mem=512gb
 #PBS -l walltime=24:00:00
 
 #PBS -j oe
@@ -17,7 +17,7 @@ cd $PBS_O_WORKDIR
 rm -rf ../data/CSVs/combined/*.csv
 
 # Run the Python script
-python ../../data_processing/process_data.py   --n_workers 4 \
+python ../../data_processing/process_data.py   --n_workers 2 \
                             --download_dir /rds/general/user/as5023/ephemeral/Lunar_pm/data/raw \
                             --save_dir /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw \
                             --interp_dir /rds/general/user/as5023/home/Lunar_point_model/data/CSVs/interpolated \
