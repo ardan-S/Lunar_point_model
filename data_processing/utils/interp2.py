@@ -6,12 +6,13 @@ import sys
 from scipy.stats import binned_statistic_2d
 from scipy.spatial import cKDTree
 from pyproj import Proj
+from sklearn.neighbors import BallTree, KDTree
 
 from data_processing.utils.utils import save_by_lon_range, load_every_nth_line, generate_xy_mesh, plot_polar
 from data_processing.download_data import clear_dir
 
 
-def interpolate_csv(df, mesh_north, mesh_south, data_type,  elev=None, MOON_RADIUS_M=1737.4e3, block=500_000):
+def interpolate_csv(df, mesh_north, mesh_south, data_type, block, elev=None, MOON_RADIUS_M=1737.4e3):
     # Define AEQD CRS for polar projections
     transformer_north = Proj(proj='aeqd', lat_0=90, lon_0=0, R=MOON_RADIUS_M, always_xy=True)
     transformer_south = Proj(proj='aeqd', lat_0=-90, lon_0=0, R=MOON_RADIUS_M, always_xy=True)
@@ -82,13 +83,14 @@ def interpolate_csv(df, mesh_north, mesh_south, data_type,  elev=None, MOON_RADI
     return pd.DataFrame(data, copy=False)
 
 
-def interpolate_diviner(df, mesh_north, mesh_south, MOON_RADIUS_M=1737.4e3, block=500_000):
+def interpolate_diviner(df, mesh_north, mesh_south, block, MOON_RADIUS_M=1737.4e3):
     # Define AEQD CRS for polar projections
     transformer_north = Proj(proj='aeqd', lat_0=90, lon_0=0, R=MOON_RADIUS_M, always_xy=True)
     transformer_south = Proj(proj='aeqd', lat_0=-90, lon_0=0, R=MOON_RADIUS_M, always_xy=True)
 
     lons = df['Longitude'].values.astype(np.float32, copy=False)
     lats = df['Latitude'].values.astype(np.float32, copy=False)
+    vals = df['Diviner'].values.astype(np.float32, copy=False)
 
     north_mask = lats >= 75
     south_mask = lats <= -75
@@ -99,14 +101,23 @@ def interpolate_diviner(df, mesh_north, mesh_south, MOON_RADIUS_M=1737.4e3, bloc
     xs_n, ys_n = transformer_north(lons[north_mask], lats[north_mask])
     xs_s, ys_s = transformer_south(lons[south_mask], lats[south_mask])
 
-    values_n = df.loc[north_mask, 'Diviner'].values.astype(np.float32, copy=False)
-    values_s = df.loc[south_mask, 'Diviner'].values.astype(np.float32, copy=False)
+    tree_n = KDTree(np.column_stack((xs_n, ys_n)), metric='euclidean')
+    tree_s = KDTree(np.column_stack((xs_s, ys_s)), metric='euclidean')
 
-    points_n = np.column_stack((xs_n, ys_n))
-    points_s = np.column_stack((xs_s, ys_s))
+    # values_n = df.loc[north_mask, 'Diviner'].values.astype(np.float32, copy=False)
+    # values_s = df.loc[south_mask, 'Diviner'].values.astype(np.float32, copy=False)
 
-    interp_n = max_rad_interp(points_n, values_n, mesh_north, block=block)
-    interp_s = max_rad_interp(points_s, values_s, mesh_south, block=block)
+    # points_n = np.column_stack((xs_n, ys_n))
+    # points_s = np.column_stack((xs_s, ys_s))
+
+    # lon_grid_n, lat_grid_n = transformer_north(mesh_north[:, 0], mesh_north[:, 1], inverse=True)
+    # lon_grid_s, lat_grid_s = transformer_south(mesh_south[:, 0], mesh_south[:, 1], inverse=True)
+
+    # interp_n = max_rad_interp_gc(lons[north_mask], lats[north_mask], values_n,lon_grid_n, lat_grid_n, block=block)
+    # interp_s = max_rad_interp_gc(lons[south_mask], lats[south_mask], values_s,lon_grid_s, lat_grid_s, block=block)
+
+    interp_n = max_rad_interp(tree_n, vals[north_mask], mesh_north, block=block)
+    interp_s = max_rad_interp(tree_s, vals[south_mask], mesh_south, block=block)
 
     lon_grid_north, lat_grid_north = transformer_north(mesh_north[:, 0], mesh_north[:, 1], inverse=True)
     lon_grid_south, lat_grid_south = transformer_south(mesh_south[:, 0], mesh_south[:, 1], inverse=True)
@@ -124,44 +135,88 @@ def interpolate_diviner(df, mesh_north, mesh_south, MOON_RADIUS_M=1737.4e3, bloc
     }, copy=False)
 
 
-def max_rad_interp(points, values, targets, block, radius_m=1000, fallback='nearest'):
-    tree = cKDTree(points, balanced_tree=True, compact_nodes=True)
-    del points
+# def max_rad_interp(tree, values, mesh, block, radius_m=450):
+#     out = np.full(mesh.shape[0], np.nan, dtype=values.dtype)
 
-    out = np.empty(targets.shape[0], dtype=values.dtype)
+#     for s in range(0, mesh.shape[0], block):
+#         idx_lists = tree.query_radius(mesh[s:s+block], r=radius_m, return_distance=False)
+#         for i, idx in enumerate(idx_lists):
+#             if idx.size:
+#                 out[s+i] = np.nanmax(values[idx])
+#     return out
 
-    n_tot    = 0            # sum of neighbour counts
-    n_pts    = 0            # number of target points processed
-    n_min    = np.inf       # current minimum
-    n_max    = -np.inf      # current maximum
+def max_rad_interp(tree, values, mesh, block, min_rad=450, passes=4):
+    out = np.full(mesh.shape[0], np.nan, dtype=values.dtype)
+    todo = np.arange(mesh.shape[0])
+    rad = min_rad
 
-    for s in range(0, targets.shape[0], block):
-        e = s + block
-        slab = targets[s:e]
+    for _ in range(passes):
+        if todo.size == 0:
+            break
 
-        idx_lists = tree.query_ball_point(slab, r=radius_m)   # Vectorised query for all targets
+        for s in range(0, todo.size, block):
+            idx = todo[s:s+block]
+            slab = mesh[idx]
+            hits = tree.query_radius(slab, r=rad, return_distance=False)
 
-        for i, idxs in enumerate(idx_lists):
-            n = len(idxs)
-            n_tot += n
-            n_pts += 1
-            if n < n_min:
-                n_min = n
-            if n > n_max:
-                n_max = n
-            if idxs:
-                out[s + i] = np.nanmax(values[idxs])  # Use max value within radius
-            elif fallback == 'nearest':
-                _, idx = tree.query(slab[i], k=1)
-                out[s + i] = values[idx]
-            else:
-                out[s + i] = np.nan
+            for j, neighbours in enumerate(hits):
+                if neighbours.size:
+                    out[idx[j]] = np.nanmax(values[neighbours])
 
-    print(f"radius_m: {radius_m}, n_min: {n_min}, n_max: {n_max}, mean: {n_tot/n_pts}")
+        todo = todo[np.isnan(out[todo])]
+        rad *= 2
+
+    print(f"Max radius: {rad/1000:.1f} km on completion. {len(todo)} points left.")
     return out
 
 
-def interpolate(data_dict, data_type, plot_save_path=None):
+
+
+# def max_rad_interp_gc(lon_deg, lat_deg, values,
+#                       tgt_lon_deg, tgt_lat_deg,
+#                       block=100_000,
+#                       radius_m=450,
+#                       R=1737.4e3,          # Moon radius
+#                       fallback='nearest'):
+#     # -- build the BallTree --------------------------------------------------
+#     src_rad  = np.deg2rad(np.column_stack((lat_deg, lon_deg)))  # (lat, lon) in *this* order
+#     tree     = BallTree(src_rad, metric='haversine')
+#     rad_max  = radius_m / R                    # great‑circle search radius [rad]
+
+#     out      = np.empty(tgt_lon_deg.size, dtype=values.dtype)
+#     tgt_rad  = np.deg2rad(np.column_stack((tgt_lat_deg, tgt_lon_deg)))
+
+#     n_tot = n_pts = nearest = 0
+#     n_min, n_max = np.inf, -np.inf
+
+#     for s in range(0, tgt_rad.shape[0], block):
+#         e    = s + block
+#         slab = tgt_rad[s:e]
+
+#         # query_radius returns a Python list of index arrays
+#         idx_lists = tree.query_radius(slab, r=rad_max, return_distance=False)
+
+#         for i, idxs in enumerate(idx_lists):
+#             n = len(idxs)
+#             n_tot += n; n_pts += 1
+#             n_min  = min(n_min, n); n_max = max(n_max, n)
+
+#             if n:
+#                 out[s+i] = np.nanmax(values[idxs])
+#             elif fallback == 'nearest':
+#                 # BallTree.query gives distance and index of the nearest neighbour
+#                 _, idx = tree.query(slab[i].reshape(1,-1), k=1)
+#                 out[s+i] = values[idx[0,0]]
+#                 nearest += 1
+#             else:
+#                 out[s+i] = np.nan
+
+#     print(f"radius_m: {radius_m}, n_min: {n_min}, n_max: {n_max}, "
+#           f"mean: {n_tot/n_pts:.2f}, nearest: {nearest}")
+#     return out
+
+
+def interpolate(data_dict, data_type, plot_save_path=None, block=8_000_000):
     if not os.path.exists(data_dict['interp_dir']):
         print(f"Creating interp dir for {data_type}")
         os.mkdir(data_dict['interp_dir'])
@@ -185,14 +240,14 @@ def interpolate(data_dict, data_type, plot_save_path=None):
 
         df = pd.read_csv(f"{data_dict['save_path']}/{csv}")
         if data_type == 'Diviner':
-            interpolated_df = interpolate_diviner(df, mesh_north, mesh_south)
+            interpolated_df = interpolate_diviner(df, mesh_north, mesh_south, block=block)
 
         elif data_type == 'M3':
             elev = df['Elevation'].values
-            interpolated_df = interpolate_csv(df, mesh_north, mesh_south, data_type, elev)
+            interpolated_df = interpolate_csv(df, mesh_north, mesh_south, data_type, elev=elev, block=block)
 
         else:
-            interpolated_df = interpolate_csv(df, mesh_north, mesh_south, data_type)
+            interpolated_df = interpolate_csv(df, mesh_north, mesh_south, data_type, block=block)
     
         save_by_lon_range(interpolated_df, save_path)
 

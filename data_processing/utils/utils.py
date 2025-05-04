@@ -16,6 +16,7 @@ import json
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import seaborn as sns
 from pyproj import Proj
+from typing import List, Tuple
 
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, balanced_accuracy_score
@@ -566,9 +567,94 @@ def save_by_lon_range(df, output_dir):
 #         plt.show()
 
 
-def plot_polar(df_in, variable, save_path, mode='continuous', label_col=None, categories=None, cat_colours=None, frac=None, random_state=42, dpi=None, name_add=None):
+# def plot_polar(df_in, variable, save_path, mode='continuous', label_col=None, categories=None, cat_colours=None, frac=None, random_state=42, dpi=None, name_add=None):
+#     """
+#     Options for mode: labeled, binary, category, continuous
+#     """
+
+def plot_polar(
+    df_in,
+    variable,
+    save_path,
+    mode: str = "continuous",
+    label_col: str | None = None,
+    categories: list[int] | None = None,
+    cat_colours: dict[int, str] | None = None,
+    frac: float | None = None,
+    random_state: int = 42,
+    dpi: int | None = None,
+    name_add: str | None = None,
+    poster=False
+):
     """
-    Options for mode: labeled, binary, category, continuous
+    Plot a north and south polar scatter map of a lunar **300 m AEQD grid**
+    and save it as a PNG.
+
+    The same plotting engine supports four modes:
+
+    ╔════════════╤═════════════════════════════════════════════════════════════╗
+    ║ Mode name  │ What it shows / when to use it                              ║
+    ╠════════════╪═════════════════════════════════════════════════════════════╣
+    ║ "continuous" (default)                                                   ║
+    ║            │ • Greyscale map of the numeric *variable* column.           ║
+    ║            │ • No label column needed.                                   ║
+    ║            │ • A colour bar is added.                                    ║
+    ║────────────┼─────────────────────────────────────────────────────────────╣
+    ║ "labeled"                                                                ║
+    ║            │ • Categorical overlay of a *label_col* whose values are     ║
+    ║            │   **positive integers (1, 2 , 3 …)**.  Label 0 is treated  ║
+    ║            │   as “background” and dropped.                              ║
+    ║            │ • Useful for quality flags or cluster classes where only    ║
+    ║            │   the flagged pixels should be shown.                       ║
+    ║            │ • If *cat_colours* is omitted, colours default to           ║
+    ║            │   `{1: "blue", 2: "red"}`; extend the dict for extra codes. ║
+    ║────────────┼─────────────────────────────────────────────────────────────╣
+    ║ "binary"                                                                 ║
+    ║            │ • A special case of *labeled* where the label column        ║
+    ║            │   contains **only 0 or 1**.                                 ║
+    ║            │ • Defaults to `{0:"black", 1:"gray"}` unless overridden.    ║
+    ║────────────┼─────────────────────────────────────────────────────────────╣
+    ║ "category"                                                              ║
+    ║            │ • Arbitrary integer categories.  You *must* supply          ║
+    ║            │   `categories=[a,b,c…]` **and** a matching `cat_colours`    ║
+    ║            │   dict that maps every listed category to a colour.         ║
+    ║            │ • Use when your labels are non-binary and include 0.        ║
+    ╚════════════╧═════════════════════════════════════════════════════════════╝
+
+    Parameters
+    ----------
+    df_in : pandas.DataFrame
+        Table that contains at least the columns
+        ``"Longitude"``, ``"Latitude"`` (decimal degrees) and *variable*.
+        For non-continuous modes it must also contain *label_col*.
+    variable : str
+        Name of the numeric column to visualise (always plotted; greyscale in
+        ``continuous`` mode, ignored in the other modes except for point size
+        aggregation).
+    save_path : str or pathlib.Path
+        Folder where the PNG will be written.
+    mode : {"continuous", "labeled", "binary", "category"}, default "continuous"
+        Selects the plotting behaviour described in the table above.
+    label_col : str, optional
+        Column holding discrete labels; **required** for every mode except
+        ``continuous``. Often the same as the variable column.
+    categories : sequence[int], optional
+        Explicit list of category codes to plot (``category`` mode only).
+    cat_colours : dict[int, str], optional
+        Maps category codes to matplotlib-recognised colour strings.
+        • Optional in ``labeled`` and ``binary`` (sensible defaults exist).  
+        • **Required** in ``category`` mode and must cover *every* entry in
+          *categories*.
+    frac : float in (0, 1], optional
+        If given, randomly sample this fraction of rows *before* plotting.
+        Useful for very dense point clouds.
+    random_state : int, default 42
+        RNG seed for the sampling step.
+    dpi : int, optional
+        Resolution passed to ``matplotlib.pyplot.savefig``.
+    name_add : str, optional
+        Extra tag appended to the file name (``<variable>_<mode>_<name_add>.png``).
+
     """
     # ---------- Basic checks ----------
     mode = mode.lower()
@@ -653,10 +739,21 @@ def plot_polar(df_in, variable, save_path, mode='continuous', label_col=None, ca
     # ---------- Save or show ----------
     fname = f"{variable}_{mode}_{name_add}.png" if name_add else f"{variable}_{mode}.png"
     fpath = os.path.join(save_path, fname)
-    if dpi:
-        plt.savefig(fpath, dpi=dpi)
-    else:
-        plt.savefig(fpath)
+    # if dpi:
+    #     if poster:
+    #         plt.savefig(fpath, dpi=dpi, transparent=True)
+    #     else:
+    #         plt.savefig(fpath, dpi=dpi)
+    # else:
+    #     if poster:
+    #         plt.savefig(fpath, dpi=300, transparent=True)
+    #     else:
+    #         plt.savefig(fpath)
+    kwargs = {'dpi': dpi or 300}
+    if poster:
+        kwargs['transparent'] = True
+
+    plt.savefig(fpath, **kwargs)
 
     print(f"Plot saved to {fname}")
     plt.close(fig)
@@ -749,11 +846,6 @@ def plot_polar(df_in, variable, save_path, mode='continuous', label_col=None, ca
 #     print(f"XY‑meshes created: {len(meshes)} slices, {total_pts:,} total points")
 
 #     return meshes
-
-
-from typing import List, Tuple
-import numpy as np
-from pyproj import Proj
 
 
 def generate_xy_mesh(

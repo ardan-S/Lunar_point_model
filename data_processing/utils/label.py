@@ -34,7 +34,7 @@ def combine(*dirs, n_workers=None):
     return combined_df
 
 
-def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, eps=350, min_cluster=5):
+def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, eps=450, min_cluster=5):
     # -------------------- Setup --------------------
     combined_save_path = dataset_dict['Combined']['combined_save_path']
 
@@ -56,6 +56,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
 
     print(f"Taking the top {df[df['Diviner'] <= 110].shape[0] / df.shape[0] :.2%} of points from Diviner. Threshold = 110")
     plot_polar(df, 'Diviner', save_path=plot_save_path, mode='labeled', label_col='Diviner label', frac=0.01, dpi=400)
+    print()
 
     # -------------------- LOLA --------------------
     lola_thresh_n = df.loc[df['Latitude'] >= 0, 'LOLA'].mean() + 2 * df.loc[df['Latitude'] >= 0, 'LOLA'].std()
@@ -83,7 +84,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
 
     # -------------------- MiniRF --------------------
     MRF_thresh = df['MiniRF'].mean() + 2 * df['MiniRF'].std()
-    print(f"\nTaking the top {df[df['MiniRF'] >= MRF_thresh].shape[0] / df.shape[0] :.2%} of points from MiniRF. Threshold = {MRF_thresh:.2f}")
+    print(f"Taking the top {df[df['MiniRF'] >= MRF_thresh].shape[0] / df.shape[0] :.2%} of points from MiniRF. Threshold = {MRF_thresh:.2f}")
     
     df.loc[df['MiniRF'] > MRF_thresh, 'Label'] += 1
     df.loc[df['MiniRF'] > MRF_thresh, 'MiniRF label'] += 1
@@ -98,7 +99,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
         counts = df[label_name].value_counts(normalize=True) * 100
         for label in [0, 1, 2]:  # Ensure that we always include 0, 1, and 2 even if they are missing
             percentage = counts.get(label, 0.0)
-            print(f"{label_name:<7} - {label}: {percentage:6.2f}%")
+            print(f"{label_name:<14} - {label}: {percentage:6.2f}%")
     print()
     print("Label counts:")
     print_label_counts(df, 'Diviner label')
@@ -112,17 +113,14 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     print(f"Total number of points: {df.shape[0]}")
     print()
 
-    plot_polar(df, 'Label', save_path=plot_save_path, mode='continuous', label_col='Label', frac=0.01, dpi=400)
+    plot_polar(df, 'Label', save_path=plot_save_path, mode='continuous', label_col='Label', frac=0.01, dpi=400, poster=True)
 
     # -------------------- Ice threshold --------------------
     lbl = 3
     df_bin = df.copy()
     df_bin['Label'] = (df_bin['Label'] >= lbl).astype(int)
 
-    print(f"Len of df: {len(df)}, dtype of label: {df['Label'].dtype}")
-    print(f"Len of df_bin: {len(df_bin)}, dtype of label: {df_bin['Label'].dtype}")
-
-    assert len(df_bin) == len(df), "Length of binary dataframe does not match original dataframe"
+    assert len(df_bin) == len(df), f"Length of binary dataframe does not match original dataframe: {len(df_bin):,} != {len(df):,}"
 
     print(f"Percentage of labels >= {lbl}: {(df_bin['Label'] == 1).sum() / df_bin.shape[0]:.2%}")
 
@@ -218,6 +216,6 @@ def apply_area_label_2(df, data_type, threshold, area_thresh, direction, pole, e
         else:
             clusters_at_1 += 1
 
-    print(f"{data_type} - Clusters at 1: {clusters_at_1}, Clusters at 2: {clusters_at_2}, Total clusters: {clusters_at_1 + clusters_at_2}")
+    print(f"{data_type} - Clusters at 1: {clusters_at_1:,}, Clusters at 2: {clusters_at_2:,}, Total clusters: {clusters_at_1 + clusters_at_2:,}")
     df.drop(columns=['cluster_label'], inplace=True)
 

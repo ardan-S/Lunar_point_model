@@ -10,10 +10,11 @@ import gc
 from concurrent.futures import ThreadPoolExecutor
 import sys
 import matplotlib.pyplot as plt 
-from pyproj import Transformer, CRS
+from pyproj import Transformer, CRS, Proj
+from pathlib import Path
 
-from utils.utils import plot_polar_data, load_csvs_parallel, save_by_lon_range
-from utils.utils import plot_psr_data, psr_eda
+from utils.utils import load_csvs_parallel, save_by_lon_range, plot_polar, psr_eda
+# from utils.utils import psr_eda
 
 
 def compute_psrs(jp2_url, lbl_url, pole):
@@ -188,8 +189,8 @@ def merge_psr_df(psr_df, args):
                 ((df_merged['Latitude'] >= 75) & (df_merged['Latitude'] <= 90))
     assert np.all(valid_mask), "Latitude values out of the allowed range"
 
-    print(f"\nMax/mean distance N: {dist_n.max():.1f} m / {dist_n.mean():.1f} m")
-    print(f"Max/mean distance S: {dist_s.max():.1f} m / {dist_s.mean():.1f} m")
+    print(f"\nMax/mean/min distance N: {dist_n.max():.1f} m / {dist_n.mean():.1f} m / {dist_n.min():.1f} m")
+    print(f"Max/mean/min distance S: {dist_s.max():.1f} m / {dist_s.mean():.1f} m / {dist_s.min():.1f} m")
     print("\nLabel proportions after combining 2:")
     print(df_merged.value_counts('Label', normalize=True) * 100) # type: ignore
     print(f"\nTotal number of points: {df_merged.shape[0]}")
@@ -201,6 +202,140 @@ def merge_psr_df(psr_df, args):
     save_by_lon_range(df_merged, args.psr_save_dir)
     return df_merged
 
+
+def merge_psr_df_2(psr_df, args, R_MOON_M=1_737_400):
+    # 1. Load and split poles
+    combined_df = load_csvs_parallel(Path("../../data/CSVs/combined"), n_workers=args.n_workers)
+
+    print("Original label distribution:")
+    print(combined_df["Label"].value_counts(normalize=True) * 100)
+
+    print("Original psr distribution:")
+    print(psr_df["psr"].value_counts(normalize=True) * 100)
+
+    orig_val_cnt = combined_df["Label"].value_counts(normalize=True).mul(100).round(1).sort_index()
+
+    combined_df_n = combined_df.loc[combined_df["Latitude"] >= 75].copy()
+    combined_df_s = combined_df.loc[combined_df["Latitude"] <= -75].copy()
+
+    psr_df_n = psr_df.loc[psr_df["Latitude"] >= 75].copy()
+    psr_df_s = psr_df.loc[psr_df["Latitude"] <= -75].copy()
+
+    # 2. Project
+    proj_n = Proj(proj='aeqd', lat_0=90, lon_0=0, R=R_MOON_M, always_xy=True)
+    proj_s = Proj(proj='aeqd', lat_0=-90, lon_0=0, R=R_MOON_M, always_xy=True)
+
+
+    def _to_xy_aeqd(df, proj_n, proj_s):
+        """Vector‑project lon/lat columns to (x, y) using AEQD per pole."""
+        lon = df["Longitude"].to_numpy(np.float32)
+        lat = df["Latitude"].to_numpy(np.float32)
+        # boolean mask for hemisphere
+        north_m = lat >= 0
+        x = np.empty_like(lon, dtype=np.float32)
+        y = np.empty_like(lat, dtype=np.float32)
+
+        # project north
+        if north_m.any():
+            x[north_m], y[north_m] = proj_n(lon[north_m], lat[north_m])
+        # project south
+        south_m = ~north_m
+        if south_m.any():
+            x[south_m], y[south_m] = proj_s(lon[south_m], lat[south_m])
+
+        # return np.column_stack((x, y))
+        df["x"] = x
+        df["y"] = y
+
+    def _attach_grid_indices(df, x_col="x", y_col="y"):
+        """Create integer row/col columns so that each unique (x, y) tuple maps to one grid cell.
+
+        Returns
+        -------
+        Tuple (x0, y0, dx, dy): origin and cell size in x and y.
+        """
+        if x_col not in df.columns or y_col not in df.columns:
+            raise KeyError(f"DataFrame missing {x_col!r} or {y_col!r} columns.")
+
+        # The grid is assumed regular and equidistant (AEQD)
+        # Compute unique sorted coordinates & their deltas to infer cell size
+        x_sorted = np.sort(df[x_col].unique())
+        y_sorted = np.sort(df[y_col].unique())
+
+        if len(x_sorted) < 2 or len(y_sorted) < 2:
+            raise ValueError("Combined_df does not contain a regular grid – need ≥2 unique X and Y values.")
+
+        dx = dy = 300.0
+        print(f"USING dx,dy = {dx} m")
+
+        if np.isnan(dx) or np.isnan(dy):
+            raise RuntimeError("Failed to infer dx/dy – after filtering, no gaps > 1 m.")
+
+        x0 = x_sorted.min()
+        y0 = y_sorted.min()
+
+        df["col"] = np.floor((df[x_col] - x0) / dx).astype(np.int32)
+        df["row"] = np.floor((df[y_col] - y0) / dy).astype(np.int32)
+
+        return x0, y0, dx, dy
+    
+    for df, name in [(combined_df_n, "combined_df_n"), (combined_df_s, "combined_df_s"), (psr_df_n, "psr_df_n"), (psr_df_s, "psr_df_s")]:
+        _to_xy_aeqd(df, proj_n, proj_s)
+        if len(df) == 0:
+            print(f"Warning: {name} is empty after projection.")
+
+    # 3. Build integer grid idxs for combined catalog (master grid)
+    x0_n = y0_n = dx_n = dy_n = None
+    x0_s = y0_s = dx_s = dy_s = None
+
+    if len(combined_df_n):
+        x0_n, y0_n, dx_n, dy_n = _attach_grid_indices(combined_df_n, x_col="x", y_col="y")
+    if len(combined_df_s):
+        x0_s, y0_s, dx_s, dy_s = _attach_grid_indices(combined_df_s, x_col="x", y_col="y")
+
+    # 4. Map PSR points onto grid and take mode
+    def _grid_idxs_psr(df_psr, x0, y0, dx, dy):
+        df = df_psr.copy()
+        df["col"] = np.round((df["x"] - x0) / dx).astype(np.int32)
+        df["row"] = np.round((df["y"] - y0) / dy).astype(np.int32)
+        return df
+    
+    if not combined_df_n.empty and not psr_df_n.empty:
+        psr_df_n = _grid_idxs_psr(psr_df_n, x0_n, y0_n, dx_n, dy_n)
+        mode_n = (psr_df_n.groupby(["row", "col"])["psr"]
+                  .agg(lambda x: x.mode().iat[0])
+                  .reset_index())
+        combined_df_n = combined_df_n.merge(mode_n, on=["row", "col"], how="left")
+
+    if not combined_df_s.empty and not psr_df_s.empty:
+        psr_df_s = _grid_idxs_psr(psr_df_s, x0_s, y0_s, dx_s, dy_s)
+        mode_s = (psr_df_s.groupby(["row", "col"])["psr"]
+                  .agg(lambda x: x.mode().iat[0])
+                  .reset_index())
+        combined_df_s = combined_df_s.merge(mode_s, on=["row", "col"], how="left")
+
+    # 5. Merge PSR data into combined_df
+    df_merged = pd.concat([combined_df_n, combined_df_s], ignore_index=True)
+    df_merged.drop(columns=["row", "col"], inplace=True, errors="ignore")
+
+    # print(f"\nLabel distribution after merging PSR data:")
+    # print(df_merged["Label"].value_counts(normalize=True) * 100)
+    final_val_cnt = df_merged["Label"].value_counts(normalize=True).mul(100).round(1).sort_index()
+    assert np.all(final_val_cnt == orig_val_cnt), "Label proportions do not match original data"
+    print("Final label distribution:")
+    print(final_val_cnt)
+
+    if "psr" in df_merged.columns:
+        print(f"\nPSR mode distribution after merging PSR data:")
+        print(df_merged["psr"].value_counts(normalize=True, dropna=False) * 100)
+
+    else:
+        print("No PSR data merged.")
+
+    if getattr(args, "save_dir", None):
+        save_by_lon_range(df_merged, args.save_dir)
+
+    return df_merged
 
 def main(args):
 
@@ -239,16 +374,19 @@ def main(args):
     print()
 
     # Plot PSR data
-    plot_polar_data(psr_df, 'psr', frac=0.01, save_path=args.plot_dir, dpi=400)
+    # plot_polar_data(psr_df, 'psr', frac=0.01, save_path=args.plot_dir, dpi=400)
+    plot_polar(psr_df, 'psr', args.plot_dir, mode='binary', frac=0.01, dpi=400, label_col='psr')
 
-    df_merged = merge_psr_df(psr_df, args)
+    df_merged = merge_psr_df_2(psr_df, args)
     
-    # Check cols
-    expected_columns = ['Latitude', 'Longitude', 'psr', 'Diviner', 'MiniRF', 'LOLA', 'M3', 'Elevation', 'Label']
-    assert all(col in df_merged.columns for col in expected_columns), \
-        f"Missing columns! Expected columns: {expected_columns}, but found: {df_merged.columns.tolist()}"
-    assert set(df_merged.columns) == set(expected_columns), \
-        f"Unexpected columns! Expected exactly: {expected_columns}, but found: {df_merged.columns.tolist()}"
+    # Check columns
+    expected = {'Latitude', 'Longitude', 'psr',
+                'Diviner', 'MiniRF', 'LOLA', 'M3',
+                'Elevation', 'Label'}
+
+    missing = expected - set(df_merged.columns)
+    if missing:
+        raise AssertionError(f"Missing columns: {sorted(missing)}")
 
     # Check values
     assert round(df_merged['Latitude'].min()) == -90, f"Expected Latitude min to be -90, but got {df_merged['Latitude'].min()}"
@@ -286,12 +424,13 @@ def main(args):
     lbl_bin_df = df_merged.copy()
     lbl_bin_df['Label'] = (lbl_bin_df['Label'] >= lbl).astype(int)
 
-    plot_polar_data(lbl_bin_df, 'Label', frac=0.01, save_path=args.plot_dir, dpi=400, graph_cat='binary')
+    # plot_polar_data(lbl_bin_df, 'Label', frac=0.01, save_path=args.plot_dir, dpi=400, graph_cat='binary')
+    plot_polar(lbl_bin_df, 'Label', args.plot_dir, mode='binary', frac=0.01, dpi=400, label_col='Label', poster=True)
 
     # Define conditions
-    condition1 = (df_merged['Label'] < lbl) & (df_merged['psr'] == 1)   # psr but NOT high label            - True -> 1
-    condition2 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 0)  # high label but NOT psr            - True -> 2
-    condition3 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 1)  # BOTH high label and psr           - True -> 3
+    condition1 = (df_merged['Label'] < lbl) & (df_merged['psr'] == 1)   # psr but NOT high label (FN)           - True -> 1
+    condition2 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 0)  # high label but NOT psr (FP)           - True -> 2
+    condition3 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 1)  # BOTH high label and psr (TP)          - True -> 3
 
     df_merged['temp'] = np.select(
         [condition1, condition2, condition3],
@@ -303,7 +442,11 @@ def main(args):
     print(f"Percentage of points with cat 1: {np.sum(df_merged['temp'] == 1) / df_merged.shape[0]:.2%}")
     print(f"Percentage of points with cat 2: {np.sum(df_merged['temp'] == 2) / df_merged.shape[0]:.2%}")
     print(f"Percentage of points with cat 3: {np.sum(df_merged['temp'] == 3) / df_merged.shape[0]:.2%}")
-    plot_psr_data(df_merged, 'temp', graph_cat='labelled', frac=0.01, save_path=args.plot_dir, dpi=400)
+    # plot_psr_data(df_merged, 'temp', graph_cat='labelled', frac=0.01, save_path=args.plot_dir, dpi=400)
+    plot_polar(df_merged, 'temp', args.plot_dir, mode='category', categories=[0, 1, 2, 3], cat_colours={0: 'black', 1: 'blue', 2: 'green', 3: 'red'}, frac=0.01, dpi=400, label_col='temp', poster=True)
+    
+    # Drop nan for col 'psr'
+    df_merged = df_merged.dropna(subset=['psr'])
     psr_eda(df_merged, args.plot_dir, lbl_thresh=lbl)
 
 
