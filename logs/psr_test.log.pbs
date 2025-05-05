@@ -4,8 +4,6 @@ Region  Number of points Non psr (%) psr (%) Lon min Lon max Lat min Lat max
  Total          22828368      96.53%   3.47%   0.015 359.985 -89.994  89.994
 
 Plot saved to psr_binary.png
-/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/sklearn/utils/_array_api.py:390: RuntimeWarning: invalid value encountered in cast
-  return x.astype(dtype, copy=copy, casting=casting)
 Original label distribution:
 Label
 0    84.816518
@@ -23,6 +21,8 @@ Projected psr_df_n to AEQD coordinates.
 Projected psr_df_s to AEQD coordinates.
 Average distance between points in combined_df_n: 611.1707
 Average distance between points in combined_df_s: 611.1455
+USING dx,dy = 300.0 m
+USING dx,dy = 300.0 m
 nearest PSR centroid : x   -454706.75
 y   -454706.75
 dtype: float32
@@ -78,39 +78,26 @@ Percentage of points with cat 1: 4.80%
 Percentage of points with cat 2: 0.51%
 Percentage of points with cat 3: 0.92%
 Plot saved to temp_category.png
-Traceback (most recent call last):
-  File "/rds/general/user/as5023/home/Lunar_point_model/jobscripts/pbs/../../data_processing/psr_test.py", line 478, in <module>
-    main(args)
-  File "/rds/general/user/as5023/home/Lunar_point_model/jobscripts/pbs/../../data_processing/psr_test.py", line 465, in main
-    psr_eda(df_merged, args.plot_dir, lbl_thresh=lbl)
-  File "/rds/general/user/as5023/home/Lunar_point_model/data_processing/utils/utils.py", line 931, in psr_eda
-    accuracy = accuracy_score(y_true, y_pred)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/sklearn/utils/_param_validation.py", line 213, in wrapper
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/sklearn/metrics/_classification.py", line 231, in accuracy_score
-    y_type, y_true, y_pred = _check_targets(y_true, y_pred)
-                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/sklearn/metrics/_classification.py", line 104, in _check_targets
-    type_true = type_of_target(y_true, input_name="y_true")
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/sklearn/utils/multiclass.py", line 398, in type_of_target
-    _assert_all_finite(data, input_name=input_name)
-  File "/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/sklearn/utils/validation.py", line 123, in _assert_all_finite
-    _assert_all_finite_element_wise(
-  File "/rds/general/user/as5023/home/.local/lib/python3.11/site-packages/sklearn/utils/validation.py", line 172, in _assert_all_finite_element_wise
-    raise ValueError(msg_err)
-ValueError: Input y_true contains NaN.
 
-Job finished on Sun  4 May 17:32:10 BST 2025
-Total runtime: 23 minutes and 31 seconds
+Accuracy: 0.9469
+Precision: 0.7979
+Recall: 0.5776
+F1 Score: 0.6148
+
+Balanced Accuracy: 0.5776
+
+Weighted Precision: 0.9337
+Weighted Recall: 0.9469
+Weighted F1 Score: 0.9315
+
+Job finished on Sun  4 May 18:08:20 BST 2025
+Total runtime: 23 minutes and 57 seconds
 
 ====================================
-CPU Time used: 00:21:18
+CPU Time used: 00:22:01
 CPU Percent: 99%
-Memory usage: 15342092kb
-Approx Power usage: 0.004199999999999999
-Walltime usage: 00:23:41
+Memory usage: 15344032kb
+Approx Power usage: 0.004399999999999999
+Walltime usage: 00:24:08
 
 ====================================
