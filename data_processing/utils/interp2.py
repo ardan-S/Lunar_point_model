@@ -145,7 +145,8 @@ def interpolate_diviner(df, mesh_north, mesh_south, block, MOON_RADIUS_M=1737.4e
 #                 out[s+i] = np.nanmax(values[idx])
 #     return out
 
-def max_rad_interp(tree, values, mesh, block, min_rad=450, passes=4):
+def max_rad_interp(tree, values, mesh, block, min_rad=350, passes=6):
+    # Start with a small radius and double it each pass
     out = np.full(mesh.shape[0], np.nan, dtype=values.dtype)
     todo = np.arange(mesh.shape[0])
     rad = min_rad
@@ -261,7 +262,7 @@ def interpolate(data_dict, data_type, plot_save_path=None, block=8_000_000):
     interpolated_df = pd.concat(df_list, ignore_index=True)
 
     if plot_save_path:
-        plot_polar(interpolated_df, data_type, frac=0.1, save_path=plot_save_path, name_add='interp')
+        plot_polar(interpolated_df, data_type, frac=0.1, save_path=plot_save_path, name_add='interp_poster', poster=True)
 
 
     print(f"\nInterpolated {data_type} df:")

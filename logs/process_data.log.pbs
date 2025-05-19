@@ -1,61 +1,19 @@
-Raw CSVs for Diviner found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/Diviner. Skipping load df...
-Raw CSVs for MiniRF found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/Mini-RF. Skipping load df...
 Raw CSVs for LOLA found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/LOLA. Skipping load df...
+Raw CSVs for MiniRF found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/Mini-RF. Skipping load df...
+Raw CSVs for Diviner found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/Diviner. Skipping load df...
 Raw CSVs for M3 found at: /rds/general/user/as5023/ephemeral/Lunar_pm/data/CSVs/raw/M3. Skipping load df...
 Loading stage complete after 0.00 mins
 
-XY-meshes created: 12 slices, 32,788,800 total points
-Max radius: 7.2 km on completion. 36620 points left.
-Max radius: 7.2 km on completion. 36620 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 0.9 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 0.9 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 0.9 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 1.8 km on completion. 0 points left.
-Max radius: 0.9 km on completion. 0 points left.
-Max radius: 7.2 km on completion. 35626 points left.
-Max radius: 7.2 km on completion. 35626 points left.
-Plot saved to Diviner_continuous_interp.png
-
-Interpolated Diviner df:
-          Longitude      Latitude       Diviner
-count  3.985499e+07  3.985499e+07  3.971049e+07
-mean   1.798716e+02  6.108484e-16  2.456645e+02
-std    1.024924e+02  8.260882e+01  4.496699e+01
-min    0.000000e+00 -9.000000e+01  4.554000e+01
-25%    9.042505e+01 -8.249094e+01  2.284000e+02
-50%    1.799395e+02  0.000000e+00  2.541800e+02
-75%    2.694736e+02  8.249094e+01  2.737000e+02
-max    3.599658e+02  9.000000e+01  4.378200e+02
-   Longitude   Latitude  Diviner
-0  28.000946  89.990105    75.52
-1  28.000946  89.980220    75.52
-2  28.000946  89.970320    75.52
-3  28.000946  89.960430    80.66
-4  28.000946  89.950530   106.78
 Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
 Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
+Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
 Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
-Interpolation stage complete after 89.46 mins
+Interpolation stage complete after 0.00 mins
 
-Dataframes combined successfully. Shape: (32790271, 7)
+Dataframes combined successfully. Shape: (32788776, 7)
 
 REMINDER: Skip if combined CSVs already exist commented out in label.py
-Taking the top 3.01% of points from Diviner. Threshold = 110
+Taking the top 3.23% of points from Diviner. Threshold = 110
 Plot saved to Diviner_labeled.png
 
 North pole LOLA threshold: 0.40 (4.77% of data)
@@ -65,10 +23,11 @@ South pole LOLA threshold: 0.43 (2.06% of data)
 Clustering LOLA pole - eps=450.00 m, min_cluster=5
 LOLA - Clusters at 1: 18,726, Clusters at 2: 29, Total clusters: 18,755
 Plot saved to LOLA_labeled.png
+Saved overlayed polar: LOLA_overlay.png
 
 North pole M3 threshold: 0.41 (9.02% of data)
 Clustering M3 pole - eps=450.00 m, min_cluster=5
-M3 - Clusters at 1: 20,555, Clusters at 2: 222, Total clusters: 20,777
+M3 - Clusters at 1: 20,557, Clusters at 2: 223, Total clusters: 20,780
 South pole M3 threshold: 0.28 (5.66% of data)
 Clustering M3 pole - eps=450.00 m, min_cluster=5
 M3 - Clusters at 1: 15,415, Clusters at 2: 233, Total clusters: 15,648
@@ -78,9 +37,9 @@ Taking the top 4.03% of points from MiniRF. Threshold = 1.20
 Plot saved to MiniRF_labeled.png
 
 Label counts:
-Diviner label  - 0:  96.99%
+Diviner label  - 0:  96.77%
 Diviner label  - 1:   0.00%
-Diviner label  - 2:   3.01%
+Diviner label  - 2:   3.23%
 LOLA label     - 0:  96.98%
 LOLA label     - 1:   2.30%
 LOLA label     - 2:   0.72%
@@ -93,40 +52,40 @@ MiniRF label   - 2:   0.00%
 
 Label proportions after combining:
 Label
-0    84.816518
-1     8.258468
-2     5.500769
-4     0.803473
-3     0.489398
-6     0.069267
-5     0.060686
-7     0.001421
+0    84.652568
+1     8.236437
+2     5.628237
+4     0.837323
+3     0.508924
+6     0.071900
+5     0.063119
+7     0.001491
 Name: proportion, dtype: float64
 
-Total number of points: 32790271
+Total number of points: 32788776
 
 Plot saved to Label_continuous.png
-Percentage of labels >= 3: 1.42%
+Percentage of labels >= 3: 1.48%
 
 Binary label proportions (label=3):
 Label
-0    98.575754
-1     1.424246
+0    98.517243
+1     1.482757
 Name: proportion, dtype: float64
 
-Total number of points: 32790271
+Total number of points: 32788776
 Plot saved to Label_binary.png
-Dataframes labeled after 153.48 mins
+Dataframes labeled after 64.95 mins
 
 
-Job finished on Sat  3 May 16:39:26 BST 2025
-Total runtime: 154 minutes and 14 seconds
+Job finished on Tue  6 May 10:05:53 BST 2025
+Total runtime: 65 minutes and 43 seconds
 
 ====================================
-CPU Time used: 02:31:41
-CPU Percent: 133%
-Memory usage: 49322560kb
-Approx Power usage: 0.030199999999999998
-Walltime usage: 02:34:25
+CPU Time used: 01:03:52
+CPU Percent: 99%
+Memory usage: 12603620kb
+Approx Power usage: 0.012600000000000002
+Walltime usage: 01:05:53
 
 ====================================

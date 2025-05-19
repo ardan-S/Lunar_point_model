@@ -213,7 +213,7 @@ def merge_psr_df_2(psr_df, args, R_MOON_M=1_737_400):
     print("Original psr distribution:")
     print(psr_df["psr"].value_counts(normalize=True) * 100)
 
-    orig_val_cnt = combined_df["Label"].value_counts(normalize=True).mul(100).round(1).sort_index()
+    orig_val_cnt = combined_df["Label"].value_counts(normalize=True).mul(100).round(0).sort_index()
 
     combined_df_n = combined_df.loc[combined_df["Latitude"] >= 75].copy()
     combined_df_s = combined_df.loc[combined_df["Latitude"] <= -75].copy()
@@ -320,8 +320,8 @@ def merge_psr_df_2(psr_df, args, R_MOON_M=1_737_400):
 
     # print(f"\nLabel distribution after merging PSR data:")
     # print(df_merged["Label"].value_counts(normalize=True) * 100)
-    final_val_cnt = df_merged["Label"].value_counts(normalize=True).mul(100).round(1).sort_index()
-    assert np.all(final_val_cnt == orig_val_cnt), "Label proportions do not match original data"
+    final_val_cnt = df_merged["Label"].value_counts(normalize=True).mul(100).round(0).sort_index()
+    assert np.all(final_val_cnt == orig_val_cnt), f"Label proportions do not match original data: \n{final_val_cnt} \n!= \n{orig_val_cnt}"
     print("Final label distribution:")
     print(final_val_cnt)
 
@@ -434,23 +434,23 @@ def main(args):
     condition2 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 0)  # high label but NOT psr (FP)           - True -> 2
     condition3 = (df_merged['Label'] >= lbl) & (df_merged['psr'] == 1)  # BOTH high label and psr (TP)          - True -> 3
 
-    df_merged['temp'] = np.select(
+    df_merged['class'] = np.select(
         [condition1, condition2, condition3],
         [1, 2, 3],
         default=0  # Default value if none of the conditions are met
     )
     
-    print(f"Percentage of points with cat 0 (TN): {np.sum(df_merged['temp'] == 0) / df_merged.shape[0]:.2%}")
-    print(f"Percentage of points with cat 1 (FN): {np.sum(df_merged['temp'] == 1) / df_merged.shape[0]:.2%}")
-    print(f"Percentage of points with cat 2 (FP): {np.sum(df_merged['temp'] == 2) / df_merged.shape[0]:.2%}")
-    print(f"Percentage of points with cat 3 (TP): {np.sum(df_merged['temp'] == 3) / df_merged.shape[0]:.2%}")
+    print(f"Percentage of points with cat 0 (TN): {np.sum(df_merged['class'] == 0) / df_merged.shape[0]:.2%}")
+    print(f"Percentage of points with cat 1 (FN): {np.sum(df_merged['class'] == 1) / df_merged.shape[0]:.2%}")
+    print(f"Percentage of points with cat 2 (FP): {np.sum(df_merged['class'] == 2) / df_merged.shape[0]:.2%}")
+    print(f"Percentage of points with cat 3 (TP): {np.sum(df_merged['class'] == 3) / df_merged.shape[0]:.2%}")
 
-    plot_polar(df_merged, 'temp', args.plot_dir, mode='category', categories=[0, 1, 2, 3], cat_colours={0: 'black', 1: 'blue', 2: 'green', 3: 'red'}, frac=0.01, dpi=400, label_col='temp', poster=True)
+    plot_polar(df_merged, 'class', args.plot_dir, mode='category', categories=[0, 1, 2, 3], cat_colours={0: 'black', 1: 'blue', 2: 'green', 3: 'red'}, frac=0.01, dpi=400, label_col='class', poster=True)
     
     # Plot confusion matrix
     fig, ax = plt.subplots(figsize=(8, 6))
     labels = ['True Negatives', 'False Negatives', 'False Positives', 'True Positives']
-    counts = [np.sum(df_merged['temp'] == 0), np.sum(df_merged['temp'] == 1), np.sum(df_merged['temp'] == 2), np.sum(df_merged['temp'] == 3)]
+    counts = [np.sum(df_merged['class'] == 0), np.sum(df_merged['class'] == 1), np.sum(df_merged['class'] == 2), np.sum(df_merged['class'] == 3)]
     ax.bar(labels, counts, color=['black', 'blue', 'green', 'red'])
     ax.set_ylabel('Count')
     ax.set_title('Confusion Matrix')

@@ -10,7 +10,7 @@ from functools import partial
 from pyproj import CRS, Transformer, Proj, Geod
 import sys
 
-from data_processing.utils.utils import save_by_lon_range, load_csvs_parallel, plot_polar
+from data_processing.utils.utils import save_by_lon_range, load_csvs_parallel, plot_polar, plot_polar_overlay
 from data_processing.download_data import clear_dir
 
 
@@ -56,6 +56,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
 
     print(f"Taking the top {df[df['Diviner'] <= 110].shape[0] / df.shape[0] :.2%} of points from Diviner. Threshold = 110")
     plot_polar(df, 'Diviner', save_path=plot_save_path, mode='labeled', label_col='Diviner label', frac=0.01, dpi=400)
+    plot_polar_overlay(base_df=df, overlay_df=df, variable='Diviner', label_col='Diviner label', save_path=plot_save_path, dpi=400, poster=True)
     print()
 
     # -------------------- LOLA --------------------
@@ -68,6 +69,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     apply_area_label_2(df, 'LOLA', lola_thresh_s, lola_area_thresh, 'above', 'south', eps=eps, min_cluster=min_cluster)
 
     plot_polar(df, 'LOLA', save_path=plot_save_path, mode='labeled', label_col='LOLA label', frac=0.01, dpi=400)
+    plot_polar_overlay(base_df=df, overlay_df=df, variable='LOLA', label_col='LOLA label', save_path=plot_save_path, dpi=400, poster=True)
     print()
 
     # -------------------- M3 --------------------
@@ -80,6 +82,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     apply_area_label_2(df, 'M3', m3_thresh_s, m3_area_thresh, 'below', 'south', eps=eps, min_cluster=min_cluster)  # eps to 2.5
 
     plot_polar(df, 'M3', save_path=plot_save_path, mode='labeled', label_col='M3 label', frac=0.01, dpi=400)
+    plot_polar_overlay(base_df=df, overlay_df=df, variable='M3', label_col='M3 label', save_path=plot_save_path, dpi=400, poster=True)
     print()
 
     # -------------------- MiniRF --------------------
@@ -90,6 +93,7 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     df.loc[df['MiniRF'] > MRF_thresh, 'MiniRF label'] += 1
 
     plot_polar(df, 'MiniRF', save_path=plot_save_path, mode='labeled', label_col='MiniRF label', frac=0.01, dpi=400)
+    plot_polar_overlay(base_df=df, overlay_df=df, variable='MiniRF', label_col='MiniRF label', save_path=plot_save_path, dpi=400, poster=True)
 
     # -------------------- Save labeled data --------------------
     save_by_lon_range(df, combined_save_path)

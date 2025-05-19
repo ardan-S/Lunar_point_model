@@ -447,6 +447,88 @@ def plot_polar(
     print(f"Plot saved to {fname}")
     plt.close(fig)
 
+def plot_polar_overlay(
+    base_df,
+    overlay_df,
+    variable,
+    label_col,
+    save_path,
+    frac_base=0.1,
+    frac_overlay=0.01,
+    dpi=300,
+    poster=True,
+):
+    # 1) Prepare the two DataFrames
+    #   * sample them
+    base = base_df.sample(frac=frac_base, random_state=42)
+    over = overlay_df.sample(frac=frac_overlay, random_state=42)
+    
+    # 2) Compute polar coords
+    def to_polar(df, pole):
+        df = df.copy()
+        df['r'] = (90 - df['Latitude']) if pole=='north' else (90 + df['Latitude'])
+        df['theta'] = np.deg2rad(df['Longitude'])
+        return df
+
+    north_base = to_polar(base[base['Latitude'] >= 0], 'north')
+    south_base = to_polar(base[base['Latitude'] <  0], 'south')
+    north_over = to_polar(over[over['Latitude'] >= 0], 'north')
+    south_over = to_polar(over[over['Latitude'] <  0], 'south')
+
+    # 3) Make one figure
+    fig, (axN, axS) = plt.subplots(1, 2, subplot_kw={'projection': 'polar'}, figsize=(20, 10), facecolor='none')
+
+    for ax in (axN, axS):
+        pole = 'north' if ax == axN else 'south'
+        ax.set_facecolor('none')
+        ax.set_ylim(0,15)
+        ax.set_yticks(range(0,16,5))
+        labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 16, 5)]
+        ax.set_yticklabels(labels)
+        ax.set_theta_zero_location('N')
+        ax.set_theta_direction(-1)
+
+    # 4) First, draw the background layer (interpolated → continuous greyscale)
+    def draw_continuous(ax, df):
+        sc = ax.scatter(
+            df['theta'], df['r'],
+            c=df[variable],
+            cmap='Greys_r',
+            s=5,
+            alpha=0.6,
+            zorder=1
+        )
+    
+    draw_continuous(axN, north_base)
+    draw_continuous(axS, south_base)
+
+    # 5) Then, on the very same axes, draw your labeled overlay
+    def draw_labels(ax, df):
+        df = df[df[label_col] > 0]
+        for cat, col in {1:'blue', 2:'red'}.items():    # or your cat_colours dict
+            sub = df[df[label_col]==cat]
+            ax.scatter(
+                sub['theta'], sub['r'],
+                c=col,
+                s=10,
+                label=f"{label_col}={cat}",
+                zorder=2  # higher than the greyscale dots
+            )
+        ax.legend(loc='upper right', title=label_col)
+
+    draw_labels(axN, north_over)
+    draw_labels(axS, south_over)
+
+    # 6) Save with transparent background
+    fname = f"{variable}_overlay.png"
+    kwargs = {'dpi':dpi}
+    if poster:
+        kwargs['transparent'] = True
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_path, fname), **kwargs)
+    plt.close(fig)
+    print("Saved overlayed polar:", fname)
 
 def generate_xy_mesh(
     RESOLUTION_M: float = 300.0,
