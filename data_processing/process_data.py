@@ -2,14 +2,23 @@ import argparse
 import sys
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
+import multiprocessing as mp
 import time
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from data_processing.utils.load_dfs import load_lro_df, load_m3_df, load_lola_df
+# from data_processing.utils.load_dfs import load_lro_df, load_m3_df, load_lola_df
+from data_processing.utils.load_dfs2 import load_df
 from data_processing.utils.interp2 import interpolate
 from data_processing.utils.label import combine, label
 from data_processing.utils.utils import load_dataset_config
+
+
+"""
+Definitely scope to add oop and make this class based.
+Initialise with the dataset dict/name etc and then call the methods.
+That way the methods can be super paralleised and hopefully faster.
+"""
 
 
 def main(args):
@@ -26,19 +35,29 @@ def main(args):
     # dataset_dict['MiniRF']['plot_path'] = None
     # print("REMINDER: Plot saving is disabled. ")
 
-    with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
-        load_futures = [
-            executor.submit(load_lro_df, dataset_dict['Diviner'], 'Diviner', plot_frac=0.95),
-            executor.submit(load_lola_df, dataset_dict['LOLA'], 'LOLA', plot_frac=0.95),
-            executor.submit(load_m3_df, dataset_dict['M3']),
-            executor.submit(load_lro_df, dataset_dict['MiniRF'], 'MiniRF', plot_frac=0.95),
-        ]
+    # with ProcessPoolExecutor(max_workers=args.n_workers) as executor:
+    #     load_futures = [
+    #         # executor.submit(load_lro_df, dataset_dict['Diviner'], 'Diviner', plot_frac=0.95),
+    #         # executor.submit(load_lola_df, dataset_dict['LOLA'], 'LOLA', plot_frac=0.95),
+    #         # executor.submit(load_m3_df, dataset_dict['M3']),
+    #         # executor.submit(load_lro_df, dataset_dict['MiniRF'], 'MiniRF', plot_frac=0.95),
+    #         executor.submit(load_df, dataset_dict['Diviner'], 'Diviner', plot_frac=0.95),
+    #         executor.submit(load_df, dataset_dict['LOLA'], 'LOLA', plot_frac=0.95),
+    #         executor.submit(load_df, dataset_dict['M3'], 'M3', plot_frac=0.95),
+    #         executor.submit(load_df, dataset_dict['MiniRF'], 'MiniRF', plot_frac=0.95)
+    #     ]
 
-        for future in as_completed(load_futures):
-            try:
-                future.result()
-            except Exception as e:
-                raise e
+    #     for future in as_completed(load_futures):
+    #         try:
+    #             future.result()
+    #         except Exception as e:
+    #             raise e
+
+    # Parallelised within function
+    load_df(dataset_dict['Diviner'], 'Diviner', n_workers=args.n_workers, plot_frac=0.95)
+    load_df(dataset_dict['LOLA'], 'LOLA', n_workers=args.n_workers, plot_frac=0.95)
+    load_df(dataset_dict['M3'], 'M3', n_workers=args.n_workers, plot_frac=0.95)
+    load_df(dataset_dict['MiniRF'], 'MiniRF', n_workers=args.n_workers, plot_frac=0.95)
 
     print(f"Loading stage complete after {(time.time() - start_time) /60:.2f} mins\n"); sys.stdout.flush()
 
@@ -64,7 +83,8 @@ def main(args):
                   dataset_dict['LOLA']['interp_dir'],
                   dataset_dict['M3']['interp_dir'],
                   dataset_dict['MiniRF']['interp_dir'], 
-                  n_workers=args.n_workers
+                  n_workers=args.n_workers,
+                  combined_save_path=dataset_dict['Combined']['combined_save_path']
                   ),
             dataset_dict, args.plot_dir
             )

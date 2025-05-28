@@ -14,8 +14,12 @@ from data_processing.utils.utils import save_by_lon_range, load_csvs_parallel, p
 from data_processing.download_data import clear_dir
 
 
-def combine(*dirs, n_workers=None):
+def combine(*dirs, n_workers=None, combined_save_path=None):
     all_dfs = []
+
+    if len([f for f in os.listdir(combined_save_path) if f.endswith('.csv') and 'lon' in f]) == 12:
+        print(f"Combined CSVs appear to exist. Skipping combine stage.")
+        return pd.DataFrame()  # Return empty DataFrame for label() to exit with
 
     with ProcessPoolExecutor(max_workers=n_workers) as executor:
         future_to_dir = {executor.submit(load_csvs_parallel, dir, n_workers): dir for dir in dirs}
@@ -38,10 +42,10 @@ def label(df, dataset_dict, plot_dir, lola_area_thresh=3, m3_area_thresh=2.4, ep
     # -------------------- Setup --------------------
     combined_save_path = dataset_dict['Combined']['combined_save_path']
 
-    # if len([f for f in os.listdir(combined_save_path) if f.endswith('.csv') and 'lon' in f]) == 12:
-    #     print(f"Combined CSVs appear to exist. Skipping label stage.")
-    #     return
-    print(f"REMINDER: Skip if combined CSVs already exist commented out in label.py")
+    if len([f for f in os.listdir(combined_save_path) if f.endswith('.csv') and 'lon' in f]) == 12:
+        print(f"Labelled CSVs appear to exist. Skipping label stage.")
+        return
+    # print(f"REMINDER: Skip if combined CSVs already exist commented out in label.py")
 
     clear_dir(combined_save_path, dirs_only=False)
 

@@ -445,7 +445,7 @@ def main(args):
     print(f"Percentage of points with cat 2 (FP): {np.sum(df_merged['class'] == 2) / df_merged.shape[0]:.2%}")
     print(f"Percentage of points with cat 3 (TP): {np.sum(df_merged['class'] == 3) / df_merged.shape[0]:.2%}")
 
-    plot_polar(df_merged, 'class', args.plot_dir, mode='category', categories=[0, 1, 2, 3], cat_colours={0: 'black', 1: 'blue', 2: 'green', 3: 'red'}, frac=0.01, dpi=400, label_col='class', poster=True)
+    plot_polar(df_merged, 'class', args.plot_dir, mode='category', categories=[0, 1, 2, 3], cat_colours={0: 'black', 1: 'blue', 2: 'green', 3: 'red'}, frac=0.25, dpi=600, label_col='class', poster=False)
     
     # Plot confusion matrix
     fig, ax = plt.subplots(figsize=(8, 6))

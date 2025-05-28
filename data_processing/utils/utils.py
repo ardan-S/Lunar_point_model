@@ -160,7 +160,7 @@ def decode_image_file(file_path, file_extension, metadata, address):
                 raise ValueError(f"Unsupported number of bands: {bands}")
 
     else:
-        raise ValueError(f"Unsupported file extension: {file_extension}")
+        raise ValueError(f"Unsupported file extension: {file_extension} found at {file_path}")
 
     return image_data
 
@@ -220,7 +220,7 @@ def load_every_nth_line(file_path, n):
     return df
 
 
-def save_by_lon_range(df, output_dir):
+def save_by_lon_range(df, output_dir, n_workers=1):
     os.makedirs(output_dir, exist_ok=True)
 
     """"
@@ -249,6 +249,8 @@ def save_by_lon_range(df, output_dir):
         os.path.join(output_dir, 'lon_300_330.csv'),
         os.path.join(output_dir, 'lon_330_360.csv')
     ]
+
+    tasks = []
 
     for lon_range, file_name in zip(lon_ranges, file_names):
         lon_min, lon_max = lon_range
@@ -410,9 +412,14 @@ def plot_polar(
         ax.set_ylim(0, 15)
         ax.set_yticks(range(0, 16, 5))
         labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 16, 5)]
+        # ax.set_ylim(0, 5)
+        # ax.set_yticks(range(0, 6, 1))
+        # labels = [str(90 - x) if pole == 'north' else str(-90 + x) for x in range(0, 6, 1)]
+    
         ax.set_yticklabels(labels)
         ax.set_theta_zero_location('N')
         ax.set_theta_direction(-1)
+        print("REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()")
 
     def draw(ax, df, pole):
         if df.empty:
@@ -420,7 +427,7 @@ def plot_polar(
             return
         set_axes(ax, pole)
         if mode == 'continuous':
-            sc = ax.scatter(df['theta'], df['r'], c=df[variable], cmap='Greys_r', s=5, vmin=vmin, vmax=vmax)
+            sc = ax.scatter(df['theta'], df['r'], c=df[variable], cmap='Greys_r', s=0.5, vmin=vmin, vmax=vmax)
             fig.colorbar(sc, ax=ax, label=variable)
         else:
             for cat in categories:

@@ -3,6 +3,8 @@ Region  Number of points Non psr (%) psr (%) Lon min Lon max Lat min Lat max
  North          11414184      96.77%   3.23%   0.015 359.985  75.000  89.994
  Total          22828368      96.53%   3.47%   0.015 359.985 -89.994  89.994
 
+REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
+REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
 Plot saved to psr_binary__raw.png
 /rds/general/user/as5023/home/Lunar_point_model/jobscripts/pbs/../../data_processing/psr_test.py:457: UserWarning: set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
   ax.set_xticklabels(labels, rotation=45)
@@ -42,6 +44,8 @@ psr
 1.0     5.721188
 NaN     0.020868
 Name: proportion, dtype: float64
+REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
+REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
 Plot saved to psr_binary__rasterised.png
 
 Percentage of points which are PSRs:            5.72%
@@ -66,11 +70,15 @@ Label = 5,   16019  points out of    20696  are PSR  (77.40%)
 Label = 6,   21899  points out of    23575  are PSR  (92.89%)
 Label = 7,     463  points out of      489  are PSR  (94.68%)
 
+REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
+REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
 Plot saved to Label_binary.png
 Percentage of points with cat 0 (TN): 93.74%
 Percentage of points with cat 1 (FN): 4.78%
 Percentage of points with cat 2 (FP): 0.54%
 Percentage of points with cat 3 (TP): 0.94%
+REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
+REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
 Plot saved to class_category.png
 
 PRECISION (How trustworthy is a positive value):        0.7934
@@ -80,14 +88,14 @@ MCC (Correlation coefficient):                          0.3054
 IOU (frac of union of detected ice and PSR common to both maps): 0.1505
 Performance metrics not used: accuracy, acc_balanced, prec_weighted, rec_weighted, f1_weighted
 
-Job finished on Wed  7 May 14:28:08 BST 2025
-Total runtime: 19 minutes and 49 seconds
+Job finished on Wed 21 May 15:52:44 BST 2025
+Total runtime: 20 minutes and 21 seconds
 
 ====================================
-CPU Time used: 00:17:42
-CPU Percent: 99%
-Memory usage: 15364636kb
-Approx Power usage: 0.0034
-Walltime usage: 00:19:58
+CPU Time used: 00:18:28
+CPU Percent: 109%
+Memory usage: 15367868kb
+Approx Power usage: 0.0035999999999999995
+Walltime usage: 00:20:31
 
 ====================================

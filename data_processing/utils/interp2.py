@@ -12,6 +12,16 @@ from data_processing.utils.utils import save_by_lon_range, load_every_nth_line, 
 from data_processing.download_data import clear_dir
 
 
+"""
+
+Presumably the interp csv and interp diviner can be combined into one. Just have seperatue interp functions and call each?
+
+Maybe even put the proj etc etc into the main interp func and just have the interp logic without the trimming and transform
+in the sub functions?
+
+"""
+
+
 def interpolate_csv(df, mesh_north, mesh_south, data_type, block, elev=None, MOON_RADIUS_M=1737.4e3):
     # Define AEQD CRS for polar projections
     transformer_north = Proj(proj='aeqd', lat_0=90, lon_0=0, R=MOON_RADIUS_M, always_xy=True)
@@ -104,18 +114,6 @@ def interpolate_diviner(df, mesh_north, mesh_south, block, MOON_RADIUS_M=1737.4e
     tree_n = KDTree(np.column_stack((xs_n, ys_n)), metric='euclidean')
     tree_s = KDTree(np.column_stack((xs_s, ys_s)), metric='euclidean')
 
-    # values_n = df.loc[north_mask, 'Diviner'].values.astype(np.float32, copy=False)
-    # values_s = df.loc[south_mask, 'Diviner'].values.astype(np.float32, copy=False)
-
-    # points_n = np.column_stack((xs_n, ys_n))
-    # points_s = np.column_stack((xs_s, ys_s))
-
-    # lon_grid_n, lat_grid_n = transformer_north(mesh_north[:, 0], mesh_north[:, 1], inverse=True)
-    # lon_grid_s, lat_grid_s = transformer_south(mesh_south[:, 0], mesh_south[:, 1], inverse=True)
-
-    # interp_n = max_rad_interp_gc(lons[north_mask], lats[north_mask], values_n,lon_grid_n, lat_grid_n, block=block)
-    # interp_s = max_rad_interp_gc(lons[south_mask], lats[south_mask], values_s,lon_grid_s, lat_grid_s, block=block)
-
     interp_n = max_rad_interp(tree_n, vals[north_mask], mesh_north, block=block)
     interp_s = max_rad_interp(tree_s, vals[south_mask], mesh_south, block=block)
 
@@ -134,16 +132,6 @@ def interpolate_diviner(df, mesh_north, mesh_south, block, MOON_RADIUS_M=1737.4e
         'Diviner': val
     }, copy=False)
 
-
-# def max_rad_interp(tree, values, mesh, block, radius_m=450):
-#     out = np.full(mesh.shape[0], np.nan, dtype=values.dtype)
-
-#     for s in range(0, mesh.shape[0], block):
-#         idx_lists = tree.query_radius(mesh[s:s+block], r=radius_m, return_distance=False)
-#         for i, idx in enumerate(idx_lists):
-#             if idx.size:
-#                 out[s+i] = np.nanmax(values[idx])
-#     return out
 
 def max_rad_interp(tree, values, mesh, block, min_rad=350, passes=6):
     # Start with a small radius and double it each pass
@@ -170,51 +158,6 @@ def max_rad_interp(tree, values, mesh, block, min_rad=350, passes=6):
     print(f"Max radius: {rad/1000:.1f} km on completion. {len(todo)} points left.")
     return out
 
-
-
-
-# def max_rad_interp_gc(lon_deg, lat_deg, values,
-#                       tgt_lon_deg, tgt_lat_deg,
-#                       block=100_000,
-#                       radius_m=450,
-#                       R=1737.4e3,          # Moon radius
-#                       fallback='nearest'):
-#     # -- build the BallTree --------------------------------------------------
-#     src_rad  = np.deg2rad(np.column_stack((lat_deg, lon_deg)))  # (lat, lon) in *this* order
-#     tree     = BallTree(src_rad, metric='haversine')
-#     rad_max  = radius_m / R                    # great‑circle search radius [rad]
-
-#     out      = np.empty(tgt_lon_deg.size, dtype=values.dtype)
-#     tgt_rad  = np.deg2rad(np.column_stack((tgt_lat_deg, tgt_lon_deg)))
-
-#     n_tot = n_pts = nearest = 0
-#     n_min, n_max = np.inf, -np.inf
-
-#     for s in range(0, tgt_rad.shape[0], block):
-#         e    = s + block
-#         slab = tgt_rad[s:e]
-
-#         # query_radius returns a Python list of index arrays
-#         idx_lists = tree.query_radius(slab, r=rad_max, return_distance=False)
-
-#         for i, idxs in enumerate(idx_lists):
-#             n = len(idxs)
-#             n_tot += n; n_pts += 1
-#             n_min  = min(n_min, n); n_max = max(n_max, n)
-
-#             if n:
-#                 out[s+i] = np.nanmax(values[idxs])
-#             elif fallback == 'nearest':
-#                 # BallTree.query gives distance and index of the nearest neighbour
-#                 _, idx = tree.query(slab[i].reshape(1,-1), k=1)
-#                 out[s+i] = values[idx[0,0]]
-#                 nearest += 1
-#             else:
-#                 out[s+i] = np.nan
-
-#     print(f"radius_m: {radius_m}, n_min: {n_min}, n_max: {n_max}, "
-#           f"mean: {n_tot/n_pts:.2f}, nearest: {nearest}")
-#     return out
 
 
 def interpolate(data_dict, data_type, plot_save_path=None, block=8_000_000):
