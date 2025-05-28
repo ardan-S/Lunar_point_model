@@ -1,118 +1,54 @@
 Processing Diviner data
 WARNING: file list limited to 64
-STAGE1: -0.00 seconds
+STAGE1: -0.01 seconds
 Multiprocessing start method: fork
 
-[1748426778.58] Worker ForkProcess-41 processing file: dgdr_tbol_avg_poln_20090705n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-40 processing file: dgdr_tbol_avg_poln_20151104d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-32 processing file: dgdr_tbol_avg_pols_20160429d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-52 processing file: dgdr_tbol_avg_pols_20141101n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-64 processing file: dgdr_tbol_avg_pols_20111204n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-22 processing file: dgdr_tbol_avg_pols_20131126d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-36 processing file: dgdr_tbol_avg_pols_20130809d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-13 processing file: dgdr_tbol_avg_pols_20090705d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-26 processing file: dgdr_tbol_avg_pols_20150525d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-35 processing file: dgdr_tbol_avg_pols_20111218d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-33 processing file: dgdr_tbol_avg_poln_20100606d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-53 processing file: dgdr_tbol_avg_poln_20131209d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-10 processing file: dgdr_tbol_avg_pols_20091211d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-27 processing file: dgdr_tbol_avg_pols_20120806n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-6 processing file: dgdr_tbol_avg_pols_20151104d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-30 processing file: dgdr_tbol_avg_pols_20111222n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-57 processing file: dgdr_tbol_avg_poln_20150828n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-12 processing file: dgdr_tbol_avg_poln_20140216n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-16 processing file: dgdr_tbol_avg_poln_20150705n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-38 processing file: dgdr_tbol_avg_pols_20130325n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-49 processing file: dgdr_tbol_avg_pols_20150925n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-24 processing file: dgdr_tbol_avg_poln_20100703n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-15 processing file: dgdr_tbol_avg_poln_20111120d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-46 processing file: dgdr_tbol_avg_pols_20090920d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-48 processing file: dgdr_tbol_avg_pols_20130822n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-2 processing file: dgdr_tbol_avg_pols_20120618n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-59 processing file: dgdr_tbol_avg_pols_20160208d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-29 processing file: dgdr_tbol_avg_poln_20150205n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-55 processing file: dgdr_tbol_avg_pols_20090810n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-51 processing file: dgdr_tbol_avg_pols_20160913n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-3 processing file: dgdr_tbol_avg_pols_20140425d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-56 processing file: dgdr_tbol_avg_poln_20160527n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-45 processing file: dgdr_tbol_avg_poln_20151229n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-60 processing file: dgdr_tbol_avg_pols_20140531n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-9 processing file: dgdr_tbol_avg_pols_20160623n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-62 processing file: dgdr_tbol_avg_pols_20120723d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-4 processing file: dgdr_tbol_avg_pols_20130422n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-58 processing file: dgdr_tbol_avg_pols_20130102n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-18 processing file: dgdr_tbol_avg_poln_20120902n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-50 processing file: dgdr_tbol_avg_pols_20110830d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-19 processing file: dgdr_tbol_avg_pols_20160803d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-25 processing file: dgdr_tbol_avg_pols_20140715n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-44 processing file: dgdr_tbol_avg_pols_20100523n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-11 processing file: dgdr_tbol_avg_poln_20100731n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-7 processing file: dgdr_tbol_avg_poln_20110220n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-42 processing file: dgdr_tbol_avg_poln_20090727d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-61 processing file: dgdr_tbol_avg_poln_20100813d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-63 processing file: dgdr_tbol_avg_pols_20140315n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-39 processing file: dgdr_tbol_avg_pols_20131016n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-20 processing file: dgdr_tbol_avg_pols_20160830d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-14 processing file: dgdr_tbol_avg_poln_20150525d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-43 processing file: dgdr_tbol_avg_poln_20140202d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-37 processing file: dgdr_tbol_avg_poln_20111107n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-8 processing file: dgdr_tbol_avg_pols_20140825d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-47 processing file: dgdr_tbol_avg_pols_20120626d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-54 processing file: dgdr_tbol_avg_pols_20140729d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-17 processing file: dgdr_tbol_avg_pols_20110513n_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-28 processing file: dgdr_tbol_avg_poln_20141226d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-5 processing file: dgdr_tbol_avg_pols_20140106d_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-34 processing file: dgdr_tbol_avg_poln_20160623n_240_jp2.lbl
-[1748426778.58] Worker ForkProcess-31 processing file: dgdr_tbol_avg_poln_20140922d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-1 processing file: dgdr_tbol_avg_pols_20111024d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-21 processing file: dgdr_tbol_avg_poln_20150621d_240_jp2.lbl
-[1748426778.57] Worker ForkProcess-23 processing file: dgdr_tbol_avg_poln_20150718d_240_jp2.lbl
 Processing 64 files for Diviner data with 64 workers...
-STAGE2: 16.18 seconds
-STAGE3: 2.81 seconds
-STAGE4: 1214.44 seconds
+STAGE2: 16.42 seconds
+STAGE3: 2.92 seconds
+STAGE4: 146.18 seconds
 Diviner df:
           Longitude      Latitude       Diviner
 count  4.526766e+07  4.526766e+07  4.526766e+07
-mean   1.817756e+02  4.705255e-01  1.261870e+02
-std    9.326260e+01  5.510118e+01  7.516490e+01
+mean   1.817757e+02  4.704860e-01  1.261863e+02
+std    9.325288e+01  5.510118e+01  7.516685e+01
 min    1.503432e-02 -8.993449e+01  0.000000e+00
-25%    9.514075e+01 -8.095256e+01  7.022000e+01
-50%    1.812405e+02  7.508854e+01  8.258000e+01
-75%    2.694597e+02  7.981237e+01  2.009600e+02
-max    3.599850e+02  8.995926e+01  4.314000e+02
+25%    9.513943e+01 -8.095262e+01  7.022000e+01
+50%    1.812408e+02  7.508842e+01  8.258000e+01
+75%    2.694597e+02  7.981231e+01  2.009600e+02
+max    3.599850e+02  8.997982e+01  4.314000e+02
 
 Loaded 45,267,661 points for Diviner data.
-STAGE5: 164.84 seconds
+STAGE5: 170.19 seconds
 REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
 REMINDER: plotting only to 5° radius, not 15° - Change in set_axes()
 Plot saved to Diviner_continuous_raw.png
-STAGE6: 353.88 seconds
+STAGE6: 368.45 seconds
 Raw CSVs appear to exist for LOLA data. Skipping loading step.
 Raw CSVs appear to exist for M3 data. Skipping loading step.
 Raw CSVs appear to exist for MiniRF data. Skipping loading step.
-Loading stage complete after 29.20 mins
+Loading stage complete after 11.74 mins
 
-Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
 Interpolated CSVs appear to exist for LOLA data. Skipping interpolation.
-Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
 Interpolated CSVs appear to exist for M3 data. Skipping interpolation.
-Interpolation stage complete after 29.22 mins
+Interpolated CSVs appear to exist for Diviner data. Skipping interpolation.
+Interpolated CSVs appear to exist for MiniRF data. Skipping interpolation.
+Interpolation stage complete after 11.75 mins
 
 Combined CSVs appear to exist. Skipping combine stage.
 Labelled CSVs appear to exist. Skipping label stage.
-Dataframes labeled after 29.22 mins
+Dataframes labeled after 11.75 mins
 
-/var/spool/pbs/mom_priv/jobs/474892.pbs-7.SC: line 37: 3770462 Terminated              vmstat 5 > /rds/general/user/as5023/home/Lunar_point_model/logs/vmstat.log 2>&1
+/var/spool/pbs/mom_priv/jobs/475779.pbs-7.SC: line 37: 1581710 Terminated              vmstat 5 > /rds/general/user/as5023/home/Lunar_point_model/logs/vmstat.log 2>&1
 
-Job finished on Wed 28 May 11:35:31 BST 2025
-Total runtime: 30 minutes and 0 seconds
+Job finished on Wed 28 May 15:25:01 BST 2025
+Total runtime: 12 minutes and 32 seconds
 
 ====================================
-CPU Time used: 00:35:36
-CPU Percent: 446%
-Memory usage: 45658060kb
-Approx Power usage: 0.007
-Walltime usage: 00:30:11
+CPU Time used: 00:37:09
+CPU Percent: 1023%
+Memory usage: 58564068kb
+Approx Power usage: 0.0074
+Walltime usage: 00:12:44
 
 ====================================

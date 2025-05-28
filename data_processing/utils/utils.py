@@ -220,6 +220,14 @@ def load_every_nth_line(file_path, n):
     return df
 
 
+def _write_lon_slice(args):
+    df_slice, file_name = args
+    if os.path.exists(file_name):
+        df_slice.to_csv(file_name, mode='a', header=False, index=False)
+    else:
+        df_slice.to_csv(file_name, mode='w', header=True, index=False)
+
+
 def save_by_lon_range(df, output_dir, n_workers=1):
     os.makedirs(output_dir, exist_ok=True)
 
@@ -257,19 +265,20 @@ def save_by_lon_range(df, output_dir, n_workers=1):
 
         # Adjust slicing to include the overlap and handle wrap-around
         if lon_min == 0:  # Handle 0 boundary wrap-around
-            df_slice = df[(df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max) |
-                          (df['Longitude'] >= 360 - (32 - lon_max))]
+            mask = (((df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max)) |
+                          ((df['Longitude'] >= 360 - (32 - lon_max))))
         elif lon_max == 360:  # Handle 360 boundary wrap-around
-            df_slice = df[(df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max) |
-                          (df['Longitude'] < (lon_min - 360) + 2)]
+            mask = (((df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max)) |
+                          ((df['Longitude'] < (lon_min - 360) + 2)))
         else:
-            df_slice = df[(df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max)]
+            mask = (df['Longitude'] >= lon_min) & (df['Longitude'] < lon_max)
 
+        df_slice = df[mask]
         if not df_slice.empty:
-            if os.path.exists(file_name):
-                df_slice.to_csv(file_name, mode='a', header=False, index=False)
-            else:
-                df_slice.to_csv(file_name, index=False)
+            tasks.append((df_slice, file_name))
+
+    with ProcessPoolExecutor(max_workers=n_workers) as executor:
+        executor.map(_write_lon_slice, tasks)
 
 
 def plot_polar(

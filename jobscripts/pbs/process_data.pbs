@@ -16,12 +16,6 @@ cd $PBS_O_WORKDIR
 
 rm -rf ../data/CSVs/combined/*.csv
 
-top -b -d 5 -u as5023 > /rds/general/user/as5023/home/Lunar_point_model/logs/top.log 2>&1 &
-MON_PID=$!
-
-vmstat 5 > /rds/general/user/as5023/home/Lunar_point_model/logs/vmstat.log 2>&1 &
-VM_PID=$!
-
 # Run the Python script
 python ../../data_processing/process_data.py   --n_workers 64 \
                             --download_dir /rds/general/user/as5023/ephemeral/Lunar_pm/data/raw \
@@ -30,8 +24,6 @@ python ../../data_processing/process_data.py   --n_workers 64 \
                             --combined_dir /rds/general/user/as5023/home/Lunar_point_model/data/CSVs/combined \
                             --plot_dir /rds/general/user/as5023/home/Lunar_point_model/data/plots
 
-kill $MON_PID 2>/dev/null
-kill $VM_PID 2>/dev/null
 
 end_time=$(date +%s)
 

@@ -114,8 +114,6 @@ def load_file(file, data_dict, data_type):
     max_val = data_dict['max']
     min_val = data_dict['min']
 
-    print(f"[{time.time():.2f}] Worker {mp.current_process().name} processing file: {file}")
-
     if data_type == 'LOLA':
         lons, lats, data = load_lola(data_dict, file, data_type)
         df_temp = pd.DataFrame({
@@ -204,7 +202,7 @@ def load_df(data_dict, data_type, n_workers=1, plot_frac=0.25, hist=False):
     t3 = time.time()
     print(f"STAGE3: {t3 - t2:.2f} seconds")
     if csv_save_path:
-        save_by_lon_range(df, csv_save_path)
+        save_by_lon_range(df, csv_save_path, n_workers=n_workers)
     t4 = time.time()
     print(f"STAGE4: {t4 - t3:.2f} seconds")
 
