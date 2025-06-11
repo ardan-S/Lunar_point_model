@@ -173,3 +173,5 @@ Jobscripts to train the FCNN and GCN are provided in `model/` directory. Hyperpa
 
 ### To use the saved models:
 The `run_model.pbs` jobscript can be used to load saved models and evaluate points. It is currently set to choose a random point from the interpolated data but can easily be modified to return a value on an external input. Note that the FCNN can input a single point with the associated remote sensing values for a label but the GCN requires a graph object as an input and will output labels for each node. The predictions from these models can be found in the log files after the `run_model.pbs` job is complete. 
+
+Test
